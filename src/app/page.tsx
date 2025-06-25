@@ -1,6 +1,7 @@
 import Background from "./components/Background";
 import Hero from "./components/Hero";
 import Navbar from "./components/Navbar";
+import Video from "./components/Video";
 import "./globals.css";
 
 export default function Home() {
@@ -9,6 +10,7 @@ export default function Home() {
       <Background />
       <Navbar />
       <Hero />
+      <Video />
     </div>
   );
 }

@@ -18,8 +18,8 @@
   }
   
   .main-wrapper {
-    padding-left: 18rem;
-    padding-right: 18rem;
+    padding-left: 20rem;
+    padding-right: 20rem;
     padding-top: 2rem;
     min-height: 100vh; 
   }
@@ -28,13 +28,13 @@
 :root {
   --radius: 0.625rem;
   --background: #ffffff;
-  --foreground: #0e0e0e;
+  --foreground: #101010;
   --accent-dark: #075985;
   --accent-light: #7DD3FC;
 }
 
 .dark {
-  --background: #0e0e0e;
+  --background: #101010;
   --foreground: #ffffff;
   --accent-dark: #075985;
   --accent-light: #7DD3FC;
