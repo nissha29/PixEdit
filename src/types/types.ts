@@ -1,0 +1,22 @@
+import { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
+
+export interface IButton extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: ReactNode;
+  className?: string;
+}
+
+export interface IInput extends InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+  className: string;
+}
+
+export type User = {
+  name: string;
+  email: string;
+};
+
+export type UserStore = {
+  user: User | null;
+  setUser: (user: User) => void;
+  clearUser: () => void;
+};

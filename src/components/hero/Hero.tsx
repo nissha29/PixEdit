@@ -1,8 +1,15 @@
-import { AnimatedTooltip } from '@/components/ui/animated-tooltip';
-import { FlipWords } from '@/components/ui/flip-words';
+'use client'
+
 import React from 'react'
+import { AnimatedTooltip } from '../ui/animated-tooltip';
+import { FlipWords } from '../ui/flip-words';
+import Background from './Background';
+import Navbar from './Navbar';
+import Video from './Video'
+import { useRouter } from 'next/navigation';
 
 function Hero() {
+    const router = useRouter();
     const words = ["images", "illustrations", "pictures", "potraits"];
     const people = [
         {
@@ -50,41 +57,46 @@ function Hero() {
     ];
 
     return (
-        <div className='text-foreground'>
-            <div className='flex justify-center items-center gap-6 mt-24'>
-                <div className='flex w-52'>
-                    <AnimatedTooltip items={people} />
+        <>
+            <Background />
+            <Navbar />
+            <div className='text-foreground'>
+                <div className='flex justify-center items-center gap-6 mt-24'>
+                    <div className='flex w-52'>
+                        <AnimatedTooltip items={people} />
+                    </div>
+                    <div>Trusted by 100+ users</div>
                 </div>
-                <div>Trusted by 100+ users</div>
-            </div>
-            <div className='flex flex-col justify-center items-center'>
-                <div className='flex mt-10 text-7xl'>
-                    <div className=''>
-                        Every tool you need to work with
-                        <div className='w-full flex flex-col justify-center items-center'>
-                            <div className='mt-6 mb-6 text-8xl'>
-                                <FlipWords words={words} />
+                <div className='flex flex-col justify-center items-center'>
+                    <div className='flex mt-10 text-7xl font-semibold'>
+                        <div className=''>
+                            Every tool you need to work with
+                            <div className='w-full flex flex-col justify-center items-center'>
+                                <div className='mt-6 mb-6 text-8xl'>
+                                    <FlipWords words={words} />
+                                </div>
+                                in one place
                             </div>
-                            in one place
+
                         </div>
+                    </div>
 
+                    <div className='flex mt-16 gap-24 w-full items-center justify-center px-6'>
+                        <div>
+                            <button onClick={() => router.push('/signin')} className='text-center text-3xl px-5 py-4 bg-accent-dark text-white hover:cursor-pointer hover:scale-105 hover:bg-sky-900 duration-250 ease-in-out transition-all rounded-sm'>Start Editing Now</button>
+                        </div>
                     </div>
                 </div>
 
-                <div className='flex mt-16 gap-24 w-full items-center justify-center px-6'>
-                    <div>
-                        <button className='text-center text-3xl px-5 py-4 bg-accent-dark text-white hover:cursor-pointer hover:scale-105 hover:bg-sky-900 duration-250 ease-in-out transition-all'>Start Editing Now</button>
-                    </div>
+                <div className='flex justify-end items-end'>
+                    <div className='border dark:border-accent-light border-sky-600 translate-x-1/2 -translate-y-64 rotate-90 w-3xl dark:blur-xs'></div>
+                </div>
+                <div className='transform-3d mt-16'>
+                    <div className='border dark:border-accent-light border-sky-400 w-7xl translate-x-20 dark:blur-xs'></div>
                 </div>
             </div>
-            
-            <div className='flex justify-end items-end'>
-                <div className='border dark:border-accent-light border-sky-600 translate-x-1/2 -translate-y-64 rotate-90 w-3xl dark:blur-xs'></div>
-            </div>
-            <div className='transform-3d mt-16'>
-                <div className='border dark:border-accent-light border-sky-400 w-7xl translate-x-20 dark:blur-xs'></div>
-            </div>
-        </div>
+            <Video />
+        </>
     )
 }
 
