@@ -1,13 +1,13 @@
-'use client'
+"use client";
 
+import { signIn } from "next-auth/react";
 import Link from 'next/link'
-import { useRouter } from 'next/navigation';
 import React from 'react'
+import Button from '../forms/Button';
 
 const navBarLinkStyles = `hover:underline underline-offset-8 decoration-2 decoration-accent-light transition-all ease-in-out duration-200 hover:cursor-pointer hover:scale-105`;
 
 function Navbar() {
-    const router = useRouter();
     return (
         <div className='relative'>
             <div className='px-24 flex justify-between items-center dark:text-foreground text-foreground sticky'>
@@ -24,10 +24,9 @@ function Navbar() {
                     </div>
                 </div>
                 <div className='text-lg flex gap-10 justify-center items-center'>
-                    <div className={navBarLinkStyles} onClick={() => router.push('/signup')}>Sign up</div>
-                    <div className='border border-accent-light rounded-xl px-4 py-2 hover:cursor-pointer hover:scale-105 transition-all ease-in-out duration-300' onClick={() => router.push('/signin')}>
-                        Sign in
-                    </div>
+                    <Button className='hover:bg-accent-light border-2 border-accent-light px-4 py-2' onClick={() => signIn('google')}>
+                        Get Started Free
+                    </Button>
                 </div>
             </div>
         </div>

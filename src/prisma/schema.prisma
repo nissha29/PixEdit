@@ -1,9 +1,24 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../lib/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum PlanType {
+  free
+  premium
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String?
+  email     String?  @unique
+  image     String?
+  plan      PlanType   @default(free)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+

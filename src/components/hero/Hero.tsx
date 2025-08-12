@@ -1,15 +1,15 @@
 'use client'
 
 import React from 'react'
+import { signIn } from "next-auth/react";
 import { AnimatedTooltip } from '../ui/animated-tooltip';
 import { FlipWords } from '../ui/flip-words';
 import Background from './Background';
 import Navbar from './Navbar';
 import Video from './Video'
-import { useRouter } from 'next/navigation';
+import Button from '../forms/Button';
 
 function Hero() {
-    const router = useRouter();
     const words = ["images", "illustrations", "pictures", "potraits"];
     const people = [
         {
@@ -83,7 +83,7 @@ function Hero() {
 
                     <div className='flex mt-16 gap-24 w-full items-center justify-center px-6'>
                         <div>
-                            <button onClick={() => router.push('/signin')} className='text-center text-3xl px-5 py-4 bg-accent-dark text-white hover:cursor-pointer hover:scale-105 hover:bg-sky-900 duration-250 ease-in-out transition-all rounded-sm'>Start Editing Now</button>
+                            <Button onClick={() => signIn('google')} className='bg-accent-dark text-white hover:bg-sky-900 text-3xl px-5 py-4'>Start Editing Now</Button>
                         </div>
                     </div>
                 </div>

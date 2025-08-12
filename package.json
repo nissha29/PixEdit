@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
+    "@prisma/client": "^6.13.0",
     "@tabler/icons-react": "^3.34.0",
     "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
