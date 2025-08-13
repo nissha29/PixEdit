@@ -83,7 +83,7 @@ function Hero() {
 
                     <div className='flex mt-16 gap-24 w-full items-center justify-center px-6'>
                         <div>
-                            <Button onClick={() => signIn('google')} className='bg-accent-dark text-white hover:bg-sky-900 text-3xl px-5 py-4'>Start Editing Now</Button>
+                            <Button onClick={() => signIn('google', { callbackUrl: '/upload' })} className='bg-accent-dark text-white hover:bg-sky-900 text-3xl px-5 py-4'>Start Editing Now</Button>
                         </div>
                     </div>
                 </div>

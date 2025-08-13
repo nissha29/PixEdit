@@ -1,3 +1,301 @@
-export default function Upload() {
-    return <div></div>
+"use client";
+
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { IconCheck, IconArrowRight, IconImage, IconTrash, IconUpload } from '@/icons/icons'
+
+const SingleFileUpload = ({ onChange }: { onChange: (file: File | null) => void }) => {
+    const [isDragOver, setIsDragOver] = useState(false);
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragOver(false);
+
+        const files = Array.from(e.dataTransfer.files);
+        const imageFile = files.find(file => file.type.startsWith('image/'));
+
+        if (imageFile) {
+            onChange(imageFile);
+        }
+    };
+
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file && file.type.startsWith('image/')) {
+            onChange(file);
+        }
+    };
+
+    return (
+        <div
+            className={`relative border-2 border-dashed rounded-xl p-12 text-center transition-all ${isDragOver
+                ? 'border-blue-400 bg-blue-50'
+                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                }`}
+            onDrop={handleDrop}
+            onDragOver={(e) => {
+                e.preventDefault();
+                setIsDragOver(true);
+            }}
+            onDragLeave={() => setIsDragOver(false)}
+        >
+            <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileSelect}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+
+            <div className="space-y-4">
+                <div className="mx-auto w-12 h-12 text-gray-400">
+                    <IconUpload className="w-full h-full" />
+                </div>
+
+                <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        Drop your photo here, or <span className="text-blue-600">browse</span>
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                        Supports JPG, PNG, WEBP, GIF up to 10MB
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export function Upload() {
+    const [file, setFile] = useState<File | null>(null);
+    const [uploadComplete, setUploadComplete] = useState(false);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const router = useRouter();
+
+    const handleFileUpload = (newFile: File | null) => {
+        if (!newFile) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setImagePreview(e.target?.result as string);
+        };
+        reader.readAsDataURL(newFile);
+        setFile(newFile);
+        setUploadComplete(true);
+    };
+
+    const removeFile = () => {
+        setFile(null);
+        setImagePreview(null);
+        setUploadComplete(false);
+    };
+
+    const formatFileSize = (bytes: number) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+            <header className="backdrop-blur-md sticky top-0 z-50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between items-center py-4">
+                        <div className="flex items-center space-x-4">
+                            <div className='flex items-center'>
+                                <div className='font-extralight text-6xl text-accent-dark'>a</div>
+                                <div className='text-3xl underline-offset-4 underline decoration-2 decoration-accent-light'>pex</div>
+                            </div>
+                        </div>
+
+
+                        <motion.button
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            onClick={() => { router.push('/editor') }}
+                            className="bg-accent-dark text-white px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 hover:shadow-lg flex items-center justify-center space-x-2 hover:cursor-pointer"
+                        >
+                            <IconImage className="w-5 h-5" />
+                            <span>Manage your Photos</span>
+                        </motion.button>
+
+                    </div>
+                </div>
+            </header>
+
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex justify-center items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                    <div className="lg:col-span-2">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mb-8"
+                        >
+                            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                                Upload your photo
+                            </h2>
+                            <p className="text-gray-600">
+                                Start editing in seconds with APEX. Upload one photo at a time for the best experience.
+                            </p>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden"
+                        >
+                            {!file ? (
+                                <SingleFileUpload onChange={handleFileUpload} />
+                            ) : (
+                                <div className="p-6">
+                                    <div className="text-center">
+                                        <div className="inline-flex items-center space-x-2 text-green-600 mb-4">
+                                            <IconCheck className="w-5 h-5" />
+                                            <span className="font-medium">Photo uploaded successfully!</span>
+                                        </div>
+
+                                        {imagePreview && (
+                                            <div className="mb-4">
+                                                <Image src={imagePreview}
+                                                    width={500}
+                                                    height={700}
+                                                    alt="Preview"
+                                                    className="max-h-64 mx-auto rounded-lg shadow-md">
+                                                </Image>
+                                            </div>
+                                        )}
+
+                                        <div className="text-sm text-gray-600 space-y-1">
+                                            <p><strong>File:</strong> {file.name}</p>
+                                            <p><strong>Size:</strong> {formatFileSize(file.size)}</p>
+                                            <p><strong>Type:</strong> {file.type}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </motion.div>
+                        {file && (
+                            <button
+                                onClick={removeFile}
+                                className="mt-8 flex items-center space-x-2 px-4 py-2 text-white bg-rose-400 hover:bg-rose-500 rounded-lg transition-colors hover:cursor-pointer"
+                            >
+                                <IconTrash className="w-4 h-4" />
+                                <span>Remove Photo</span>
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="lg:col-span-1">
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 sticky top-24"
+                        >
+                            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                                Upload Summary
+                            </h3>
+
+                            <div className="space-y-3 mb-6">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-600">File size:</span>
+                                    <span className="font-medium text-gray-800">
+                                        {file ? formatFileSize(file.size) : '0 Bytes'}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-600">Status:</span>
+                                    <span className={`font-medium ${uploadComplete ? 'text-green-600' : 'text-gray-400'}`}>
+                                        {uploadComplete ? 'Ready' : 'Not Uploaded'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {file && (
+                                <div className="mb-6">
+                                    <h4 className="text-sm font-medium text-gray-700 mb-3">Current Photo</h4>
+                                    <motion.div
+                                        initial={{ opacity: 0, x: 10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                                    >
+                                        <div className="flex items-center space-x-3 flex-1 min-w-0">
+                                            <IconImage className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                                            <div className="min-w-0">
+                                                <p className="text-sm font-medium truncate text-gray-700">
+                                                    {file.name}
+                                                </p>
+                                                <p className="text-xs text-gray-500">
+                                                    {formatFileSize(file.size)}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <IconCheck className="w-5 h-5 text-green-500 flex-shrink-0" />
+                                    </motion.div>
+                                </div>
+                            )}
+
+                            <AnimatePresence>
+                                {uploadComplete && file && (
+                                    <motion.button
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        onClick={() => { router.push('/editor') }}
+                                        className="w-full bg-accent-dark text-white px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 hover:shadow-lg flex items-center justify-center space-x-2 hover:cursor-pointer"
+                                    >
+                                        <span>Continue to Editor</span>
+                                        <IconArrowRight className="w-4 h-4" />
+                                    </motion.button>
+                                )}
+                            </AnimatePresence>
+
+                            <div className="mt-8 pt-6 border-t border-gray-200">
+                                <h4 className="text-lg font-semibold text-gray-800 mb-3">{`What's Next?`}</h4>
+                                <div className="space-y-2 text-sm text-gray-600">
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                                        <span>Remove or change background instantly</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                                        <span>Smart crop and resize</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-rose-400 rounded-full"></div>
+                                        <span>Rotate and Flip</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                                        <span>Text and typography</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                                        <span>Object Removal or Magic Eraser</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-fuchsia-400 rounded-full"></div>
+                                        <span>Add Blur</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
+                                        <span>AI Image Upscaling and Restoration</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-lime-400 rounded-full"></div>
+                                        <span>Format Conversion</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }
