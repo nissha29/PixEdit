@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { IconCheck, IconArrowRight, IconImage, IconTrash, IconUpload } from '@/icons/icons'
+import { useSession } from "next-auth/react";
+import { useFileStore, useImagePreviewStore } from "@/store/store";
 
 const SingleFileUpload = ({ onChange }: { onChange: (file: File | null) => void }) => {
     const [isDragOver, setIsDragOver] = useState(false);
@@ -32,7 +34,7 @@ const SingleFileUpload = ({ onChange }: { onChange: (file: File | null) => void 
         <div
             className={`relative border-2 border-dashed rounded-xl p-12 text-center transition-all ${isDragOver
                 ? 'border-blue-400 bg-blue-50'
-                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                : 'border-neutral-300 hover:border-neutral-400 hover:bg-neutral-50'
                 }`}
             onDrop={handleDrop}
             onDragOver={(e) => {
@@ -49,15 +51,15 @@ const SingleFileUpload = ({ onChange }: { onChange: (file: File | null) => void 
             />
 
             <div className="space-y-4">
-                <div className="mx-auto w-12 h-12 text-gray-400">
+                <div className="mx-auto w-12 h-12 text-neutral-400">
                     <IconUpload className="w-full h-full" />
                 </div>
 
                 <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    <h3 className="text-lg font-medium text-neutral-900 mb-2">
                         Drop your photo here, or <span className="text-blue-600">browse</span>
                     </h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-neutral-500">
                         Supports JPG, PNG, WEBP, GIF up to 10MB
                     </p>
                 </div>
@@ -67,9 +69,10 @@ const SingleFileUpload = ({ onChange }: { onChange: (file: File | null) => void 
 };
 
 export function Upload() {
-    const [file, setFile] = useState<File | null>(null);
+    const { file, setFile, clearFile } = useFileStore();
+    const { dataURL, setDataURL } = useImagePreviewStore();
     const [uploadComplete, setUploadComplete] = useState(false);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const { data: session, status } = useSession();
     const router = useRouter();
 
     const handleFileUpload = (newFile: File | null) => {
@@ -77,7 +80,7 @@ export function Upload() {
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            setImagePreview(e.target?.result as string);
+            setDataURL(e.target?.result as string);
         };
         reader.readAsDataURL(newFile);
         setFile(newFile);
@@ -85,8 +88,8 @@ export function Upload() {
     };
 
     const removeFile = () => {
-        setFile(null);
-        setImagePreview(null);
+        clearFile();
+        setDataURL(null);
         setUploadComplete(false);
     };
 
@@ -98,15 +101,19 @@ export function Upload() {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
+    if (status === 'loading') {
+        return <div>Loading...</div>
+    }
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100">
             <header className="backdrop-blur-md sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center py-4">
                         <div className="flex items-center space-x-4">
                             <div className='flex items-center'>
-                                <div className='font-extralight text-6xl text-accent-dark'>a</div>
-                                <div className='text-3xl underline-offset-4 underline decoration-2 decoration-accent-light'>pex</div>
+                                <div className='font-extralight text-2xl text-white bg-accent-dark text-center p-1 rounded-l-lg'>A</div>
+                                <div className='text-2xl text-white bg-accent-dark ml-0.5 p-1 rounded-r-lg'>pex</div>
                             </div>
                         </div>
 
@@ -116,15 +123,17 @@ export function Upload() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             onClick={() => { router.push('/editor') }}
-                            className="bg-accent-dark text-white px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 hover:shadow-lg flex items-center justify-center space-x-2 hover:cursor-pointer"
+                            className="bg-accent-dark text-white px-2 sm:px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 hover:shadow-lg flex items-center justify-center space-x-2 hover:cursor-pointer"
                         >
                             <IconImage className="w-5 h-5" />
-                            <span>Manage your Photos</span>
+                            <span>Manage Photos</span>
                         </motion.button>
 
                     </div>
                 </div>
             </header>
+
+            <div className="flex justify-center items-center text-3xl font-semibold text-neutral-800 mt-5 mb-2 lg:mb-12">{`Hi ${session?.user.name}, let's get started!`}</div>
 
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex justify-center items-center">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -135,10 +144,10 @@ export function Upload() {
                             animate={{ opacity: 1, y: 0 }}
                             className="mb-8"
                         >
-                            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                            <h2 className="text-3xl font-bold text-neutral-800 mb-2">
                                 Upload your photo
                             </h2>
-                            <p className="text-gray-600">
+                            <p className="text-neutral-600">
                                 Start editing in seconds with APEX. Upload one photo at a time for the best experience.
                             </p>
                         </motion.div>
@@ -147,7 +156,7 @@ export function Upload() {
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden"
+                            className="bg-white rounded-xl shadow-lg border border-neutral-200 overflow-hidden"
                         >
                             {!file ? (
                                 <SingleFileUpload onChange={handleFileUpload} />
@@ -159,9 +168,9 @@ export function Upload() {
                                             <span className="font-medium">Photo uploaded successfully!</span>
                                         </div>
 
-                                        {imagePreview && (
+                                        {dataURL && (
                                             <div className="mb-4">
-                                                <Image src={imagePreview}
+                                                <Image src={dataURL}
                                                     width={500}
                                                     height={700}
                                                     alt="Preview"
@@ -170,7 +179,7 @@ export function Upload() {
                                             </div>
                                         )}
 
-                                        <div className="text-sm text-gray-600 space-y-1">
+                                        <div className="text-sm text-neutral-600 space-y-1">
                                             <p><strong>File:</strong> {file.name}</p>
                                             <p><strong>Size:</strong> {formatFileSize(file.size)}</p>
                                             <p><strong>Type:</strong> {file.type}</p>
@@ -195,22 +204,22 @@ export function Upload() {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 sticky top-24"
+                            className="bg-white rounded-xl shadow-lg border border-neutral-200 p-6 sticky top-24"
                         >
-                            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                            <h3 className="text-lg font-semibold text-neutral-800 mb-4">
                                 Upload Summary
                             </h3>
 
                             <div className="space-y-3 mb-6">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-gray-600">File size:</span>
-                                    <span className="font-medium text-gray-800">
+                                    <span className="text-neutral-600">File size:</span>
+                                    <span className="font-medium text-neutral-800">
                                         {file ? formatFileSize(file.size) : '0 Bytes'}
                                     </span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-gray-600">Status:</span>
-                                    <span className={`font-medium ${uploadComplete ? 'text-green-600' : 'text-gray-400'}`}>
+                                    <span className="text-neutral-600">Status:</span>
+                                    <span className={`font-medium ${uploadComplete ? 'text-green-600' : 'text-neutral-400'}`}>
                                         {uploadComplete ? 'Ready' : 'Not Uploaded'}
                                     </span>
                                 </div>
@@ -218,24 +227,24 @@ export function Upload() {
 
                             {file && (
                                 <div className="mb-6">
-                                    <h4 className="text-sm font-medium text-gray-700 mb-3">Current Photo</h4>
+                                    <h4 className="text-sm font-medium text-neutral-700 mb-3">Current Photo</h4>
                                     <motion.div
                                         initial={{ opacity: 0, x: 10 }}
                                         animate={{ opacity: 1, x: 0 }}
-                                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                                        className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg"
                                     >
                                         <div className="flex items-center space-x-3 flex-1 min-w-0">
                                             <IconImage className="w-5 h-5 text-blue-500 flex-shrink-0" />
                                             <div className="min-w-0">
-                                                <p className="text-sm font-medium truncate text-gray-700">
+                                                <p className="text-sm font-medium truncate text-neutral-700">
                                                     {file.name}
                                                 </p>
-                                                <p className="text-xs text-gray-500">
+                                                <p className="text-xs text-neutral-500">
                                                     {formatFileSize(file.size)}
                                                 </p>
                                             </div>
                                         </div>
-                                        <IconCheck className="w-5 h-5 text-green-500 flex-shrink-0" />
+                                        <IconCheck className="w-5 h-5 text-neutral-500 flex-shrink-0" />
                                     </motion.div>
                                 </div>
                             )}
@@ -255,9 +264,9 @@ export function Upload() {
                                 )}
                             </AnimatePresence>
 
-                            <div className="mt-8 pt-6 border-t border-gray-200">
-                                <h4 className="text-lg font-semibold text-gray-800 mb-3">{`What's Next?`}</h4>
-                                <div className="space-y-2 text-sm text-gray-600">
+                            <div className="mt-8 pt-6 border-t border-neutral-200">
+                                <h4 className="text-lg font-semibold text-neutral-800 mb-3">{`What's Next?`}</h4>
+                                <div className="space-y-2 text-sm text-neutral-600">
                                     <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                                         <span>Remove or change background instantly</span>

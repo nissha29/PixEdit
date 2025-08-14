@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Quattrocento } from "next/font/google";
 import "./globals.css";
+import Providers from "./providers";
 
 const quattrocento = Quattrocento({
-  weight: ['400', '700'], 
+  weight: ['400', '700'],
   variable: "--font-quattrocento",
   subsets: ['latin'],
 });
@@ -23,7 +24,9 @@ export default function RootLayout({
       <body
         className={`${quattrocento.className} antialiased`}
       >
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

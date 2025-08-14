@@ -13,8 +13,8 @@ function Navbar() {
             <div className='px-24 flex justify-between items-center dark:text-foreground text-foreground sticky'>
                 <div className='flex gap-32'>
                     <div className='flex items-center'>
-                        <div className='font-extralight text-6xl text-accent-dark'>a</div>
-                        <div className='text-3xl underline-offset-4 underline decoration-2 decoration-accent-light'>pex</div>
+                        <div className='font-extralight text-2xl text-white bg-accent-dark text-center p-1 rounded-l-lg'>A</div>
+                        <div className='text-2xl text-white bg-accent-dark ml-0.5 p-1 rounded-r-lg'>pex</div>
                     </div>
                     <div className='flex gap-16 justify-center items-center text-lg z-10'>
                         <Link href='' className={navBarLinkStyles}>Home</Link>
@@ -24,8 +24,8 @@ function Navbar() {
                     </div>
                 </div>
                 <div className='text-lg flex gap-10 justify-center items-center'>
-                    <Button className='hover:bg-accent-dark hover:text-white border border-accent-dark px-4 py-2' onClick={() => signIn('google', { callbackUrl: '/upload' })}>
-                        Get Started Free
+                    <Button className='border-2 border-accent-light text-black px-4 py-2' onClick={() => signIn('google', { callbackUrl: '/upload' })}>
+                        Get Started
                     </Button>
                 </div>
             </div>

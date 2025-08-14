@@ -20,3 +20,15 @@ export type UserStore = {
   setUser: (user: User) => void;
   clearUser: () => void;
 };
+
+export type FileStore = {
+  file: File | null,
+  setFile: (newFile: File) => void,
+  clearFile: () => void,
+}
+
+export type ImagePreviewStore = {
+  dataURL: string | null,
+  setDataURL: (dataURL: string | null) => void,
+  clearDataURL: () => void,
+}
