@@ -1,4 +1,4 @@
-export default function Filter() {
+export default function Rotate() {
 
     const filters = [
         { name: 'None', class: '' },

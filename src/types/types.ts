@@ -32,3 +32,8 @@ export type ImagePreviewStore = {
   setDataURL: (dataURL: string | null) => void,
   clearDataURL: () => void,
 }
+
+export type ActiveTabStore = {
+  activeTab: string | null;
+  setActiveTab: (activeTab: string | null) => void,
+}

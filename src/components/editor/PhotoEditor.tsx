@@ -3,15 +3,16 @@
 import React, { useState } from 'react';
 import LeftSidebar from '@/components/editor/LeftSidebar';
 import Crop from '@/components/editor/RightSidebar.tsx/Crop';
-import Adjust from '@/components/editor/RightSidebar.tsx/Adjust';
-import Filter from '@/components/editor/RightSidebar.tsx/Filter';
-import Effect from '@/components/editor/RightSidebar.tsx/Effect';
+import Adjust from '@/components/editor/RightSidebar.tsx/AddBlur';
+import Filter from '@/components/editor/RightSidebar.tsx/Rotate';
+import Effect from '@/components/editor/RightSidebar.tsx/MagicEraser';
 import Text from '@/components/editor/RightSidebar.tsx/Text';
 import Background from '@/components/editor/RightSidebar.tsx/Background';
 import Canvas from '@/components/editor/Canvas';
+import { useActiveTabStore } from '@/store/store';
 
 const PhotoEditor = () => {
-    const [activeTab, setActiveTab] = useState('crop');
+    const { activeTab } = useActiveTabStore();
     const [rotation, setRotation] = useState(0);
     const [brightness, setBrightness] = useState(100);
     const [contrast, setContrast] = useState(100);
@@ -48,7 +49,7 @@ const PhotoEditor = () => {
 
     return (
         <div className="h-screen bg-white text-neutral-800 flex">
-            <LeftSidebar activeTab={activeTab} setActiveTab={setActiveTab}/>
+            <LeftSidebar />
 
             <Canvas brightness={brightness} contrast={contrast} saturation={saturation} rotation={rotation}/>
 

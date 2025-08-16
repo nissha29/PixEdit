@@ -1,4 +1,4 @@
-export default function Effect() {
+export default function MagicEraser() {
     return <div className="space-y-6">
         <h3 className="text-lg font-semibold text-neutral-800 mb-4">Effects</h3>
         <div className="grid grid-cols-2 gap-3">

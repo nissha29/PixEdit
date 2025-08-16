@@ -31,3 +31,11 @@ export const useImagePreviewStore = create<ImagePreviewStore>()(
     { name: 'image-preview-storage' }
   )
 );
+
+export const useActiveTabStore = create<FileStore>()(
+    (set) => ({
+        file: null,
+        setFile: (file: File) => set({ file }),
+        clearFile: () => set({ file: null }),
+    }),
+);

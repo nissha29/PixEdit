@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 
-export default function Adjust({ brightness, setBrightness, contrast, setContrast, saturation, setSaturation }: { brightness: number, setBrightness: Dispatch<SetStateAction<number>>, contrast: number, setContrast: Dispatch<SetStateAction<number>>, saturation: number, setSaturation: Dispatch<SetStateAction<number>> }) {
+export default function AddBlur({ brightness, setBrightness, contrast, setContrast, saturation, setSaturation }: { brightness: number, setBrightness: Dispatch<SetStateAction<number>>, contrast: number, setContrast: Dispatch<SetStateAction<number>>, saturation: number, setSaturation: Dispatch<SetStateAction<number>> }) {
     
     return <div className="space-y-6">
         <h3 className="text-lg font-semibold text-neutral-800 mb-4">Adjustments</h3>
