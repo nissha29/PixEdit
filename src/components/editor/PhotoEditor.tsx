@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 import LeftSidebar from '@/components/editor/LeftSidebar';
-import Crop from '@/components/editor/RightSidebar.tsx/Crop';
-import Adjust from '@/components/editor/RightSidebar.tsx/AddBlur';
-import Filter from '@/components/editor/RightSidebar.tsx/Rotate';
-import Effect from '@/components/editor/RightSidebar.tsx/MagicEraser';
-import Text from '@/components/editor/RightSidebar.tsx/Text';
-import Background from '@/components/editor/RightSidebar.tsx/Background';
+import Crop from '@/components/editor/RightSidebar/Crop';
+import Adjust from '@/components/editor/RightSidebar/AddBlur';
+import Filter from '@/components/editor/RightSidebar/Rotate';
+import Effect from '@/components/editor/RightSidebar/MagicEraser';
+import Text from '@/components/editor/RightSidebar/Text';
+import Background from '@/components/editor/RightSidebar/Background';
 import Canvas from '@/components/editor/Canvas';
 import { useActiveTabStore } from '@/store/store';
 
@@ -17,6 +17,8 @@ const PhotoEditor = () => {
     const [brightness, setBrightness] = useState(100);
     const [contrast, setContrast] = useState(100);
     const [saturation, setSaturation] = useState(100);
+
+    console.log('Current activeTab:', activeTab);
 
     const renderSidebarContent = () => {
         switch (activeTab) {
@@ -38,6 +40,13 @@ const PhotoEditor = () => {
             case 'background':
                 return <Background />
 
+            case 'aiTools':
+                return (
+                    <div className="text-center text-neutral-500 py-8">
+                        <p>AI Tools coming soon...</p>
+                    </div>
+                );
+
             default:
                 return (
                     <div className="text-center text-neutral-500 py-8">
@@ -53,7 +62,7 @@ const PhotoEditor = () => {
 
             <Canvas brightness={brightness} contrast={contrast} saturation={saturation} rotation={rotation}/>
 
-            <aside className="w-80 bg-white p-6 overflow-y-auto border-l border-neutral-200">
+            <aside className="w-80 bg-white p-6 overflow-y-auto border-l border-neutral-200 z-10">
                 <div className="transition-all duration-300">
                     {renderSidebarContent()}
                 </div>

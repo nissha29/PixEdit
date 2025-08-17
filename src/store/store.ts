@@ -1,4 +1,4 @@
-import { FileStore, ImagePreviewStore, UserStore } from '../types/types';
+import { ActiveTabStore, FileStore, ImagePreviewStore, UserStore } from '../types/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -32,10 +32,9 @@ export const useImagePreviewStore = create<ImagePreviewStore>()(
   )
 );
 
-export const useActiveTabStore = create<FileStore>()(
+export const useActiveTabStore = create<ActiveTabStore>()(
     (set) => ({
-        file: null,
-        setFile: (file: File) => set({ file }),
-        clearFile: () => set({ file: null }),
+      activeTab: 'background',
+      setActiveTab: (activeTab: string | null) => set({ activeTab }),
     }),
 );

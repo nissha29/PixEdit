@@ -15,7 +15,7 @@ export default function Canvas({ brightness, contrast, saturation, rotation }: {
                     </div>
                 </div>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex justify-between items-center space-x-2">
                     <button className="p-2 bg-neutral-200 hover:bg-neutral-300 hover:cursor-pointer rounded-lg transition-colors">
                         <IconUndo className="w-5 h-5" />
                     </button>
@@ -30,8 +30,8 @@ export default function Canvas({ brightness, contrast, saturation, rotation }: {
             </div>
         </header>
 
-        <div className="flex-1 bg-neutral-100 p-8 flex items-center justify-center overflow-auto">
-            <div className="max-w-full max-h-full flex items-center justify-center bg-white rounded-lg shadow-lg p-4">
+        <div className="flex-1 bg-neutral-200 p-8 flex items-center justify-center overflow-auto">
+            <div className="max-w-full max-h-full flex items-center justify-center rounded-lg shadow-lg p-4 border border-neutral-700">
                 {dataURL && (
                     <Image
                         src={dataURL}
@@ -45,6 +45,7 @@ export default function Canvas({ brightness, contrast, saturation, rotation }: {
                     />
                 )}
             </div>
+
         </div>
     </main>
 }
