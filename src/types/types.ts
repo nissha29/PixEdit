@@ -37,3 +37,15 @@ export type ActiveTabStore = {
   activeTab: string | null;
   setActiveTab: (activeTab: string | null) => void,
 }
+
+export type BackgroundType = 'color' | 'gradient' | 'image' | null;
+
+export type Background = {
+  type: BackgroundType;
+  value: string | null;
+}
+
+export type BackgroundStore = {
+  background: Background,
+  setBackground: (background: Background) => void,
+}

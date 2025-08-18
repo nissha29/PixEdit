@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { removeBackground } from "@imgly/background-removal";
-import { useImagePreviewStore } from '@/store/store';
+import { useBackgroundStore, useImagePreviewStore } from '@/store/store';
 import { SketchPicker, ColorResult } from 'react-color';
+import { BackgroundType } from '@/types/types';
+import { baseColors, gradients } from '@/lib/constants'
 
 export default function Background() {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -10,36 +12,20 @@ export default function Background() {
   const [loading, setLoading] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [customColor, setCustomColor] = useState('#ffffff');
+  const { setBackground } = useBackgroundStore();
 
-
-  const baseColors = [
-    '#ffffff', '#000000', '#ff6b6b', '#4ecdc4', '#556270', '#c7f464', '#ffcc5c', '#96ceb4',
-    '#ff6f91', '#845ec2', '#d65db1', '#00c2cb', '#c34a36', '#ef798a', '#a29bfe', '#81ecec',
-    '#fab1a0', '#55efc4', '#2d3436', '#00b894', '#fd79a8', '#0984e3', '#6c5ce7'
-  ];
 
   const colors = [...baseColors, customColor];
 
-  const gradients = [
-    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    'linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%)',
-    'linear-gradient(60deg, #abecd6 0%, #fbed96 100%)',
-    'linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%)',
-    'linear-gradient(45deg, #fbc7aa 0%, #9876aa 100%)',
-    'linear-gradient(240deg, #319197 0%, #a7ede0 100%)',
-    'linear-gradient(45deg, #a1c4fd 0%, #c2e9fb 100%)',
-    'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
-    'linear-gradient(60deg, #ff5858 0%, #f09819 100%)',
-    'linear-gradient(45deg, #43cea2 0%, #185a9d 100%)',
-    'linear-gradient(135deg, #ee9ca7 0%, #ffe4e1 100%)',
-    'linear-gradient(60deg, #3a6186 0%, #89253e 100%)'
-  ];
 
-
+  function setBackgroundChoice(type: BackgroundType, value: string) {
+    setBackground({ type, value });
+  }
 
   function handleColorChange(color: ColorResult) {
     setCustomColor(color.hex);
     setSelectedColor(color.hex);
+    setBackgroundChoice('color', color.hex);
   }
 
   async function handleBackgroundRemoval(imageSrc: string | null) {
@@ -49,6 +35,20 @@ export default function Background() {
     setDataURL(resultUrl);
     setLoading(false);
   }
+
+  function handleFileSelect(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          setBackgroundChoice('image', reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
 
   return (
     <div className="w-full bg-white px-6 py-2 space-y-8">
@@ -80,7 +80,10 @@ export default function Background() {
                 return (
                   <button
                     key={color}
-                    onClick={() => setSelectedColor(color)}
+                    onClick={() => {
+                      setSelectedColor(color)
+                      setBackgroundChoice('color', color);
+                    }}
                     className={`w-8 h-8 rounded-lg border transition-colors ${selectedColor === color ? 'border-0 ring-1 ring-black' : 'border-neutral-300 hover:border-neutral-400'
                       }`}
                     style={{ backgroundColor: color }}
@@ -106,16 +109,27 @@ export default function Background() {
           <div>
             <h4 className="font-semibold text-neutral-800 mb-3">Gradients</h4>
             <div className="grid grid-cols-4 gap-2">
-              {gradients.map((gradient, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedGradient(gradient)}
-                  className={`w-full h-12 rounded-lg transition-colors ${selectedGradient === gradient ? 'ring-2 ring-accent-light' : 'border-neutral-300 hover:border-neutral-400'}`}
-                  style={{ background: gradient }}
-                />
-              ))}
+              {gradients.map((gradient, index) => {
+                const gradientStr = JSON.stringify(gradient);
+                const gradientCss = `linear-gradient(${gradient.angle}deg, ${gradient.colors.join(', ')})`; // For CSS
+
+                return (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setSelectedGradient(gradientStr);
+                      setBackgroundChoice('gradient', gradientStr);
+                    }}
+                    className={`w-full h-12 rounded-lg transition-colors ${selectedGradient === gradientStr ? 'ring-1 ring-black' : 'border-neutral-300 hover:border-neutral-400'
+                      }`}
+                    style={{ background: gradientCss }}
+                    title={gradientCss}
+                  />
+                );
+              })}
             </div>
           </div>
+
 
           <div>
             <h4 className="font-semibold text-neutral-800 mb-3">Custom</h4>
@@ -126,11 +140,10 @@ export default function Background() {
               <input
                 type="file"
                 accept="image/*"
-                // onChange={handleFileSelect}
+                onChange={handleFileSelect}
                 className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
               />
             </div>
-
           </div>
         </div>
       </div>

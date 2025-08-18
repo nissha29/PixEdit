@@ -1,4 +1,4 @@
-import { ActiveTabStore, FileStore, ImagePreviewStore, UserStore } from '../types/types';
+import { ActiveTabStore, Background, BackgroundStore, FileStore, ImagePreviewStore, UserStore } from '../types/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -36,5 +36,12 @@ export const useActiveTabStore = create<ActiveTabStore>()(
     (set) => ({
       activeTab: 'background',
       setActiveTab: (activeTab: string | null) => set({ activeTab }),
+    }),
+);
+
+export const useBackgroundStore = create<BackgroundStore>()(
+    (set) => ({
+      background: null,
+      setBackground: (background: Background) => set({ background }),
     }),
 );
