@@ -43,9 +43,24 @@ export type BackgroundType = 'color' | 'gradient' | 'image' | null;
 export type Background = {
   type: BackgroundType;
   value: string | null;
-}
+} | null;
 
 export type BackgroundStore = {
   background: Background,
   setBackground: (background: Background) => void,
+}
+
+export type LoadingStore = {
+  loading: boolean,
+  setLoading: (value: boolean) => void,
+}
+
+export type FilterType = {
+  name: string,
+  class: string,
+} | null;
+
+export type FilterStore = {
+  filter: FilterType,
+  setFilter: (filter: FilterType) => void
 }

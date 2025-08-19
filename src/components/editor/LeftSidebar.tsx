@@ -1,4 +1,4 @@
-import { IconBlur, IconCrop, IconLayers, IconRotate, IconSparkles, IconType, IconWand } from '@/icons/icons'
+import { IconBlur, IconCrop, IconLayers, IconFilter, IconSparkles, IconType, IconWand } from '@/icons/icons'
 import { useActiveTabStore } from '@/store/store';
 
 export default function LeftSidebar() {
@@ -6,7 +6,7 @@ export default function LeftSidebar() {
     const toolbarItems = [
         { id: 'background', icon: IconLayers, label: 'Background', color: 'bg-yellow-500' },
         { id: 'crop', icon: IconCrop, label: 'Crop', color: 'bg-blue-500' },
-        { id: 'filters', icon: IconRotate, label: 'Rotate', color: 'bg-rose-500' },
+        { id: 'filters', icon: IconFilter, label: 'Filters', color: 'bg-rose-500' },
         { id: 'text', icon: IconType, label: 'Text', color: 'bg-orange-500' },
         { id: 'effects', icon: IconWand, label: 'Magic Eraser', color: 'bg-fuchsia-500' },
         { id: 'adjust', icon: IconBlur, label: 'Add Blur', color: 'bg-green-500' },

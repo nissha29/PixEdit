@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import LeftSidebar from '@/components/editor/LeftSidebar';
 import Crop from '@/components/editor/RightSidebar/Crop';
 import Adjust from '@/components/editor/RightSidebar/AddBlur';
-import Filter from '@/components/editor/RightSidebar/Rotate';
+import Filter from '@/components/editor/RightSidebar/Filters';
 import Effect from '@/components/editor/RightSidebar/MagicEraser';
 import Text from '@/components/editor/RightSidebar/Text';
 import Background from '@/components/editor/RightSidebar/Background';
@@ -60,7 +60,7 @@ const PhotoEditor = () => {
         <div className="h-screen bg-white text-neutral-800 flex">
             <LeftSidebar />
 
-            <Canvas brightness={brightness} contrast={contrast} saturation={saturation} rotation={rotation}/>
+            <Canvas />
 
             <aside className="w-80 bg-white p-6 overflow-y-auto border-l border-neutral-200 z-10">
                 <div className="transition-all duration-300">

@@ -1,12 +1,37 @@
 import { IconDownload, IconRedo, IconUndo } from "@/icons/icons";
-import { useBackgroundStore, useImagePreviewStore } from "@/store/store";
+import { useBackgroundStore, useFilterStore, useImagePreviewStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
 
-export default function Canvas({ brightness, contrast, saturation }: { brightness: number, contrast: number, saturation: number, rotation: number }) {
+export default function Canvas() {
     const { dataURL } = useImagePreviewStore();
     const { background } = useBackgroundStore();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [open, setOpen] = useState(false);
+    const [exportFormat, setExportFormat] = useState('png');
+    const { filter } = useFilterStore();
+
+    function downloadImage() {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const validFormats = ['png', 'jpeg', 'jpg', 'webp'];
+        if (!validFormats.includes(exportFormat)) {
+            alert(`Export format "${exportFormat}" not supported for canvas export. Defaulting to PNG.`);
+            setExportFormat('png');
+        }
+
+        const mimeType = exportFormat === 'jpg' ? 'image/jpeg' : `image/${exportFormat}`;
+        const quality = 0.92;
+
+        const dataURL = canvas.toDataURL(mimeType, quality);
+
+        const link = document.createElement('a');
+        link.href = dataURL;
+        link.download = `apex-${crypto.randomUUID()}.${exportFormat}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -42,13 +67,16 @@ export default function Canvas({ brightness, contrast, saturation }: { brightnes
                 ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, width, height);
 
-            } else if (background?.type === "image" && background.value) {
+            } else if (background?.type === 'image' && background.value) {
                 const bgImg = new window.Image();
-                bgImg.crossOrigin = "anonymous";
+                bgImg.crossOrigin = 'anonymous';
                 bgImg.src = background.value;
                 bgImg.onload = () => {
+                    ctx.save();
+                    ctx.filter = 'blur(10px)';
                     ctx.drawImage(bgImg, 0, 0, width, height);
-                    drawForeground();
+                    ctx.restore();
+                    drawForeground();          
                 };
                 return;
             } else {
@@ -58,14 +86,14 @@ export default function Canvas({ brightness, contrast, saturation }: { brightnes
             function drawForeground() {
                 if (ctx) {
                     ctx.save();
-                    ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
+                    ctx.filter = ctx.filter = filter?.class || 'none';
                     ctx.drawImage(fgImg, 0, 0, width, height);
                     ctx.restore();
                 }
             }
             drawForeground();
         };
-    }, [dataURL, background, brightness, contrast, saturation]);
+    }, [dataURL, background, filter]);
 
     return (
         <main className="flex-1 flex flex-col">
@@ -101,21 +129,19 @@ export default function Canvas({ brightness, contrast, saturation }: { brightnes
 
                             <select
                                 className="w-full p-2 rounded-md border border-gray-300 bg-white text-gray-700 focus:outline-none transition-colors"
-                                onChange={e => {
-                                    const format = e.target.value;
-                                    console.log("Selected export format:", format);
-                                }}
-                                defaultValue="png"
+                                value={exportFormat}
+                                onChange={(e) => setExportFormat(e.target.value)}
                             >
-                                <option value="png">PNG - Lossless</option>
-                                <option value="jpg">JPG - Compressed</option>
-                                <option value="jpeg">JPEG - High Quality</option>
-                                <option value="webp">WEBP - Modern</option>
-                                <option value="svg">SVG - Vector</option>
-                                <option value="pdf">PDF - Document</option>
+                                <option value="png">PNG</option>
+                                <option value="jpg">JPG</option>
+                                <option value="jpeg">JPEG</option>
+                                <option value="webp">WEBP</option>
                             </select>
 
-                            <button className="w-full mt-3 bg-accent-dark hover:bg-sky-900 hover:cursor-pointer text-white py-2 px-4 rounded-md transition-colors font-medium">
+                            <button
+                                className="w-full mt-3 bg-accent-dark hover:bg-sky-900 hover:cursor-pointer text-white py-2 px-4 rounded-md transition-colors font-medium"
+                                onClick={() => downloadImage()}
+                            >
                                 Download
                             </button>
                         </div>
@@ -127,12 +153,12 @@ export default function Canvas({ brightness, contrast, saturation }: { brightnes
                 <canvas
                     ref={canvasRef}
                     style={{
-                        maxWidth: '100vw',
-                        maxHeight: '90vh',
+                        maxWidth: '90vw',
+                        maxHeight: '80vh',
                         borderRadius: '12px',
                         width: 'auto',
                         height: 'auto',
-                        boxShadow: '0 0 10px rgba(0,0,0,0.1)'
+                        border: '2px solid #075985',
                     }}
                 />
             </div>

@@ -1,4 +1,4 @@
-import { ActiveTabStore, Background, BackgroundStore, FileStore, ImagePreviewStore, UserStore } from '../types/types';
+import { ActiveTabStore, Background, BackgroundStore, FileStore, FilterStore, FilterType, ImagePreviewStore, LoadingStore, UserStore } from '../types/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -14,11 +14,11 @@ export const useUserStore = create<UserStore>()(
 );
 
 export const useFileStore = create<FileStore>()(
-    (set) => ({
-        file: null,
-        setFile: (file: File) => set({ file }),
-        clearFile: () => set({ file: null }),
-    }),
+  (set) => ({
+    file: null,
+    setFile: (file: File) => set({ file }),
+    clearFile: () => set({ file: null }),
+  }),
 );
 
 export const useImagePreviewStore = create<ImagePreviewStore>()(
@@ -33,15 +33,25 @@ export const useImagePreviewStore = create<ImagePreviewStore>()(
 );
 
 export const useActiveTabStore = create<ActiveTabStore>()(
-    (set) => ({
-      activeTab: 'background',
-      setActiveTab: (activeTab: string | null) => set({ activeTab }),
-    }),
+  (set) => ({
+    activeTab: 'background',
+    setActiveTab: (activeTab: string | null) => set({ activeTab }),
+  }),
 );
 
 export const useBackgroundStore = create<BackgroundStore>()(
-    (set) => ({
-      background: null,
-      setBackground: (background: Background) => set({ background }),
-    }),
+  (set) => ({
+    background: null,
+    setBackground: (background: Background) => set({ background }),
+  }),
 );
+
+export const useLoadingStore = create<LoadingStore>((set) => ({
+  loading: false,
+  setLoading: (value: boolean) => set({ loading: value }),
+}));
+
+export const useFilterStore = create<FilterStore>((set) => ({
+  filter: null,
+  setFilter: (filter: FilterType | null) => set({ filter }),
+}));

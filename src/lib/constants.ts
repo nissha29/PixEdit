@@ -1,7 +1,7 @@
 export const baseColors = [
-    '#ffffff', '#000000', '#ff6b6b', '#4ecdc4', '#556270', '#c7f464', '#ffcc5c', '#96ceb4',
-    '#ff6f91', '#845ec2', '#d65db1', '#00c2cb', '#c34a36', '#ef798a', '#a29bfe', '#81ecec',
-    '#fab1a0', '#55efc4', '#2d3436', '#00b894', '#fd79a8', '#0984e3', '#6c5ce7'
+  '#ffffff', '#000000', '#ff6b6b', '#4ecdc4', '#556270', '#c7f464', '#ffcc5c', '#96ceb4',
+  '#ff6f91', '#845ec2', '#d65db1', '#c34a36', '#ef798a', '#a29bfe', '#81ecec',
+  '#fab1a0', '#55efc4', '#2d3436', '#00b894', '#fd79a8', '#0984e3', '#6c5ce7'
 ];
 
 
@@ -19,4 +19,27 @@ export const gradients = [
   { angle: 135, colors: ['#ee9ca7', '#ffe4e1'] },
   { angle: 60, colors: ['#3a6186', '#89253e'] },
 ];
+
+export const customImages = [
+  '/bg1.png',
+  '/bg2.png',
+  '/bg3.png',
+  '/bg4.png',
+  '/bg5.png',
+  '/bg6.png',
+];
+
+export const filters = [
+  { name: 'None', class: '' },
+  { name: 'Sepia', class: 'sepia(100%)' },
+  { name: 'Grayscale', class: 'grayscale(100%)' },
+  { name: 'Vintage', class: 'sepia(50%) contrast(120%) brightness(110%)' },
+  { name: 'Cool', class: 'hue-rotate(180deg) saturate(120%)' },
+  { name: 'Warm', class: 'sepia(30%) saturate(120%) brightness(110%)' },
+  { name: 'Blur', class: 'blur(3px)' },
+  { name: 'Invert', class: 'invert(100%)' },
+  { name: 'Brighten', class: 'brightness(150%)' },
+  { name: 'Contrast', class: 'contrast(150%)' }
+];
+
 
