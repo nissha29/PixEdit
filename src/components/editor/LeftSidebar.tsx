@@ -8,8 +8,8 @@ export default function LeftSidebar() {
         { id: 'crop', icon: IconCrop, label: 'Crop', color: 'bg-blue-500' },
         { id: 'filters', icon: IconFilter, label: 'Filters', color: 'bg-rose-500' },
         { id: 'text', icon: IconType, label: 'Text', color: 'bg-orange-500' },
-        { id: 'effects', icon: IconWand, label: 'Magic Eraser', color: 'bg-fuchsia-500' },
-        { id: 'adjust', icon: IconBlur, label: 'Add Blur', color: 'bg-green-500' },
+        { id: 'draw', icon: IconWand, label: 'Draw', color: 'bg-fuchsia-500' },
+        { id: 'addBlur', icon: IconBlur, label: 'Add Blur', color: 'bg-green-500' },
         { id: 'aiTools', icon: IconSparkles, label: 'AI Tools', color: 'bg-purple-500' },
     ];
 
@@ -19,7 +19,7 @@ export default function LeftSidebar() {
                 const Icon = item.icon;
                 return (
                     <div key={item.id} className='flex flex-col justify-center items-center mt-3'>
-                        <div className='flex flex-col justify-center items-center gap-2'>
+                        <div className='flex flex-col justify-center items-center gap-1.5'>
                             <button
                                 onClick={() => {
                                     console.log('Button clicked:', item.id);
@@ -33,7 +33,7 @@ export default function LeftSidebar() {
                             >
                                 <Icon className="w-5 h-5" />
                             </button>
-                            <div className='text-center'>{item.label}</div>
+                            <div className='text-center text-neutral-800'>{item.label}</div>
                         </div>
                     </div>
                 );

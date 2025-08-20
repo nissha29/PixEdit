@@ -5,11 +5,11 @@ import LeftSidebar from '@/components/editor/LeftSidebar';
 import Crop from '@/components/editor/RightSidebar/Crop';
 import Adjust from '@/components/editor/RightSidebar/AddBlur';
 import Filter from '@/components/editor/RightSidebar/Filters';
-import Effect from '@/components/editor/RightSidebar/MagicEraser';
 import Text from '@/components/editor/RightSidebar/Text';
 import Background from '@/components/editor/RightSidebar/Background';
 import Canvas from '@/components/editor/Canvas';
 import { useActiveTabStore } from '@/store/store';
+import Draw from '@/components/editor/RightSidebar/Draw';
 
 const PhotoEditor = () => {
     const { activeTab } = useActiveTabStore();
@@ -31,8 +31,8 @@ const PhotoEditor = () => {
             case 'filters':
                 return <Filter />
 
-            case 'effects':
-                return <Effect />
+            case 'draw':
+                return <Draw />
 
             case 'text':
                 return <Text />

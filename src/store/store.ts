@@ -1,4 +1,17 @@
-import { ActiveTabStore, Background, BackgroundStore, FileStore, FilterStore, FilterType, ImagePreviewStore, LoadingStore, UserStore } from '../types/types';
+import { 
+  ActiveTabStore, 
+  Background, 
+  BackgroundStore, 
+  BrushType, 
+  DrawingStore, 
+  FileStore, 
+  FilterStore, 
+  FilterType, 
+  ImagePreviewStore, 
+  LoadingStore, 
+  ToolType, 
+  UserStore 
+} from '../types/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -54,4 +67,15 @@ export const useLoadingStore = create<LoadingStore>((set) => ({
 export const useFilterStore = create<FilterStore>((set) => ({
   filter: null,
   setFilter: (filter: FilterType | null) => set({ filter }),
+}));
+
+export const useDrawingStore = create<DrawingStore>((set) => ({
+  tool: ToolType.brush,
+  selectedColor: '#000000',
+  brushSize: 5,
+  brushType: BrushType.round,
+  setTool: (tool: ToolType) => set({ tool }),
+  setSelectedColor: (color: string) => set({ selectedColor: color }),
+  setBrushSize: (size: number) => set({ brushSize: size }),
+  setBrushType: (type: BrushType) => set({ brushType: type }),
 }));

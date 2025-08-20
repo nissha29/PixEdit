@@ -64,3 +64,32 @@ export type FilterStore = {
   filter: FilterType,
   setFilter: (filter: FilterType) => void
 }
+
+export enum ToolType {
+  brush = 'brush',
+  pencil = 'pencil',
+  dotted = 'dotted',
+  eraser = 'eraser',
+  rectangle = 'rectangle',
+  circle = 'circle',
+  arrow = 'arrow',
+  line = 'line'
+}
+
+export enum BrushType {
+  round = 'round',
+  square = 'square',
+  soft = 'soft'
+}
+
+
+export type DrawingStore = {
+  tool: ToolType,
+  selectedColor: string,
+  brushSize: number,
+  brushType: BrushType,
+  setTool: (tool: ToolType) => void,
+  setSelectedColor: (color: string) => void,
+  setBrushSize: (size: number) => void,
+  setBrushType: (type: BrushType) => void,
+}

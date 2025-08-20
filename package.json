@@ -17,6 +17,7 @@
     "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "konva": "^9.3.22",
     "lucide-react": "^0.523.0",
     "motion": "^12.19.1",
     "next": "15.3.4",
@@ -30,6 +31,7 @@
     "react-easy-crop": "^5.5.0",
     "react-hook-form": "^7.62.0",
     "react-hot-toast": "^2.5.2",
+    "react-konva": "^19.0.7",
     "tailwind-merge": "^3.3.1",
     "zod": "^4.0.17",
     "zustand": "^5.0.7"

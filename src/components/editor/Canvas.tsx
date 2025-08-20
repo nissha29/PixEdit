@@ -1,5 +1,5 @@
 import { IconDownload, IconRedo, IconUndo } from "@/icons/icons";
-import { useBackgroundStore, useFilterStore, useImagePreviewStore } from "@/store/store";
+import { useBackgroundStore, useDrawingStore, useFilterStore, useImagePreviewStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
 
 export default function Canvas() {
@@ -9,6 +9,110 @@ export default function Canvas() {
     const [open, setOpen] = useState(false);
     const [exportFormat, setExportFormat] = useState('png');
     const { filter } = useFilterStore();
+    const { tool, selectedColor, brushSize, brushType } = useDrawingStore();
+    const [isDrawing, setIsDrawing] = useState(false);
+
+    const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        setIsDrawing(true);
+        const canvas = canvasRef.current;
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            }
+        }
+    };
+
+    const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        if (!isDrawing) return;
+        const canvas = canvasRef.current;
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+                switch (tool) {
+                    case 'brush':
+                        ctx.globalAlpha = 1.0;
+                        ctx.strokeStyle = selectedColor;
+                        ctx.lineWidth = brushSize;
+                        ctx.lineCap = brushType === 'round' ? 'round' : 'square';
+                        ctx.lineJoin = brushType === 'round' ? 'round' : 'miter';
+                        break;
+                    case 'pencil':
+                        ctx.globalAlpha = 0.6;
+
+                        const patternCanvas = document.createElement('canvas');
+                        patternCanvas.width = patternCanvas.height = 20;
+                        const pctx = patternCanvas.getContext('2d');
+                        if (pctx) {
+                            for (let i = 0; i < 50; i++) {
+                                pctx.fillStyle = `rgba(0,0,0,${Math.random() * 0.15})`;
+                                pctx.beginPath();
+                                pctx.arc(Math.random() * 20, Math.random() * 20, 1, 0, Math.PI * 2);
+                                pctx.fill();
+                            }
+                            const pattern = ctx.createPattern(patternCanvas, 'repeat');
+                            if(pattern) ctx.strokeStyle = pattern;
+                        }
+
+                        ctx.lineWidth = brushSize * 0.6;
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+                        ctx.setLineDash([]);
+                        break;
+                    case 'dotted':
+                        ctx.globalAlpha = 1.0;
+                        ctx.strokeStyle = selectedColor;
+                        ctx.lineWidth = brushSize;
+                        ctx.setLineDash([5, 15]); 
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+                        break;
+                    case 'eraser':
+                        ctx.globalCompositeOperation = 'destination-out';
+                        ctx.lineWidth = brushSize * 2;
+                        break;
+                    case 'rectangle':
+                        ctx.globalCompositeOperation = 'source-over';
+                        ctx.strokeStyle = selectedColor;
+                        ctx.lineWidth = brushSize;
+                        break;
+                    case 'circle':
+                        ctx.globalCompositeOperation = 'source-over';
+                        ctx.strokeStyle = selectedColor;
+                        ctx.lineWidth = brushSize;
+                        break;
+                    case 'arrow':
+                        ctx.globalCompositeOperation = 'source-over';
+                        ctx.strokeStyle = selectedColor;
+                        ctx.lineWidth = brushSize;
+                        break;
+                    case 'line':
+                        ctx.globalCompositeOperation = 'source-over';
+                        ctx.strokeStyle = selectedColor;
+                        ctx.lineWidth = brushSize;
+                        break;
+                }
+
+                ctx.lineCap = brushType === 'round' ? 'round' : 'square';
+                ctx.lineJoin = brushType === 'round' ? 'round' : 'miter';
+
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            }
+        }
+    };
+
+    const stopDrawing = () => {
+        setIsDrawing(false);
+    };
 
     function downloadImage() {
         const canvas = canvasRef.current;
@@ -51,6 +155,9 @@ export default function Canvas() {
             canvas.width = width;
             canvas.height = height;
 
+            canvas.style.width = `${width}px`;
+            canvas.style.height = `${height}px`;
+
             if (background?.type === "color" && background.value) {
                 ctx.fillStyle = background.value;
                 ctx.fillRect(0, 0, width, height);
@@ -76,7 +183,7 @@ export default function Canvas() {
                     ctx.filter = 'blur(10px)';
                     ctx.drawImage(bgImg, 0, 0, width, height);
                     ctx.restore();
-                    drawForeground();          
+                    drawForeground();
                 };
                 return;
             } else {
@@ -152,6 +259,10 @@ export default function Canvas() {
             <div className="flex-1 bg-neutral-200 p-8 flex items-center justify-center overflow-auto">
                 <canvas
                     ref={canvasRef}
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={stopDrawing}
+                    onMouseLeave={stopDrawing}
                     style={{
                         maxWidth: '90vw',
                         maxHeight: '80vh',

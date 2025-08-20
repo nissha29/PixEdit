@@ -39,7 +39,14 @@ export const filters = [
   { name: 'Blur', class: 'blur(3px)' },
   { name: 'Invert', class: 'invert(100%)' },
   { name: 'Brighten', class: 'brightness(150%)' },
-  { name: 'Contrast', class: 'contrast(150%)' }
+  { name: 'Contrast', class: 'contrast(150%)' },
+  { name: 'Hue Shift', class: 'hue-rotate(90deg)' },
+  { name: 'Solarize', class: 'invert(10%) saturate(130%) brightness(110%)' },
+  { name: 'Night', class: 'brightness(50%) saturate(150%)' },
+  { name: 'Soft Glow', class: 'brightness(120%) contrast(90%) blur(1.5px)' },
+  { name: 'Sharp', class: 'contrast(170%) saturate(140%)' },
+  { name: 'Warm Glow', class: 'sepia(50%) brightness(120%) saturate(130%)' }
 ];
+
 
 
