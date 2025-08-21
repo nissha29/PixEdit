@@ -2,13 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   Brush,
   Pencil,
-  Circle,
-  Square,
-  ArrowRight,
-  Minus,
   MoreHorizontal,
-  Eraser,
 } from 'lucide-react';
+import { IconEscalatorFilled } from '@tabler/icons-react';
 import { ColorResult, SketchPicker } from 'react-color';
 import { baseColors } from '@/lib/constants';
 import { useDrawingStore } from '@/store/store';
@@ -24,11 +20,7 @@ export default function Draw() {
     { id: 'brush', icon: Brush, label: 'Brush' },
     { id: 'pencil', icon: Pencil, label: 'Pencil' },
     { id: 'dotted', icon: MoreHorizontal, label: 'Dotted' },
-    { id: 'eraser', icon: Eraser, label: 'Eraser' },
-    { id: 'rectangle', icon: Square, label: 'Rectangle' },
-    { id: 'circle', icon: Circle, label: 'Circle' },
-    { id: 'arrow', icon: ArrowRight, label: 'Arrow' },
-    { id: 'line', icon: Minus, label: 'Line' }
+    { id: 'chalk', icon: IconEscalatorFilled, label: 'Chalk' },
   ];
 
   const colors = [...baseColors, customColor];

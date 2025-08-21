@@ -27,6 +27,13 @@ export default function Canvas() {
         }
     };
 
+    function hexToRGBA(hex: string, alpha = 1): string {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r},${g},${b},${alpha})`;
+    }
+
     const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (!isDrawing) return;
         const canvas = canvasRef.current;
@@ -42,8 +49,23 @@ export default function Canvas() {
                         ctx.globalAlpha = 1.0;
                         ctx.strokeStyle = selectedColor;
                         ctx.lineWidth = brushSize;
-                        ctx.lineCap = brushType === 'round' ? 'round' : 'square';
-                        ctx.lineJoin = brushType === 'round' ? 'round' : 'miter';
+                        if (brushType === 'soft') {
+                            ctx.shadowColor = selectedColor;
+                            ctx.shadowBlur = brushSize * 1.5;
+                            ctx.lineCap = 'round';
+                            ctx.lineJoin = 'round';
+                        } else if (brushType === 'round') {
+                            ctx.shadowColor = 'transparent';
+                            ctx.shadowBlur = 0;
+                            ctx.lineCap = 'round';
+                            ctx.lineJoin = 'round';
+                        } else {
+                            ctx.shadowColor = 'transparent';
+                            ctx.shadowBlur = 1;
+                            ctx.lineCap = 'square';
+                            ctx.lineJoin = 'miter';
+                        }
+
                         break;
                     case 'pencil':
                         ctx.globalAlpha = 0.6;
@@ -52,14 +74,17 @@ export default function Canvas() {
                         patternCanvas.width = patternCanvas.height = 20;
                         const pctx = patternCanvas.getContext('2d');
                         if (pctx) {
+                            const rgbaColor = hexToRGBA(selectedColor, 0.15);
                             for (let i = 0; i < 50; i++) {
-                                pctx.fillStyle = `rgba(0,0,0,${Math.random() * 0.15})`;
+                                pctx.fillStyle = rgbaColor;
                                 pctx.beginPath();
                                 pctx.arc(Math.random() * 20, Math.random() * 20, 1, 0, Math.PI * 2);
                                 pctx.fill();
                             }
                             const pattern = ctx.createPattern(patternCanvas, 'repeat');
-                            if(pattern) ctx.strokeStyle = pattern;
+                            if (pattern) {
+                                ctx.strokeStyle = pattern;
+                            }
                         }
 
                         ctx.lineWidth = brushSize * 0.6;
@@ -71,33 +96,19 @@ export default function Canvas() {
                         ctx.globalAlpha = 1.0;
                         ctx.strokeStyle = selectedColor;
                         ctx.lineWidth = brushSize;
-                        ctx.setLineDash([5, 15]); 
+                        ctx.setLineDash([5, 15]);
                         ctx.lineCap = 'round';
                         ctx.lineJoin = 'round';
                         break;
-                    case 'eraser':
-                        ctx.globalCompositeOperation = 'destination-out';
-                        ctx.lineWidth = brushSize * 2;
-                        break;
-                    case 'rectangle':
-                        ctx.globalCompositeOperation = 'source-over';
+                    case 'chalk':
+                        ctx.globalAlpha = 0.6;
+                        ctx.lineWidth = brushSize * 10;
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+                        ctx.shadowColor = selectedColor;
+                        ctx.shadowBlur = brushSize * 3;
                         ctx.strokeStyle = selectedColor;
-                        ctx.lineWidth = brushSize;
-                        break;
-                    case 'circle':
-                        ctx.globalCompositeOperation = 'source-over';
-                        ctx.strokeStyle = selectedColor;
-                        ctx.lineWidth = brushSize;
-                        break;
-                    case 'arrow':
-                        ctx.globalCompositeOperation = 'source-over';
-                        ctx.strokeStyle = selectedColor;
-                        ctx.lineWidth = brushSize;
-                        break;
-                    case 'line':
-                        ctx.globalCompositeOperation = 'source-over';
-                        ctx.strokeStyle = selectedColor;
-                        ctx.lineWidth = brushSize;
+                        ctx.setLineDash([]);
                         break;
                 }
 

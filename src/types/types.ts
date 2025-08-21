@@ -69,11 +69,7 @@ export enum ToolType {
   brush = 'brush',
   pencil = 'pencil',
   dotted = 'dotted',
-  eraser = 'eraser',
-  rectangle = 'rectangle',
-  circle = 'circle',
-  arrow = 'arrow',
-  line = 'line'
+  chalk = 'chalk',
 }
 
 export enum BrushType {
