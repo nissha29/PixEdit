@@ -1,5 +1,6 @@
 import { 
   ActiveTabStore, 
+  AlignType, 
   Background, 
   BackgroundStore, 
   BrushType, 
@@ -9,6 +10,7 @@ import {
   FilterType, 
   ImagePreviewStore, 
   LoadingStore, 
+  TextStore, 
   ToolType, 
   UserStore 
 } from '../types/types';
@@ -78,4 +80,42 @@ export const useDrawingStore = create<DrawingStore>((set) => ({
   setSelectedColor: (color: string) => set({ selectedColor: color }),
   setBrushSize: (size: number) => set({ brushSize: size }),
   setBrushType: (type: BrushType) => set({ brushType: type }),
+}));
+
+export const useTextStore = create<TextStore>((set) => ({
+  textInput: '',
+  setTextInput: (value) => set({ textInput: value }),
+
+  selectedFont: 'Inter',
+  setSelectedFont: (value) => set({ selectedFont: value }),
+
+  fontSize: 48,
+  setFontSize: (value) => set({ fontSize: value }),
+
+  fontWeight: '400',
+  setFontWeight: (value) => set({ fontWeight: value }),
+
+  letterSpacing: 0,
+  setLetterSpacing: (value) => set({ letterSpacing: value }),
+
+  lineHeight: 1.2,
+  setLineHeight: (value) => set({ lineHeight: value }),
+
+  textAlign: AlignType.left,
+  setTextAlign: (value) => set({ textAlign: value }),
+
+  isBold: false,
+  setIsBold: (value) => set({ isBold: value }),
+
+  isItalic: false,
+  setIsItalic: (value) => set({ isItalic: value }),
+
+  isUnderlined: false,
+  setIsUnderlined: (value) => set({ isUnderlined: value }),
+
+  customColor: '#ffffff',
+  setCustomColor: (value) => set({ customColor: value }),
+
+  selectedTextColor: null,
+  setSelectedTextColor: (value) => set({ selectedTextColor: value }),
 }));

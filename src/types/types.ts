@@ -78,7 +78,6 @@ export enum BrushType {
   soft = 'soft'
 }
 
-
 export type DrawingStore = {
   tool: ToolType,
   selectedColor: string,
@@ -88,4 +87,58 @@ export type DrawingStore = {
   setSelectedColor: (color: string) => void,
   setBrushSize: (size: number) => void,
   setBrushType: (type: BrushType) => void,
+}
+
+export enum AlignType {
+  left =  'left',
+  right = 'right',
+  center = 'center',
+}
+
+export type TextStore = {
+  textInput: string;
+  setTextInput: (value: string) => void;
+
+  selectedFont: string;
+  setSelectedFont: (value: string) => void;
+
+  fontSize: number;
+  setFontSize: (value: number) => void;
+
+  fontWeight: string;
+  setFontWeight: (value: string) => void;
+
+  letterSpacing: number;
+  setLetterSpacing: (value: number) => void;
+
+  lineHeight: number;
+  setLineHeight: (value: number) => void;
+
+  textAlign: AlignType;
+  setTextAlign: (value: AlignType) => void;
+
+  isBold: boolean;
+  setIsBold: (value: boolean) => void;
+
+  isItalic: boolean;
+  setIsItalic: (value: boolean) => void;
+
+  isUnderlined: boolean;
+  setIsUnderlined: (value: boolean) => void;
+
+  customColor: string;
+  setCustomColor: (value: string) => void;
+
+  selectedTextColor: string | null;
+  setSelectedTextColor: (value: string | null) => void;
+};
+
+export type ActiveTool = {
+  background: 'background',
+  crop: 'crop',
+  filters: 'filters',
+  text: 'text',
+  draw: 'draw',
+  addBlur: 'addBlur',
+  aiTools: 'aiTools'
 }

@@ -1,5 +1,5 @@
 import { IconDownload, IconRedo, IconUndo } from "@/icons/icons";
-import { useBackgroundStore, useDrawingStore, useFilterStore, useImagePreviewStore } from "@/store/store";
+import { useActiveTabStore, useBackgroundStore, useDrawingStore, useFilterStore, useImagePreviewStore, useTextStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
 
 export default function Canvas() {
@@ -9,10 +9,52 @@ export default function Canvas() {
     const [open, setOpen] = useState(false);
     const [exportFormat, setExportFormat] = useState('png');
     const { filter } = useFilterStore();
+    const { activeTab } = useActiveTabStore();
     const { tool, selectedColor, brushSize, brushType } = useDrawingStore();
     const [isDrawing, setIsDrawing] = useState(false);
+    const { textInput, selectedTextColor, selectedFont, fontSize, fontWeight, isBold, isItalic, isUnderlined, textAlign, letterSpacing, lineHeight } = useTextStore();
+
+    function drawText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, options: {
+        fontFamily: string;
+        fontSize: number;
+        fontWeight: string | number;
+        isBold: boolean;
+        isItalic: boolean;
+        isUnderlined: boolean;
+        letterSpacing: number;
+        lineHeight: number;
+        textAlign: CanvasTextAlign;
+        fillStyle: string;
+    }) {
+        const fontParts = [];
+        if (options.isItalic) fontParts.push('italic');
+        if (options.isBold) fontParts.push('bold');
+        else fontParts.push(options.fontWeight);
+        fontParts.push(`${options.fontSize}px`);
+        fontParts.push(options.fontFamily);
+
+        ctx.font = fontParts.join(' ');
+        ctx.fillStyle = options.fillStyle;
+        ctx.textAlign = options.textAlign;
+        ctx.textBaseline = 'top';
+
+        ctx.fillText(text, x, y);
+
+        if (options.isUnderlined) {
+            const textWidth = ctx.measureText(text).width;
+            const underlineHeight = options.fontSize / 15;
+            let startX = x;
+            if (options.textAlign === 'center') startX = x - textWidth / 2;
+            else if (options.textAlign === 'right') startX = x - textWidth;
+
+            const underlineY = y + options.fontSize + 2;
+            ctx.fillRect(startX, underlineY, textWidth, underlineHeight);
+        }
+    }
+
 
     const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        if (activeTab !== 'draw') return;
         setIsDrawing(true);
         const canvas = canvasRef.current;
         if (canvas) {
@@ -36,6 +78,7 @@ export default function Canvas() {
 
     const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (!isDrawing) return;
+        if (activeTab !== 'draw') return;
         const canvas = canvasRef.current;
         if (canvas) {
             const ctx = canvas.getContext('2d');
@@ -207,11 +250,31 @@ export default function Canvas() {
                     ctx.filter = ctx.filter = filter?.class || 'none';
                     ctx.drawImage(fgImg, 0, 0, width, height);
                     ctx.restore();
+
+                    if (activeTab === 'text') {
+                        drawText(ctx,
+                            textInput,
+                            width / 2,
+                            height / 2,
+                            {
+                                fontFamily: selectedFont,
+                                fontSize: fontSize,
+                                fontWeight: fontWeight,
+                                isBold: isBold,
+                                isItalic: isItalic,
+                                isUnderlined: isUnderlined,
+                                letterSpacing: letterSpacing,
+                                lineHeight: lineHeight,
+                                textAlign: textAlign as CanvasTextAlign,
+                                fillStyle: selectedTextColor || '#000',
+                            }
+                        );
+                    }
                 }
             }
             drawForeground();
         };
-    }, [dataURL, background, filter]);
+    }, [dataURL, background, filter, fontSize, fontWeight, isBold, isItalic, isUnderlined, letterSpacing, lineHeight, selectedTextColor, selectedFont, textAlign, textInput, activeTab]);
 
     return (
         <main className="flex-1 flex flex-col">
