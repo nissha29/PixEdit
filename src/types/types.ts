@@ -95,7 +95,31 @@ export enum AlignType {
   center = 'center',
 }
 
+export type TextBox = {
+  id: string;
+  text: string;
+  x: number;
+  y: number;
+  fontSize: number;
+  fontFamily: string;
+  fontWeight: string;
+  isBold: boolean;
+  isItalic: boolean;
+  isUnderlined: boolean;
+  textAlign: CanvasTextAlign;
+  color: string;
+};
+
 export type TextStore = {
+  textBoxes: TextBox[];
+  setTextBoxes: (textBoxes: TextBox[]) => void;
+
+  activeTextBoxId: string | null;
+  setActiveTextBoxId: (id: string | null) => void;
+
+  activeTextBox: TextBox | null;
+  setActiveTextBox: (box: TextBox | null) => void;
+
   textInput: string;
   setTextInput: (value: string) => void;
 
@@ -107,12 +131,6 @@ export type TextStore = {
 
   fontWeight: string;
   setFontWeight: (value: string) => void;
-
-  letterSpacing: number;
-  setLetterSpacing: (value: number) => void;
-
-  lineHeight: number;
-  setLineHeight: (value: number) => void;
 
   textAlign: AlignType;
   setTextAlign: (value: AlignType) => void;
@@ -129,16 +147,16 @@ export type TextStore = {
   customColor: string;
   setCustomColor: (value: string) => void;
 
-  selectedTextColor: string | null;
-  setSelectedTextColor: (value: string | null) => void;
+  selectedTextColor: string;
+  setSelectedTextColor: (value: string) => void;
 };
 
-export type ActiveTool = {
-  background: 'background',
-  crop: 'crop',
-  filters: 'filters',
-  text: 'text',
-  draw: 'draw',
-  addBlur: 'addBlur',
-  aiTools: 'aiTools'
+export type Dimension = {
+  width: number,
+  height: number,
+}
+
+export type ImageDimensionStore = {
+  imageDimensions: Dimension,
+  setImageDimensions: (imageDimensions: Dimension) => void
 }

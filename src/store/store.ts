@@ -1,18 +1,21 @@
-import { 
-  ActiveTabStore, 
-  AlignType, 
-  Background, 
-  BackgroundStore, 
-  BrushType, 
-  DrawingStore, 
-  FileStore, 
-  FilterStore, 
-  FilterType, 
-  ImagePreviewStore, 
-  LoadingStore, 
-  TextStore, 
-  ToolType, 
-  UserStore 
+import {
+  ActiveTabStore,
+  AlignType,
+  Background,
+  BackgroundStore,
+  BrushType,
+  Dimension,
+  DrawingStore,
+  FileStore,
+  FilterStore,
+  FilterType,
+  ImageDimensionStore,
+  ImagePreviewStore,
+  LoadingStore,
+  TextBox,
+  TextStore,
+  ToolType,
+  UserStore
 } from '../types/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -83,39 +86,48 @@ export const useDrawingStore = create<DrawingStore>((set) => ({
 }));
 
 export const useTextStore = create<TextStore>((set) => ({
+  textBoxes: [],
+  setTextBoxes: (textBoxes: TextBox[]) => set({ textBoxes }),
+
+  activeTextBoxId: null,
+  setActiveTextBoxId: (id: string | null) => set({ activeTextBoxId: id }),
+
+  activeTextBox: null,
+  setActiveTextBox: (box: TextBox | null) => set({ activeTextBox: box }),
+
   textInput: '',
-  setTextInput: (value) => set({ textInput: value }),
+  setTextInput: (value: string) => set({ textInput: value }),
 
   selectedFont: 'Inter',
-  setSelectedFont: (value) => set({ selectedFont: value }),
+  setSelectedFont: (value: string) => set({ selectedFont: value }),
 
-  fontSize: 48,
-  setFontSize: (value) => set({ fontSize: value }),
+  fontSize: 20,
+  setFontSize: (value: number) => set({ fontSize: value }),
 
   fontWeight: '400',
-  setFontWeight: (value) => set({ fontWeight: value }),
-
-  letterSpacing: 0,
-  setLetterSpacing: (value) => set({ letterSpacing: value }),
-
-  lineHeight: 1.2,
-  setLineHeight: (value) => set({ lineHeight: value }),
+  setFontWeight: (value: string) => set({ fontWeight: value }),
 
   textAlign: AlignType.left,
-  setTextAlign: (value) => set({ textAlign: value }),
+  setTextAlign: (value: AlignType) => set({ textAlign: value }),
 
   isBold: false,
-  setIsBold: (value) => set({ isBold: value }),
+  setIsBold: (value: boolean) => set({ isBold: value }),
 
   isItalic: false,
-  setIsItalic: (value) => set({ isItalic: value }),
+  setIsItalic: (value: boolean) => set({ isItalic: value }),
 
   isUnderlined: false,
-  setIsUnderlined: (value) => set({ isUnderlined: value }),
+  setIsUnderlined: (value: boolean) => set({ isUnderlined: value }),
 
   customColor: '#ffffff',
-  setCustomColor: (value) => set({ customColor: value }),
+  setCustomColor: (value: string) => set({ customColor: value }),
 
-  selectedTextColor: null,
-  setSelectedTextColor: (value) => set({ selectedTextColor: value }),
+  selectedTextColor: '#000000',
+  setSelectedTextColor: (value: string) => set({ selectedTextColor: value }),
 }));
+
+export const useImageDimensionStore = create<ImageDimensionStore>((set) => ({
+  imageDimensions: { width: 0, height: 0 },
+  setImageDimensions: (imageDimensions: Dimension) => set({ imageDimensions }),
+}));
+

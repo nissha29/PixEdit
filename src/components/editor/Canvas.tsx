@@ -1,5 +1,6 @@
 import { IconDownload, IconRedo, IconUndo } from "@/icons/icons";
-import { useActiveTabStore, useBackgroundStore, useDrawingStore, useFilterStore, useImagePreviewStore, useTextStore } from "@/store/store";
+import { useActiveTabStore, useBackgroundStore, useDrawingStore, useFilterStore, useImageDimensionStore, useImagePreviewStore, useTextStore } from "@/store/store";
+import { TextBox } from "@/types/types";
 import { useEffect, useRef, useState } from "react";
 
 export default function Canvas() {
@@ -8,11 +9,14 @@ export default function Canvas() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [open, setOpen] = useState(false);
     const [exportFormat, setExportFormat] = useState('png');
+    const [containerRect, setContainerRect] = useState<DOMRect | null>(null);
     const { filter } = useFilterStore();
     const { activeTab } = useActiveTabStore();
     const { tool, selectedColor, brushSize, brushType } = useDrawingStore();
     const [isDrawing, setIsDrawing] = useState(false);
-    const { textInput, selectedTextColor, selectedFont, fontSize, fontWeight, isBold, isItalic, isUnderlined, textAlign, letterSpacing, lineHeight } = useTextStore();
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { textBoxes, setTextBoxes, activeTextBox } = useTextStore();
+    const { setImageDimensions } = useImageDimensionStore();
 
     function drawText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, options: {
         fontFamily: string;
@@ -21,8 +25,6 @@ export default function Canvas() {
         isBold: boolean;
         isItalic: boolean;
         isUnderlined: boolean;
-        letterSpacing: number;
-        lineHeight: number;
         textAlign: CanvasTextAlign;
         fillStyle: string;
     }) {
@@ -51,6 +53,13 @@ export default function Canvas() {
             ctx.fillRect(startX, underlineY, textWidth, underlineHeight);
         }
     }
+
+
+    useEffect(() => {
+        if (containerRef.current) {
+            setContainerRect(containerRef.current.getBoundingClientRect());
+        }
+    }, []);
 
 
     const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -206,6 +215,8 @@ export default function Canvas() {
             const width = fgImg.width;
             const height = fgImg.height;
 
+            setImageDimensions({ width, height });
+
             canvas.width = width;
             canvas.height = height;
 
@@ -252,29 +263,29 @@ export default function Canvas() {
                     ctx.restore();
 
                     if (activeTab === 'text') {
-                        drawText(ctx,
-                            textInput,
-                            width / 2,
-                            height / 2,
-                            {
-                                fontFamily: selectedFont,
-                                fontSize: fontSize,
-                                fontWeight: fontWeight,
-                                isBold: isBold,
-                                isItalic: isItalic,
-                                isUnderlined: isUnderlined,
-                                letterSpacing: letterSpacing,
-                                lineHeight: lineHeight,
-                                textAlign: textAlign as CanvasTextAlign,
-                                fillStyle: selectedTextColor || '#000',
-                            }
-                        );
+                        textBoxes.forEach((box: TextBox) => {
+                            drawText(ctx,
+                                box.text,
+                                box.x,
+                                box.y,
+                                {
+                                    fontFamily: box.fontFamily,
+                                    fontSize: box.fontSize,
+                                    fontWeight: box.fontWeight,
+                                    isBold: box.isBold,
+                                    isItalic: box.isItalic,
+                                    isUnderlined: box.isUnderlined,
+                                    textAlign: box.textAlign,
+                                    fillStyle: box.color,
+                                }
+                            );
+                        })
                     }
                 }
             }
             drawForeground();
         };
-    }, [dataURL, background, filter, fontSize, fontWeight, isBold, isItalic, isUnderlined, letterSpacing, lineHeight, selectedTextColor, selectedFont, textAlign, textInput, activeTab]);
+    }, [dataURL, background, filter, textBoxes, activeTab, setImageDimensions]);
 
     return (
         <main className="flex-1 flex flex-col">
@@ -330,7 +341,11 @@ export default function Canvas() {
                 )}
             </header>
 
-            <div className="flex-1 bg-neutral-200 p-8 flex items-center justify-center overflow-auto">
+            <div
+                ref={containerRef}
+                className="flex-1 bg-neutral-200 p-8 flex items-center justify-center overflow-auto relative"
+            >
+                {/* Canvas */}
                 <canvas
                     ref={canvasRef}
                     onMouseDown={startDrawing}
@@ -346,6 +361,43 @@ export default function Canvas() {
                         border: '2px solid #075985',
                     }}
                 />
+
+                {textBoxes.map((box: TextBox) =>
+                    activeTextBox && box.id === activeTextBox.id && containerRect ? (
+                        <textarea
+                            key={box.id}
+                            value={box.text}
+                            autoFocus
+                            onChange={e => {
+                                const updatedText = e.target.value;
+                                setTextBoxes(textBoxes.map((tb: TextBox) =>
+                                    tb.id === box.id ? { ...tb, text: updatedText } : tb
+                                ));
+                            }}
+                            style={{
+                                position: 'absolute',
+                                top: box.y + (containerRect.top ?? 0),
+                                left: box.x + (containerRect.left ?? 0),
+                                fontSize: box.fontSize,
+                                fontFamily: box.fontFamily,
+                                fontWeight: box.isBold ? 'bold' : box.fontWeight,
+                                fontStyle: box.isItalic ? 'italic' : 'normal',
+                                textDecoration: box.isUnderlined ? 'underline' : 'none',
+                                color: box.color,
+                                background: 'transparent',
+                                border: '1px solid #ccc',
+                                resize: 'none',
+                                outline: 'none',
+                                padding: 2,
+                                whiteSpace: 'pre-wrap',
+                                zIndex: 9999,
+                                minWidth: 80,
+                                maxWidth: 300,
+                                overflow: 'hidden',
+                            }}
+                        />
+                    ) : null
+                )}
             </div>
         </main>
     );
