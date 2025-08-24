@@ -7,7 +7,7 @@ import { AlignType, TextBox } from '@/types/types';
 
 export default function TextEditorTool() {
   const [showPicker, setShowPicker] = useState(false);
-  const { customColor, setCustomColor, selectedTextColor, setSelectedTextColor, selectedFont, setSelectedFont, fontSize, setFontSize, fontWeight, setFontWeight, isBold, setIsBold, isItalic, setIsItalic, isUnderlined, setIsUnderlined, textAlign, setTextAlign, textBoxes, setTextBoxes, setActiveTextBox } = useTextStore();
+  const { customColor, setCustomColor, selectedTextColor, setSelectedTextColor, selectedFont, setSelectedFont, fontSize, setFontSize, fontWeight, setFontWeight, isBold, setIsBold, isItalic, setIsItalic, isUnderlined, setIsUnderlined, textAlign, setTextAlign, textBoxes, setTextBoxes, textInput, setTextInput } = useTextStore();
   const { activeTab } = useActiveTabStore();
   const { imageDimensions } = useImageDimensionStore();
 
@@ -31,17 +31,15 @@ export default function TextEditorTool() {
   ];
 
   const addNewText = () => {
-    if (activeTab !== "text") return;
-    if (!imageDimensions.width || !imageDimensions.height) {
-      return;
-    }
+    if (activeTab !== "text" || (!imageDimensions.width || !imageDimensions.height)) return;
+    if(textInput.trim() === '') return;
 
     const centerX = imageDimensions.width / 2;
     const centerY = imageDimensions.height / 2;
 
     const newBox: TextBox = {
       id: crypto.randomUUID(),
-      text: "New Text",
+      text: textInput,
       x: centerX,
       y: centerY,
       fontSize,
@@ -54,19 +52,27 @@ export default function TextEditorTool() {
       color: selectedTextColor,
     };
     setTextBoxes([...textBoxes, newBox]);
-    setActiveTextBox(newBox);
+    setTextInput('');
   };
 
   return (
     <div className="w-full bg-white p-2 space-y-8">
       <h2 className="text-xl font-semibold text-neutral-800">Add Text</h2>
 
-      <button onClick={addNewText} className="w-full py-3 bg-accent-dark hover:bg-sky-900 text-white rounded-lg transition-colors font-medium shadow-sm">
-        Add Text to Canvas
+      <textarea
+        value={textInput}
+        onChange={e => setTextInput(e.target.value)}
+        placeholder="Enter text here"
+        className="w-full p-2 border border-gray-300 rounded mb-2 resize-none"
+        rows={2}
+      />
+
+      <button onClick={addNewText} className="w-full py-3 bg-accent-dark hover:cursor-pointer hover:bg-sky-900 text-white rounded-lg transition-colors font-medium shadow-sm">
+        Add New Text
       </button>
 
-      <div className="bg-white rounded-lg p-4 shadow-sm border border-neutral-200">
-        <label className="block text-sm font-medium text-neutral-800 mb-3">Font Family</label>
+      <div className="bg-white p-1">
+        <label className="block font- font-medium text-neutral-800 mb-3">Font Family</label>
         <div className="relative">
           <select
             value={selectedFont}
@@ -81,9 +87,9 @@ export default function TextEditorTool() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg p-4 shadow-sm border border-neutral-200 space-y-4">
+      <div className="bg-white p-1 space-y-4">
         <div>
-          <label className="block text-sm font-medium text-neutral-800 mb-2">Font Size</label>
+          <label className="block font-medium text-neutral-800 mb-2">Font Size</label>
           <div className="flex items-center space-x-3">
             <input
               type="range"
@@ -132,8 +138,8 @@ export default function TextEditorTool() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg p-4 shadow-sm border border-neutral-200">
-        <label className="block text-sm font-medium text-neutral-800 mb-3">Text Style</label>
+      <div className="bg-white p-1">
+        <label className="block font-medium text-neutral-800 mb-3">Text Style</label>
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setIsBold(!isBold)}
@@ -159,8 +165,8 @@ export default function TextEditorTool() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-        <label className="block text-sm font-medium text-gray-700 mb-3">Text Alignment</label>
+      <div className="bg-white p-1">
+        <label className="block font-medium text-gray-700 mb-3">Text Alignment</label>
         <div className="flex items-center space-x-2">
           {[
             { value: 'left', icon: AlignLeft },
@@ -179,8 +185,8 @@ export default function TextEditorTool() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-        <label className="block text-sm font-medium text-gray-700 mb-3">Text Color</label>
+      <div className="bg-white p-1">
+        <label className="block font-medium text-gray-700 mb-3">Text Color</label>
         <div className="grid grid-cols-6 gap-2">
           {baseColors.map((color, index) => {
             if (index === baseColors.length - 1) {

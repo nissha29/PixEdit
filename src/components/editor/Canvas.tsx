@@ -1,6 +1,7 @@
 import { IconDownload, IconRedo, IconUndo } from "@/icons/icons";
 import { useActiveTabStore, useBackgroundStore, useDrawingStore, useFilterStore, useImageDimensionStore, useImagePreviewStore, useTextStore } from "@/store/store";
 import { TextBox } from "@/types/types";
+import { drawBoundingBox, getBoundingBox, getHandlerHitIndex, getHandlerPositions, isPointInRect } from "@/utils/utils";
 import { useEffect, useRef, useState } from "react";
 
 export default function Canvas() {
@@ -9,14 +10,17 @@ export default function Canvas() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [open, setOpen] = useState(false);
     const [exportFormat, setExportFormat] = useState('png');
-    const [containerRect, setContainerRect] = useState<DOMRect | null>(null);
     const { filter } = useFilterStore();
     const { activeTab } = useActiveTabStore();
     const { tool, selectedColor, brushSize, brushType } = useDrawingStore();
     const [isDrawing, setIsDrawing] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
-    const { textBoxes, setTextBoxes, activeTextBox } = useTextStore();
+    const { textBoxes, setTextBoxes, activeTextBox, setActiveTextBox } = useTextStore();
     const { setImageDimensions } = useImageDimensionStore();
+    const [interactionMode, setInteractionMode] = useState<'none' | 'dragging' | 'resizing'>('none');
+    const [resizeHandlerIndex, setResizeHandlerIndex] = useState<number | null>(null);
+    const [dragStartPos, setDragStartPos] = useState<{ x: number, y: number } | null>(null);
+
 
     function drawText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, options: {
         fontFamily: string;
@@ -54,15 +58,7 @@ export default function Canvas() {
         }
     }
 
-
-    useEffect(() => {
-        if (containerRef.current) {
-            setContainerRect(containerRef.current.getBoundingClientRect());
-        }
-    }, []);
-
-
-    const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const onMouseDownDraw = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (activeTab !== 'draw') return;
         setIsDrawing(true);
         const canvas = canvasRef.current;
@@ -85,7 +81,7 @@ export default function Canvas() {
         return `rgba(${r},${g},${b},${alpha})`;
     }
 
-    const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const onMouseMoveDraw = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (!isDrawing) return;
         if (activeTab !== 'draw') return;
         const canvas = canvasRef.current;
@@ -173,9 +169,128 @@ export default function Canvas() {
         }
     };
 
-    const stopDrawing = () => {
+    const onMouseUpDraw = () => {
         setIsDrawing(false);
     };
+
+    const onMouseDownText = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+        for (let i = textBoxes.length - 1; i >= 0; i--) {
+            const box = textBoxes[i];
+            const boxRect = getBoundingBox({
+                x: box.x,
+                y: box.y,
+                text: box.text,
+                font: `${box.isBold ? "bold" : box.fontWeight} ${box.fontSize}px ${box.fontFamily}`,
+                fontSize: box.fontSize,
+            }, ctx);
+
+            if (boxRect && isPointInRect(mouseX, mouseY, boxRect)) {
+                setActiveTextBox(box);
+
+                const { handlers } = getHandlerPositions(boxRect);
+                const hitHandler = getHandlerHitIndex(mouseX, mouseY, handlers);
+                if (hitHandler !== null) {
+                    setInteractionMode('resizing');
+                    setResizeHandlerIndex(hitHandler);
+                    setDragStartPos({ x: mouseX, y: mouseY });
+                    return;
+                }
+                setInteractionMode('dragging');
+                setDragStartPos({ x: mouseX, y: mouseY });
+                return;
+            }
+        }
+
+        setActiveTextBox(null);
+        setInteractionMode('none');
+        setResizeHandlerIndex(null);
+        setDragStartPos(null);
+    };
+
+    const onMouseMoveText = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        if (interactionMode === 'none' || !dragStartPos || !activeTextBox) return;
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+        const dx = mouseX - dragStartPos.x;
+        const dy = mouseY - dragStartPos.y;
+
+        if (interactionMode === 'dragging') {
+            setTextBoxes(textBoxes.map(box => {
+                if (box.id === activeTextBox.id) {
+                    const movedBox = {
+                        ...box,
+                        x: box.x + dx,
+                        y: box.y + dy
+                    };
+                    setActiveTextBox(movedBox);
+                    return movedBox;
+                }
+                return box;
+            }));
+        } else if (interactionMode === 'resizing' && resizeHandlerIndex !== null) {
+            setTextBoxes(textBoxes.map(box => {
+                if (box.id === activeTextBox.id) {
+                    const newFontSize = Math.max(8, box.fontSize + dy);
+                    const resizedBox = {
+                        ...box,
+                        fontSize: newFontSize
+                    };
+                    setActiveTextBox(resizedBox);
+                    return resizedBox;
+                }
+                return box;
+            }));
+        }
+        setDragStartPos({ x: mouseX, y: mouseY });
+
+    }
+
+    const onMouseUpText = () => {
+        setInteractionMode('none');
+        setResizeHandlerIndex(null);
+        setDragStartPos(null);
+    }
+
+    const onMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        switch (activeTab) {
+            case 'draw':
+                onMouseDownDraw(e);
+            case 'text':
+                onMouseDownText(e);
+        }
+    }
+
+    const onMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        switch (activeTab) {
+            case 'draw':
+                onMouseMoveDraw(e);
+            case 'text':
+                onMouseMoveText(e);
+        }
+    }
+
+    const onMouseUp = () => {
+        switch (activeTab) {
+            case 'draw':
+                onMouseUpDraw();
+            case 'text':
+                onMouseUpText();
+        }
+    }
 
     function downloadImage() {
         const canvas = canvasRef.current;
@@ -281,11 +396,26 @@ export default function Canvas() {
                             );
                         })
                     }
+                    if (activeTab === 'text' && activeTextBox) {
+                        const box = getBoundingBox({
+                            x: activeTextBox.x,
+                            y: activeTextBox.y,
+                            text: activeTextBox.text,
+                            font: `${activeTextBox.isBold ? 'bold' : activeTextBox.fontWeight} ${activeTextBox.fontSize}px ${activeTextBox.fontFamily}`,
+                            fontSize: activeTextBox.fontSize,
+                        }, ctx);
+
+                        if (box) {
+                            const { paddedBox, handlers } = getHandlerPositions(box);
+                            drawBoundingBox(ctx, paddedBox, handlers);
+                        }
+                    }
+
                 }
             }
             drawForeground();
         };
-    }, [dataURL, background, filter, textBoxes, activeTab, setImageDimensions]);
+    }, [dataURL, background, filter, textBoxes, activeTab, setImageDimensions, activeTextBox]);
 
     return (
         <main className="flex-1 flex flex-col">
@@ -345,13 +475,12 @@ export default function Canvas() {
                 ref={containerRef}
                 className="flex-1 bg-neutral-200 p-8 flex items-center justify-center overflow-auto relative"
             >
-                {/* Canvas */}
                 <canvas
                     ref={canvasRef}
-                    onMouseDown={startDrawing}
-                    onMouseMove={draw}
-                    onMouseUp={stopDrawing}
-                    onMouseLeave={stopDrawing}
+                    onMouseDown={onMouseDown}
+                    onMouseMove={onMouseMove}
+                    onMouseUp={onMouseUp}
+                    onMouseLeave={onMouseUp}
                     style={{
                         maxWidth: '90vw',
                         maxHeight: '80vh',
@@ -361,43 +490,6 @@ export default function Canvas() {
                         border: '2px solid #075985',
                     }}
                 />
-
-                {textBoxes.map((box: TextBox) =>
-                    activeTextBox && box.id === activeTextBox.id && containerRect ? (
-                        <textarea
-                            key={box.id}
-                            value={box.text}
-                            autoFocus
-                            onChange={e => {
-                                const updatedText = e.target.value;
-                                setTextBoxes(textBoxes.map((tb: TextBox) =>
-                                    tb.id === box.id ? { ...tb, text: updatedText } : tb
-                                ));
-                            }}
-                            style={{
-                                position: 'absolute',
-                                top: box.y + (containerRect.top ?? 0),
-                                left: box.x + (containerRect.left ?? 0),
-                                fontSize: box.fontSize,
-                                fontFamily: box.fontFamily,
-                                fontWeight: box.isBold ? 'bold' : box.fontWeight,
-                                fontStyle: box.isItalic ? 'italic' : 'normal',
-                                textDecoration: box.isUnderlined ? 'underline' : 'none',
-                                color: box.color,
-                                background: 'transparent',
-                                border: '1px solid #ccc',
-                                resize: 'none',
-                                outline: 'none',
-                                padding: 2,
-                                whiteSpace: 'pre-wrap',
-                                zIndex: 9999,
-                                minWidth: 80,
-                                maxWidth: 300,
-                                overflow: 'hidden',
-                            }}
-                        />
-                    ) : null
-                )}
             </div>
         </main>
     );
