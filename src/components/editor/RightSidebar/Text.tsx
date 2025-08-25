@@ -4,35 +4,23 @@ import { ColorResult, SketchPicker } from 'react-color';
 import { baseColors } from '@/lib/constants';
 import { useActiveTabStore, useImageDimensionStore, useTextStore } from '@/store/store';
 import { AlignType, TextBox } from '@/types/types';
+import { fonts, fontWeights } from '@/lib/constants';
 
 export default function TextEditorTool() {
   const [showPicker, setShowPicker] = useState(false);
-  const { customColor, setCustomColor, selectedTextColor, setSelectedTextColor, selectedFont, setSelectedFont, fontSize, setFontSize, fontWeight, setFontWeight, isBold, setIsBold, isItalic, setIsItalic, isUnderlined, setIsUnderlined, textAlign, setTextAlign, textBoxes, setTextBoxes, textInput, setTextInput } = useTextStore();
+  const { customColor, setCustomColor, selectedTextColor, setSelectedTextColor, selectedFont, setSelectedFont, fontSize, setFontSize, fontWeight, setFontWeight, isBold, setIsBold, isItalic, setIsItalic, isUnderlined, setIsUnderlined, textAlign, setTextAlign, textBoxes, setTextBoxes, textInput, setTextInput, activeTextBox, setActiveTextBox } = useTextStore();
   const { activeTab } = useActiveTabStore();
   const { imageDimensions } = useImageDimensionStore();
-
-  const fonts = [
-    'Inter', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Poppins',
-    'Arial', 'Helvetica', 'Georgia', 'Times New Roman', 'Playfair Display', 'Oswald'
-  ];
 
   function handleColorChange(color: ColorResult) {
     setCustomColor(color.hex);
     setSelectedTextColor(color.hex);
+    updateActiveTextBox({ color: color.hex });
   }
-
-  const fontWeights = [
-    { value: '300', label: 'Light' },
-    { value: '400', label: 'Regular' },
-    { value: '500', label: 'Medium' },
-    { value: '600', label: 'Semi Bold' },
-    { value: '700', label: 'Bold' },
-    { value: '800', label: 'Extra Bold' }
-  ];
 
   const addNewText = () => {
     if (activeTab !== "text" || (!imageDimensions.width || !imageDimensions.height)) return;
-    if(textInput.trim() === '') return;
+    if (textInput.trim() === '') return;
 
     const centerX = imageDimensions.width / 2;
     const centerY = imageDimensions.height / 2;
@@ -55,6 +43,17 @@ export default function TextEditorTool() {
     setTextInput('');
   };
 
+  function updateActiveTextBox(updatedProps: Partial<TextBox>) {
+    if (!textBoxes.length) return;
+
+    const activeBox = textBoxes.find((box) => box.id === activeTextBox?.id);
+    if (!activeBox) return;
+
+    const updatedBox = { ...activeBox, ...updatedProps };
+    setTextBoxes(textBoxes.map((box) => (box.id === updatedBox.id ? updatedBox : box)));
+    setActiveTextBox(updatedBox);
+  }
+
   return (
     <div className="w-full bg-white p-2 space-y-8">
       <h2 className="text-xl font-semibold text-neutral-800">Add Text</h2>
@@ -67,16 +66,32 @@ export default function TextEditorTool() {
         rows={2}
       />
 
-      <button onClick={addNewText} className="w-full py-3 bg-accent-dark hover:cursor-pointer hover:bg-sky-900 text-white rounded-lg transition-colors font-medium shadow-sm">
-        Add New Text
-      </button>
+      <div className='flex gap-3 flex-col'>
+        <button onClick={addNewText} className="w-full py-3 bg-accent-dark hover:cursor-pointer hover:bg-sky-900 text-white rounded-lg transition-colors font-medium shadow-sm px-2">
+          Add New Text
+        </button>
+
+        <button
+          onClick={() => {
+            if (!activeTextBox) return;
+            setTextBoxes(textBoxes.filter(box => box.id !== activeTextBox.id));
+            setActiveTextBox(null);
+          }}
+          className={`py-3 cursor-pointer text-white rounded-lg transition-colors font-medium shadow-sm px-2 w-full ${!activeTextBox ? 'hidden' : 'bg-rose-500 hover:bg-rose-600'}`}>
+          Delete Active Text
+        </button>
+      </div>
 
       <div className="bg-white p-1">
-        <label className="block font- font-medium text-neutral-800 mb-3">Font Family</label>
+        <label className="block font-medium text-neutral-800 mb-3">Font Family</label>
         <div className="relative">
           <select
             value={selectedFont}
-            onChange={(e) => setSelectedFont(e.target.value)}
+            onChange={(e) => {
+              const fontFamily = e.target.value;
+              setSelectedFont(fontFamily);
+              updateActiveTextBox({ fontFamily });
+            }}
             className="w-full px-3 py-2 border border-neutral-300 rounded-md appearance-none bg-white"
           >
             {fonts.map((font) => (
@@ -96,7 +111,11 @@ export default function TextEditorTool() {
               min="12"
               max="120"
               value={fontSize}
-              onChange={(e) => setFontSize(parseInt(e.target.value))}
+              onChange={(e) => {
+                const fontSize = parseInt(e.target.value);
+                setFontSize(fontSize);
+                updateActiveTextBox({ fontSize });
+              }}
               className="flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer 
                 [&::-webkit-slider-thumb]:appearance-none 
                 [&::-webkit-slider-thumb]:h-5
@@ -126,7 +145,11 @@ export default function TextEditorTool() {
           <div className="relative">
             <select
               value={fontWeight}
-              onChange={(e) => setFontWeight(e.target.value)}
+              onChange={(e) => {
+                const fontWeight = e.target.value;
+                setFontWeight(fontWeight);
+                updateActiveTextBox({ fontWeight });
+              }}
               className="w-full px-3 py-2 border border-gray-300 rounded-md appearance-none bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-8"
             >
               {fontWeights.map((weight) => (
@@ -142,21 +165,30 @@ export default function TextEditorTool() {
         <label className="block font-medium text-neutral-800 mb-3">Text Style</label>
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => setIsBold(!isBold)}
+            onClick={() => {
+              setIsBold(!isBold)
+              updateActiveTextBox({ isBold: !isBold })
+            }}
             className={`w-10 h-10 rounded-md border-2 flex items-center justify-center transition-all ${isBold ? 'border-accent-dark/80 bg-accent-dark/10 text-accent-dark' : 'border-neutral-300 hover:border-neutral-400'
               }`}
           >
             <Bold className="w-4 h-4" />
           </button>
           <button
-            onClick={() => setIsItalic(!isItalic)}
+            onClick={() => {
+              setIsItalic(!isItalic)
+              updateActiveTextBox({ isItalic: !isItalic })
+            }}
             className={`w-10 h-10 rounded-md border-2 flex items-center justify-center transition-all ${isItalic ? 'border-accent-dark/80 bg-accent-dark/10 text-accent-dark' : 'border-neutral-300 hover:border-neutral-400'
               }`}
           >
             <Italic className="w-4 h-4" />
           </button>
           <button
-            onClick={() => setIsUnderlined(!isUnderlined)}
+            onClick={() => {
+              setIsUnderlined(!isUnderlined)
+              updateActiveTextBox({ isUnderlined: !isUnderlined })
+            }}
             className={`w-10 h-10 rounded-md border-2 flex items-center justify-center transition-all ${isUnderlined ? 'border-accent-dark/80 bg-accent-dark/10 text-accent-dark' : 'border-neutral-300 hover:border-neutral-400'
               }`}
           >
@@ -175,7 +207,11 @@ export default function TextEditorTool() {
           ].map(({ value, icon: Icon }) => (
             <button
               key={value}
-              onClick={() => setTextAlign(AlignType[value as keyof typeof AlignType])}
+              onClick={() => {
+                const textAlign = AlignType[value as keyof typeof AlignType];
+                setTextAlign(textAlign);
+                updateActiveTextBox({ textAlign })
+              }}
               className={`w-10 h-10 rounded-md border-2 flex items-center justify-center transition-all ${textAlign === value ? 'border-accent-dark/80 bg-accent-dark/10 text-accent-dark' : 'border-neutral-300 hover:border-neutral-400'
                 }`}
             >
@@ -210,6 +246,7 @@ export default function TextEditorTool() {
                 key={color}
                 onClick={() => {
                   setSelectedTextColor(color)
+                  updateActiveTextBox({ color })
                 }}
                 className={`w-8 h-8 rounded-lg border transition-colors ${selectedTextColor === color ? 'border-0 ring-1 ring-black' : 'border-neutral-300 hover:border-neutral-400'
                   }`}
@@ -219,7 +256,7 @@ export default function TextEditorTool() {
             );
           })}
           {showPicker && (
-            <div className="absolute z-10 mt-2">
+            <div className="absolute z-10 -mt-96 mr-40">
               <SketchPicker color={customColor} onChange={handleColorChange} />
               <button
                 onClick={() => setShowPicker(false)}

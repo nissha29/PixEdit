@@ -1,7 +1,7 @@
 import { IconDownload, IconRedo, IconUndo } from "@/icons/icons";
 import { useActiveTabStore, useBackgroundStore, useDrawingStore, useFilterStore, useImageDimensionStore, useImagePreviewStore, useTextStore } from "@/store/store";
 import { TextBox } from "@/types/types";
-import { drawBoundingBox, getBoundingBox, getHandlerHitIndex, getHandlerPositions, isPointInRect } from "@/utils/utils";
+import { drawBoundingBox, getBoundingBox, getBox, isPointInRect } from "@/utils/utils";
 import { useEffect, useRef, useState } from "react";
 
 export default function Canvas() {
@@ -17,9 +17,8 @@ export default function Canvas() {
     const containerRef = useRef<HTMLDivElement>(null);
     const { textBoxes, setTextBoxes, activeTextBox, setActiveTextBox } = useTextStore();
     const { setImageDimensions } = useImageDimensionStore();
-    const [interactionMode, setInteractionMode] = useState<'none' | 'dragging' | 'resizing'>('none');
-    const [resizeHandlerIndex, setResizeHandlerIndex] = useState<number | null>(null);
-    const [dragStartPos, setDragStartPos] = useState<{ x: number, y: number } | null>(null);
+    const [interactionMode, setInteractionMode] = useState<'none' | 'dragging'>('none');
+    const [dragStartPos, setDragStartPos] = useState<{ x: number, y: number } | null>(null);;
 
 
     function drawText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, options: {
@@ -176,7 +175,7 @@ export default function Canvas() {
     const onMouseDownText = (e: React.MouseEvent<HTMLCanvasElement>) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
         const rect = canvas.getBoundingClientRect();
@@ -185,83 +184,65 @@ export default function Canvas() {
 
         for (let i = textBoxes.length - 1; i >= 0; i--) {
             const box = textBoxes[i];
-            const boxRect = getBoundingBox({
-                x: box.x,
-                y: box.y,
-                text: box.text,
-                font: `${box.isBold ? "bold" : box.fontWeight} ${box.fontSize}px ${box.fontFamily}`,
-                fontSize: box.fontSize,
-            }, ctx);
+            const boxRect = getBoundingBox(
+                {
+                    x: box.x,
+                    y: box.y,
+                    text: box.text,
+                    font: `${box.isBold ? "bold" : box.fontWeight} ${box.fontSize}px ${box.fontFamily}`,
+                    fontSize: box.fontSize,
+                    textAlign: box.textAlign,
+                },
+                ctx
+            );
 
             if (boxRect && isPointInRect(mouseX, mouseY, boxRect)) {
                 setActiveTextBox(box);
-
-                const { handlers } = getHandlerPositions(boxRect);
-                const hitHandler = getHandlerHitIndex(mouseX, mouseY, handlers);
-                if (hitHandler !== null) {
-                    setInteractionMode('resizing');
-                    setResizeHandlerIndex(hitHandler);
-                    setDragStartPos({ x: mouseX, y: mouseY });
-                    return;
-                }
-                setInteractionMode('dragging');
+                setInteractionMode("dragging");
                 setDragStartPos({ x: mouseX, y: mouseY });
                 return;
             }
         }
 
+        // Deselect
         setActiveTextBox(null);
-        setInteractionMode('none');
-        setResizeHandlerIndex(null);
+        setInteractionMode("none");
         setDragStartPos(null);
     };
 
     const onMouseMoveText = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        if (interactionMode === 'none' || !dragStartPos || !activeTextBox) return;
-        const canvas = canvasRef.current;
-        if (!canvas) return;
+        if (interactionMode !== "dragging" || !dragStartPos || !activeTextBox) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
-        const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
 
-        const dx = mouseX - dragStartPos.x;
-        const dy = mouseY - dragStartPos.y;
+    const dx = mouseX - dragStartPos.x;
+    const dy = mouseY - dragStartPos.y;
 
-        if (interactionMode === 'dragging') {
-            setTextBoxes(textBoxes.map(box => {
-                if (box.id === activeTextBox.id) {
-                    const movedBox = {
-                        ...box,
-                        x: box.x + dx,
-                        y: box.y + dy
-                    };
-                    setActiveTextBox(movedBox);
-                    return movedBox;
-                }
-                return box;
-            }));
-        } else if (interactionMode === 'resizing' && resizeHandlerIndex !== null) {
-            setTextBoxes(textBoxes.map(box => {
-                if (box.id === activeTextBox.id) {
-                    const newFontSize = Math.max(8, box.fontSize + dy);
-                    const resizedBox = {
-                        ...box,
-                        fontSize: newFontSize
-                    };
-                    setActiveTextBox(resizedBox);
-                    return resizedBox;
-                }
-                return box;
-            }));
+    setTextBoxes(
+      textBoxes.map((box) => {
+        if (box.id === activeTextBox.id) {
+          const movedBox = {
+            ...box,
+            x: box.x + dx,
+            y: box.y + dy,
+          };
+          setActiveTextBox(movedBox);
+          return movedBox;
         }
-        setDragStartPos({ x: mouseX, y: mouseY });
+        return box;
+      })
+    );
+
+    setDragStartPos({ x: mouseX, y: mouseY });
 
     }
 
     const onMouseUpText = () => {
-        setInteractionMode('none');
-        setResizeHandlerIndex(null);
+        setInteractionMode("none");
         setDragStartPos(null);
     }
 
@@ -403,11 +384,12 @@ export default function Canvas() {
                             text: activeTextBox.text,
                             font: `${activeTextBox.isBold ? 'bold' : activeTextBox.fontWeight} ${activeTextBox.fontSize}px ${activeTextBox.fontFamily}`,
                             fontSize: activeTextBox.fontSize,
+                            textAlign: activeTextBox.textAlign,
                         }, ctx);
 
                         if (box) {
-                            const { paddedBox, handlers } = getHandlerPositions(box);
-                            drawBoundingBox(ctx, paddedBox, handlers);
+                            const { paddedBox } = getBox(box);
+                            drawBoundingBox(ctx, paddedBox);
                         }
                     }
 
@@ -484,10 +466,9 @@ export default function Canvas() {
                     style={{
                         maxWidth: '90vw',
                         maxHeight: '80vh',
-                        borderRadius: '12px',
                         width: 'auto',
                         height: 'auto',
-                        border: '2px solid #075985',
+                        border: '1px solid #075985',
                     }}
                 />
             </div>

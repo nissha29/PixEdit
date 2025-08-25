@@ -48,5 +48,20 @@ export const filters = [
   { name: 'Warm Glow', class: 'sepia(50%) brightness(120%) saturate(130%)' }
 ];
 
+export const fonts = [
+  'Inter', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Poppins',
+  'Arial', 'Times New Roman', 'Playfair Display', 'Oswald'
+];
+
+export const fontWeights = [
+  { value: '300', label: 'Light' },
+  { value: '400', label: 'Regular' },
+  { value: '500', label: 'Medium' },
+  { value: '600', label: 'Semi Bold' },
+  { value: '700', label: 'Bold' },
+  { value: '800', label: 'Extra Bold' }
+];
+
+
 
 

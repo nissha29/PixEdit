@@ -2,35 +2,35 @@ export function isPointInRect(x: number, y: number, box: { minX: number, minY: n
   return x >= box.minX && x <= box.maxX && y >= box.minY && y <= box.maxY;
 }
 
-export function getHandlerHitIndex(x: number, y: number, handlers: { x: number, y: number }[], hitRadius = 10) {
-  for (let i = 0; i < handlers.length; i++) {
-    const h = handlers[i];
-    const dx = x - h.x;
-    const dy = y - h.y;
-    if (Math.sqrt(dx * dx + dy * dy) <= hitRadius) {
-      return i;
-    }
-  }
-  return null;
-}
-
-export function getBoundingBox({ x, y, text, font, fontSize }: { x: number, y: number, text: string, font: string, fontSize: number }, ctx: CanvasRenderingContext2D) {
+export function getBoundingBox({ x, y, text, font, fontSize, textAlign }: { x: number, y: number, text: string, font: string, fontSize: number, textAlign: string }, ctx: CanvasRenderingContext2D) {
   ctx.font = font || "24px Arial";
   const width = ctx.measureText(text).width;
   const height = fontSize * 1.2;
-  return {
-    minX: x,
-    minY: y,
-    maxX: x + width,
-    maxY: y + height
+
+  let minX = x;
+  let maxX = x + width;
+
+  if (textAlign === 'center') {
+    minX = x - width / 2;
+    maxX = x + width / 2;
+  } else if (textAlign === 'right') {
+    minX = x - width;
+    maxX = x;
   }
+
+  return {
+    minX,
+    minY: y,
+    maxX,
+    maxY: y + height
+  };
 }
 
-export function getHandlerPositions(box: {
-    minX: number;
-    minY: number;
-    maxX: number;
-    maxY: number;
+export function getBox(box: {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
 }, pad = 4) {
   const paddedBox = {
     minX: box.minX - pad,
@@ -40,31 +40,18 @@ export function getHandlerPositions(box: {
   };
   return {
     paddedBox,
-    handlers: [
-      { x: paddedBox.minX, y: paddedBox.minY },
-      { x: paddedBox.maxX, y: paddedBox.minY },
-      { x: paddedBox.maxX, y: paddedBox.maxY },
-      { x: paddedBox.minX, y: paddedBox.maxY },
-    ]
-  }
+  };
 }
 
-export function drawBoundingBox(ctx: CanvasRenderingContext2D, box: { minX: number; minY: number; maxX: number; maxY: number }, handlers: {x: number, y: number}[]) {
+
+export function drawBoundingBox(ctx: CanvasRenderingContext2D, box: { minX: number; minY: number; maxX: number; maxY: number }) {
   ctx.save();
-  ctx.strokeStyle = '#00CCCC';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([5, 3]);
+
+  ctx.strokeStyle = '#075985';
+  ctx.lineWidth = 2;
 
   ctx.strokeRect(box.minX, box.minY, box.maxX - box.minX, box.maxY - box.minY);
 
-  ctx.setLineDash([]);
-  ctx.fillStyle = '#00FFFFaa';
-
-  handlers.forEach(({ x, y }) => {
-    ctx.beginPath();
-    ctx.arc(x, y, 6, 0, Math.PI * 2);
-    ctx.fill();
-  });
-
+  ctx.fillStyle = '#075985';
   ctx.restore();
 }
