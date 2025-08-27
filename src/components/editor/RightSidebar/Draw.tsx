@@ -54,7 +54,7 @@ export default function Draw() {
     <div className="w-full bg-white px-6 py-2 space-y-8">
       <h3 className="text-xl font-semibold text-gray-800">Draw</h3>
 
-      <div className="space-y-4">
+      <div className="space-y-4 flex flex-col gap-7">
         <div className="grid grid-cols-2 gap-2">
           {tools.map((toolItem) => (
             <button

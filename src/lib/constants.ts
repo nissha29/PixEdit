@@ -49,8 +49,8 @@ export const filters = [
 ];
 
 export const fonts = [
-  'Inter', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Poppins',
-  'Arial', 'Times New Roman', 'Playfair Display', 'Oswald'
+  'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Poppins',
+  'Arial', 'Playfair Display', 'Oswald'
 ];
 
 export const fontWeights = [

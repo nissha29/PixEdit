@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Quattrocento,
+import { 
+  Quattrocento,
   Roboto,
   Open_Sans,
   Lato,
@@ -17,43 +18,43 @@ const quattrocento = Quattrocento({
   subsets: ['latin'],
 });
 
-const roboto = Roboto({
+export const roboto = Roboto({
   weight: ["400", "700"],
   variable: "--font-roboto",
   subsets: ["latin"],
 });
 
-const openSans = Open_Sans({
+export const openSans = Open_Sans({
   weight: ["400", "700"],
   variable: "--font-open-sans",
   subsets: ["latin"],
 });
 
-const lato = Lato({
+export const lato = Lato({
   weight: ["400", "700"],
   variable: "--font-lato",
   subsets: ["latin"],
 });
 
-const montserrat = Montserrat({
+export const montserrat = Montserrat({
   weight: ["400", "700"],
   variable: "--font-montserrat",
   subsets: ["latin"],
 });
 
-const poppins = Poppins({
+export const poppins = Poppins({
   weight: ["400", "700"],
   variable: "--font-poppins",
   subsets: ["latin"],
 });
 
-const playfairDisplay = Playfair_Display({
+export const playfairDisplay = Playfair_Display({
   weight: ["400", "700"],
   variable: "--font-playfair-display",
   subsets: ["latin"],
 });
 
-const oswald = Oswald({
+export const oswald = Oswald({
   weight: ["400", "700"],
   variable: "--font-oswald",
   subsets: ["latin"],
@@ -71,7 +72,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${quattrocento.className} ${roboto.className} ${openSans.className} ${lato.className} ${montserrat.className} ${playfairDisplay} ${oswald} ${poppins.className}`}
+        className={`${quattrocento.className} antialiased`}
       >
         <Providers>
           {children}

@@ -3,6 +3,8 @@ import {
   AlignType,
   Background,
   BackgroundStore,
+  BlurStore,
+  BlurType,
   BrushType,
   Dimension,
   DrawingStore,
@@ -129,5 +131,10 @@ export const useTextStore = create<TextStore>((set) => ({
 export const useImageDimensionStore = create<ImageDimensionStore>((set) => ({
   imageDimensions: { width: 0, height: 0 },
   setImageDimensions: (imageDimensions: Dimension) => set({ imageDimensions }),
+}));
+
+export const useBlurStore = create<BlurStore>((set) => ({
+  selectedBlur: BlurType.blur,
+  setSelectedBlur: (selectedBlur: BlurType) => set({ selectedBlur }),
 }));
 

@@ -3,20 +3,17 @@
 import React, { useState } from 'react';
 import LeftSidebar from '@/components/editor/LeftSidebar';
 import Crop from '@/components/editor/RightSidebar/Crop';
-import Adjust from '@/components/editor/RightSidebar/AddBlur';
 import Filter from '@/components/editor/RightSidebar/Filters';
 import Text from '@/components/editor/RightSidebar/Text';
 import Background from '@/components/editor/RightSidebar/Background';
 import Canvas from '@/components/editor/Canvas';
 import { useActiveTabStore } from '@/store/store';
 import Draw from '@/components/editor/RightSidebar/Draw';
+import AddBlur from '@/components/editor/RightSidebar/AddBlur';
 
 const PhotoEditor = () => {
     const { activeTab } = useActiveTabStore();
     const [rotation, setRotation] = useState(0);
-    const [brightness, setBrightness] = useState(100);
-    const [contrast, setContrast] = useState(100);
-    const [saturation, setSaturation] = useState(100);
 
     console.log('Current activeTab:', activeTab);
 
@@ -25,8 +22,8 @@ const PhotoEditor = () => {
             case 'crop':
                 return <Crop rotation={rotation} setRotation={setRotation}/>
 
-            case 'adjust':
-                return <Adjust brightness={brightness} setBrightness={setBrightness} contrast={contrast} setContrast={setContrast} saturation={saturation} setSaturation={setSaturation}/>
+            case 'addBlur':
+                return <AddBlur />
 
             case 'filters':
                 return <Filter />

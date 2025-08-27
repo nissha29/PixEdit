@@ -57,20 +57,89 @@ export default function Canvas() {
         }
     }
 
+    const resetContextStyles = (ctx: CanvasRenderingContext2D) => {
+        ctx.globalAlpha = 1;
+        ctx.lineDashOffset = 0;
+        ctx.setLineDash([]);
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.lineCap = brushType === 'round' ? 'round' : 'square';
+        ctx.lineJoin = brushType === 'round' ? 'round' : 'miter';
+
+        switch (tool) {
+            case 'brush':
+                ctx.strokeStyle = selectedColor;
+                ctx.lineWidth = brushSize;
+
+                if (brushType === 'soft') {
+                    ctx.shadowColor = selectedColor;
+                    ctx.shadowBlur = brushSize * 1.5;
+                }
+                break;
+
+            case 'pencil':
+                ctx.globalAlpha = 0.6;
+                ctx.lineWidth = brushSize * 0.6;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                const patternCanvas = document.createElement('canvas');
+                patternCanvas.width = patternCanvas.height = 20;
+                const pctx = patternCanvas.getContext('2d');
+                if (pctx) {
+                    const rgbaColor = hexToRGBA(selectedColor, 0.15);
+                    for (let i = 0; i < 50; i++) {
+                        pctx.fillStyle = rgbaColor;
+                        pctx.beginPath();
+                        pctx.arc(Math.random() * 20, Math.random() * 20, 1, 0, Math.PI * 2);
+                        pctx.fill();
+                    }
+                    const pattern = ctx.createPattern(patternCanvas, 'repeat');
+                    if (pattern) ctx.strokeStyle = pattern;
+                }
+                ctx.setLineDash([]);
+                break;
+
+            case 'dotted':
+                ctx.strokeStyle = selectedColor;
+                ctx.lineWidth = brushSize;
+                ctx.setLineDash([5, 15]);
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                break;
+
+            case 'chalk':
+                ctx.globalAlpha = 0.6;
+                ctx.lineWidth = brushSize * 10;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.shadowColor = selectedColor;
+                ctx.shadowBlur = brushSize * 1;
+                ctx.strokeStyle = selectedColor;
+                ctx.setLineDash([]);
+                break;
+
+            default:
+                ctx.strokeStyle = selectedColor;
+                ctx.lineWidth = brushSize;
+        }
+    };
+
     const onMouseDownDraw = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (activeTab !== 'draw') return;
         setIsDrawing(true);
         const canvas = canvasRef.current;
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-                const rect = canvas.getBoundingClientRect();
-                const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-                const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-            }
-        }
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+        resetContextStyles(ctx);
+
+        ctx.beginPath();
+        ctx.moveTo(x, y);
     };
 
     function hexToRGBA(hex: string, alpha = 1): string {
@@ -84,91 +153,23 @@ export default function Canvas() {
         if (!isDrawing) return;
         if (activeTab !== 'draw') return;
         const canvas = canvasRef.current;
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-                const rect = canvas.getBoundingClientRect();
-                const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-                const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const y = (e.clientY - rect.top) * (canvas.height / rect.height);
 
-                switch (tool) {
-                    case 'brush':
-                        ctx.globalAlpha = 1.0;
-                        ctx.strokeStyle = selectedColor;
-                        ctx.lineWidth = brushSize;
-                        if (brushType === 'soft') {
-                            ctx.shadowColor = selectedColor;
-                            ctx.shadowBlur = brushSize * 1.5;
-                            ctx.lineCap = 'round';
-                            ctx.lineJoin = 'round';
-                        } else if (brushType === 'round') {
-                            ctx.shadowColor = 'transparent';
-                            ctx.shadowBlur = 0;
-                            ctx.lineCap = 'round';
-                            ctx.lineJoin = 'round';
-                        } else {
-                            ctx.shadowColor = 'transparent';
-                            ctx.shadowBlur = 1;
-                            ctx.lineCap = 'square';
-                            ctx.lineJoin = 'miter';
-                        }
-
-                        break;
-                    case 'pencil':
-                        ctx.globalAlpha = 0.6;
-
-                        const patternCanvas = document.createElement('canvas');
-                        patternCanvas.width = patternCanvas.height = 20;
-                        const pctx = patternCanvas.getContext('2d');
-                        if (pctx) {
-                            const rgbaColor = hexToRGBA(selectedColor, 0.15);
-                            for (let i = 0; i < 50; i++) {
-                                pctx.fillStyle = rgbaColor;
-                                pctx.beginPath();
-                                pctx.arc(Math.random() * 20, Math.random() * 20, 1, 0, Math.PI * 2);
-                                pctx.fill();
-                            }
-                            const pattern = ctx.createPattern(patternCanvas, 'repeat');
-                            if (pattern) {
-                                ctx.strokeStyle = pattern;
-                            }
-                        }
-
-                        ctx.lineWidth = brushSize * 0.6;
-                        ctx.lineCap = 'round';
-                        ctx.lineJoin = 'round';
-                        ctx.setLineDash([]);
-                        break;
-                    case 'dotted':
-                        ctx.globalAlpha = 1.0;
-                        ctx.strokeStyle = selectedColor;
-                        ctx.lineWidth = brushSize;
-                        ctx.setLineDash([5, 15]);
-                        ctx.lineCap = 'round';
-                        ctx.lineJoin = 'round';
-                        break;
-                    case 'chalk':
-                        ctx.globalAlpha = 0.6;
-                        ctx.lineWidth = brushSize * 10;
-                        ctx.lineCap = 'round';
-                        ctx.lineJoin = 'round';
-                        ctx.shadowColor = selectedColor;
-                        ctx.shadowBlur = brushSize * 3;
-                        ctx.strokeStyle = selectedColor;
-                        ctx.setLineDash([]);
-                        break;
-                }
-
-                ctx.lineCap = brushType === 'round' ? 'round' : 'square';
-                ctx.lineJoin = brushType === 'round' ? 'round' : 'miter';
-
-                ctx.lineTo(x, y);
-                ctx.stroke();
-            }
-        }
+        ctx.lineTo(x, y);
+        ctx.stroke();
     };
 
     const onMouseUpDraw = () => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.closePath();
         setIsDrawing(false);
     };
 
@@ -204,7 +205,6 @@ export default function Canvas() {
             }
         }
 
-        // Deselect
         setActiveTextBox(null);
         setInteractionMode("none");
         setDragStartPos(null);
@@ -212,32 +212,32 @@ export default function Canvas() {
 
     const onMouseMoveText = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (interactionMode !== "dragging" || !dragStartPos || !activeTextBox) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+        const canvas = canvasRef.current;
+        if (!canvas) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
-    const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
 
-    const dx = mouseX - dragStartPos.x;
-    const dy = mouseY - dragStartPos.y;
+        const dx = mouseX - dragStartPos.x;
+        const dy = mouseY - dragStartPos.y;
 
-    setTextBoxes(
-      textBoxes.map((box) => {
-        if (box.id === activeTextBox.id) {
-          const movedBox = {
-            ...box,
-            x: box.x + dx,
-            y: box.y + dy,
-          };
-          setActiveTextBox(movedBox);
-          return movedBox;
-        }
-        return box;
-      })
-    );
+        setTextBoxes(
+            textBoxes.map((box) => {
+                if (box.id === activeTextBox.id) {
+                    const movedBox = {
+                        ...box,
+                        x: box.x + dx,
+                        y: box.y + dy,
+                    };
+                    setActiveTextBox(movedBox);
+                    return movedBox;
+                }
+                return box;
+            })
+        );
 
-    setDragStartPos({ x: mouseX, y: mouseY });
+        setDragStartPos({ x: mouseX, y: mouseY });
 
     }
 
