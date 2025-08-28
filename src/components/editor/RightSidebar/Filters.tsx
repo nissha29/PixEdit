@@ -7,7 +7,7 @@ export default function Filters() {
     const mockImageURL = "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=800&h=600&fit=crop";
 
     return <div className="space-y-6" style={{ scrollbarWidth: 'none' }}>
-        <h3 className="text-xl font-semibold text-neutral-800 mb-4">Filters</h3>
+        <h3 className="text-xl font-semibold text-neutral-200 mb-4">Filters</h3>
         <div className="grid grid-cols-2 gap-3">
             {filters.map((filter, index) => (
                 <div key={index} className="text-center">
@@ -19,7 +19,7 @@ export default function Filters() {
                         }}
                         onClick={() => setFilter(filter)}
                     />
-                    <span className="text-xs text-neutral-600">{filter.name}</span>
+                    <span className="text-xs text-neutral-200">{filter.name}</span>
                 </div>
             ))}
         </div>

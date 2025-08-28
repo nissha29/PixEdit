@@ -27,10 +27,10 @@
 
 :root {
   --radius: 0.625rem;
-  --background: #ffffff;
-  --foreground: #101010;
-  --accent-dark: #075985;
-  --accent-light: #7DD3FC;
+  --background: #101010;
+  --foreground: #ffffff;
+  --accent-dark: #40ac02;
+  --accent-light: #40ac02c4;
 }
 
 .dark {

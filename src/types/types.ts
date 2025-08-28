@@ -164,11 +164,17 @@ export type ImageDimensionStore = {
 export enum BlurType {
   pixelate = 'pixelate',
   smudge = 'smudge',
-  dots = 'dots',
+  snowy = 'snowy',
   blur = 'blur',
 }
 
 export type BlurStore = {
   selectedBlur: BlurType,
   setSelectedBlur: (selectedBlur: BlurType) => void,
+
+  blurRadius: number,
+  setBlurRadius: (blurRadius: number) => void,
+
+  blurStrength: number,
+  setBlurStrength: (brushSize: number) => void,
 }

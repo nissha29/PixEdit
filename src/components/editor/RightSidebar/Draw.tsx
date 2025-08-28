@@ -51,8 +51,8 @@ export default function Draw() {
   }, []);
 
   return (
-    <div className="w-full bg-white px-6 py-2 space-y-8">
-      <h3 className="text-xl font-semibold text-gray-800">Draw</h3>
+    <div className="w-full bg-background px-6 py-2 space-y-8">
+      <h3 className="text-xl font-semibold text-neutral-200">Draw</h3>
 
       <div className="space-y-4 flex flex-col gap-7">
         <div className="grid grid-cols-2 gap-2">
@@ -72,7 +72,7 @@ export default function Draw() {
         </div>
 
         <div>
-          <h4 className="font-semibold text-neutral-800 mb-4">Solid Colors</h4>
+          <h4 className="font-semibold text-neutral-200 mb-4">Solid Colors</h4>
           <div className="grid grid-cols-6 gap-2">
             {colors.map((color, index) => {
               if (index === colors.length - 1) {
@@ -83,8 +83,7 @@ export default function Draw() {
                     onClick={() => {
                       setShowPicker(!showPicker)
                     }}
-                    className={`w-8 h-8 rounded-lg border transition-colors ${selectedColor === customColor ? 'border-0' : 'border-neutral-300 hover:border-neutral-400'
-                      }`}
+                    className={`w-8 h-8 rounded-lg border transition-colors`}
                     style={{ background: 'conic-gradient(red, yellow, lime, aqua, blue, magenta, red)' }}
                     title="Pick custom color"
                   />
@@ -96,7 +95,7 @@ export default function Draw() {
                   onClick={() => {
                     setSelectedColor(color)
                   }}
-                  className={`w-8 h-8 rounded-lg border transition-colors ${selectedColor === color ? 'border-0 ring-1 ring-black' : 'border-neutral-300 hover:border-neutral-400'
+                  className={`w-8 h-8 rounded-lg border transition-colors ${selectedColor === color && 'border-0 ring-1 ring-white'
                     }`}
                   style={{ backgroundColor: color }}
                   title={color}
@@ -119,7 +118,7 @@ export default function Draw() {
         </div>
 
         <div>
-          <label className="block font-semibold text-neutral-800 mb-2">
+          <label className="block font-semibold text-neutral-200 mb-2">
             Brush Size: {brushSize}px
           </label>
           <input
@@ -134,15 +133,18 @@ export default function Draw() {
                 [&::-webkit-slider-thumb]:rounded
                 [&::-webkit-slider-thumb]:bg-accent-dark
             "
+            style={{
+              background: `linear-gradient(to right, #40ac02 0%, #40ac02 ${((brushSize - 1) / (20 - 1)) * 100}%, #e5e7eb ${((brushSize - 1) / (20 - 1)) * 100}%, #e5e7eb 100%)`
+            }}
           />
-          <div className="flex justify-between text-xs text-neutral-800 mt-1">
+          <div className="flex justify-between text-xs text-neutral-200 mt-1">
             <span>1px</span>
             <span>20px</span>
           </div>
         </div>
 
         <div>
-          <label className="block font-semibold text-neutral-900 mb-2">
+          <label className="block font-semibold text-neutral-200 mb-2">
             Brush Type
           </label>
           <div className="grid grid-cols-3 gap-1">
@@ -152,7 +154,7 @@ export default function Draw() {
                 onClick={() => setBrushType(BrushType[type.id as keyof typeof BrushType])}
                 className={`px-2 py-1.5 rounded-md text-xs transition-colors ${brushType === type.id
                   ? 'bg-accent-dark text-white'
-                  : 'bg-neutral-200 hover:bg-neutral-300 text-neutral-800'
+                  : 'bg-neutral-200 hover:bg-neutral-300 hover:cursor-pointer text-neutral-800'
                   }`}
               >
                 {type.label}

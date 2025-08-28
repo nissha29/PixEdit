@@ -23,7 +23,7 @@ export default function Background() {
     : '';
 
   const blurRemoveBgClass = hasRemovedBackground
-    ? 'pointer-events-none select-none blur opacity-100'
+    ? 'pointer-events-none select-none hidden'
     : '';
   const colors = [nullColor, ...baseColors, customColor];
 
@@ -62,9 +62,9 @@ export default function Background() {
 
 
   return (
-    <div className="w-full bg-white px-6 py-2 space-y-8">
+    <div className="w-full bg-background px-6 py-2 space-y-8">
       <div>
-        <h3 className="text-xl font-semibold text-neutral-800 mb-4">Background</h3>
+        <h3 className="text-xl font-semibold text-neutral-200 mb-8">Background</h3>
         <div className="flex flex-col gap-3 space-y-4">
           <button
             onClick={() => {
@@ -77,7 +77,7 @@ export default function Background() {
 
           <div className={`${blurRestClass} flex flex-col gap-6`}>
             <div>
-              <h4 className="font-semibold text-neutral-800 mb-4">Solid Colors</h4>
+              <h4 className="font-semibold text-neutral-200 mb-4">Solid Colors</h4>
               <div className="grid grid-cols-6 gap-2">
                 {colors.map((color, index) => {
                   if (index === colors.length - 1) {
@@ -111,7 +111,7 @@ export default function Background() {
                         style={{ backgroundColor: color }}
                         title={color}
                       >
-                        <IconBan className='w-4 h-4 text-center' />
+                        <IconBan className='w-4 h-4 text-center text-white' />
                       </button>
                     );
                   }
@@ -148,7 +148,7 @@ export default function Background() {
             </div>
 
             <div>
-              <h4 className="font-semibold text-neutral-800 mb-3">Gradients</h4>
+              <h4 className="font-semibold text-neutral-200 mb-3">Gradients</h4>
               <div className="grid grid-cols-4 gap-2">
                 {gradients.map((gradient, index) => {
                   const gradientStr = JSON.stringify(gradient);
@@ -173,7 +173,7 @@ export default function Background() {
               </div>
             </div>
             <div>
-              <h4 className="font-semibold text-neutral-800 mb-3">Custom</h4>
+              <h4 className="font-semibold text-neutral-200 mb-3">Custom</h4>
 
               <div className="flex space-x-4 overflow-x-auto py-2 px-1 mb-4 custom-scrollbar" style={{ scrollbarWidth: 'none'}}>
                 {customImages.map((src, idx) => (
@@ -196,7 +196,7 @@ export default function Background() {
 
 
               <div className="relative inline-block w-full">
-                <button className="w-full py-3 border-2 border-dashed border-neutral-300 hover:border-neutral-400 rounded-lg text-neutral-600 hover:text-neutral-700 transition-colors text-sm">
+                <button className="w-full py-3 border-2 border-dashed border-neutral-300 hover:border-neutral-400 rounded-lg text-neutral-200 hover:text-neutral-300 transition-colors text-sm">
                   Upload Background Image
                 </button>
                 <input

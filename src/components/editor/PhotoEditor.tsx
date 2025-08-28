@@ -54,12 +54,12 @@ const PhotoEditor = () => {
     };
 
     return (
-        <div className="h-screen bg-white text-neutral-800 flex">
+        <div className="h-screen bg-background text-neutral-800 flex">
             <LeftSidebar />
 
             <Canvas />
 
-            <aside className="w-80 bg-white p-6 overflow-y-auto border-l border-neutral-200 z-10">
+            <aside className="w-80 bg-background p-6 overflow-y-auto border-l border-neutral-800 z-10">
                 <div className="transition-all duration-300">
                     {renderSidebarContent()}
                 </div>

@@ -83,16 +83,16 @@ function Hero() {
 
                     <div className='flex mt-16 gap-24 w-full items-center justify-center px-6'>
                         <div>
-                            <Button onClick={() => signIn('google', { callbackUrl: '/upload' })} className='bg-accent-dark text-white hover:bg-sky-900 text-3xl px-5 py-4'>Start Editing Now</Button>
+                            <Button onClick={() => signIn('google', { callbackUrl: '/upload' })} className='bg-accent-dark text-white hover:bg-accent-light text-3xl px-5 py-4'>Start Editing Now</Button>
                         </div>
                     </div>
                 </div>
 
                 <div className='flex justify-end items-end'>
-                    <div className='border dark:border-accent-light border-sky-600 translate-x-1/2 -translate-y-64 rotate-90 w-3xl dark:blur-xs'></div>
+                    <div className='border border-accent-light/30 translate-x-1/2 -translate-y-64 rotate-90 w-3xl'></div>
                 </div>
                 <div className='transform-3d mt-16'>
-                    <div className='border dark:border-accent-light border-sky-400 w-7xl translate-x-20 dark:blur-xs'></div>
+                    <div className='border border-accent-light/30 w-7xl translate-x-11'></div>
                 </div>
             </div>
             <Video />

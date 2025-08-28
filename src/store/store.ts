@@ -136,5 +136,11 @@ export const useImageDimensionStore = create<ImageDimensionStore>((set) => ({
 export const useBlurStore = create<BlurStore>((set) => ({
   selectedBlur: BlurType.blur,
   setSelectedBlur: (selectedBlur: BlurType) => set({ selectedBlur }),
+
+  blurRadius: 10,
+  setBlurRadius: (blurRadius: number) => set({ blurRadius }),
+
+  blurStrength: 25,
+  setBlurStrength: (blurStrength: number) => set({ blurStrength }),
 }));
 

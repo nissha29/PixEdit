@@ -14,11 +14,11 @@ export default function LeftSidebar() {
     ];
 
     return (
-        <aside className="w-28 h-full bg-white border-r border-neutral-200 flex flex-col items-center p-10 space-y-2 z-20">
+        <aside className="w-28 h-full bg-background border-r border-neutral-800 flex flex-col items-center p-10 space-y-2 z-20">
             {toolbarItems.map((item) => {
                 const Icon = item.icon;
                 return (
-                    <div key={item.id} className='flex flex-col justify-center items-center mt-3'>
+                    <div key={item.id} className='flex flex-col justify-center items-center mt-5'>
                         <div className='flex flex-col justify-center items-center gap-1.5'>
                             <button
                                 onClick={() => {
@@ -27,13 +27,13 @@ export default function LeftSidebar() {
                                 }}
                                 className={`p-3 rounded-xl transition-all duration-200 ease-in-out cursor-pointer ${activeTab === item.id
                                     ? `${item.color} text-white shadow-lg transform scale-105`
-                                    : 'bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400 text-neutral-600 hover:shadow-md active:shadow-lg'
+                                    : 'bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-400 text-neutral-100 hover:shadow-md active:shadow-lg'
                                     }`}
                                 title={item.label}
                             >
-                                <Icon className="w-5 h-5" />
+                                <Icon className="w-5 h-5 text-white" />
                             </button>
-                            <div className='text-center text-neutral-800'>{item.label}</div>
+                            <div className='text-center text-neutral-200'>{item.label}</div>
                         </div>
                     </div>
                 );
