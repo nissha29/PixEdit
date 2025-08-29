@@ -1,7 +1,7 @@
-import { IconDownload, IconRedo, IconUndo } from "@/icons/icons";
-import { useActiveTabStore, useBackgroundStore, useBlurStore, useDrawingStore, useFilterStore, useImageDimensionStore, useImagePreviewStore, useTextStore } from "@/store/store";
+import { IconDownload, IconRedo, IconUndo, IconUpload } from "@/icons/icons";
+import { useActiveTabStore, useBackgroundStore, useBlurStore, useDrawingStore, useFileStore, useFilterStore, useImageDimensionStore, useImagePreviewStore, useTextStore } from "@/store/store";
 import { TextBox } from "@/types/types";
-import { drawText, blur, snowy, drawBoundingBox, getBoundingBox, getBox, getCanvasCoords, isPointInRect, pixelate, smudge, resetContextStyles } from "@/utils/utils";
+import { drawText, blur, snowy, drawBoundingBox, getBoundingBox, getBox, getCanvasCoords, isPointInRect, pixelate, smudge, resetContextStyles, drawBoundingBoxForCrop } from "@/utils/utils";
 import { useEffect, useRef, useState } from "react";
 
 export default function Canvas() {
@@ -22,6 +22,25 @@ export default function Canvas() {
     const [dragStartPos, setDragStartPos] = useState<{ x: number, y: number } | null>(null);
     const { selectedBlur, blurRadius, blurStrength } = useBlurStore();
     let lastPos: { x: number; y: number } | null = null;
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const { setDataURL } = useImagePreviewStore();
+    const { setFile } = useFileStore()
+
+    const triggerFileSelect = () => {
+        fileInputRef.current?.click();
+    };
+
+    const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            setDataURL(event.target?.result as string);
+        };
+        reader.readAsDataURL(file);
+        setFile(file);
+    };
 
     const onMouseDownDraw = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (activeTab !== 'draw') return;
@@ -341,6 +360,10 @@ export default function Canvas() {
                             drawBoundingBox(ctx, paddedBox);
                         }
                     }
+                    if(activeTab === 'crop') {
+                        const box = { minX: 0, minY: 0, maxX: width, maxY: height };
+                        drawBoundingBoxForCrop(ctx, box);
+                    }
 
                 }
             }
@@ -349,78 +372,91 @@ export default function Canvas() {
     }, [dataURL, background, filter, textBoxes, activeTab, setImageDimensions, activeTextBox]);
 
     return (
-        <main className="flex-1 flex flex-col">
-            <header className="bg-background p-4 border-b border-neutral-800 shadow-sm">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                        <div className="flex items-center">
-                            <div className="text-accent-dark text-3xl font-bold">pix</div>
-                            <div className="text-2xl font-bold text-neutral-100">EDiT</div>
-                        </div>
-                    </div>
-
-                    <div className="flex justify-between items-center space-x-2">
-                        <button className="p-2 bg-neutral-800 hover:bg-neutral-700 hover:cursor-pointer rounded-lg transition-colors">
-                            <IconUndo className="w-5 h-5 text-white" />
-                        </button>
-                        <button className="p-2 bg-neutral-800 hover:bg-neutral-700 hover:cursor-pointer rounded-lg transition-colors">
-                            <IconRedo className="w-5 h-5 text-white" />
-                        </button>
-                        <button onClick={() => setOpen(prev => !prev)} className="px-4 py-2 bg-accent-dark hover:bg-accent-light hover:cursor-pointer text-white font-semibold rounded-lg transition-colors flex items-center space-x-2">
-                            <IconDownload className="w-5 h-5" />
-                            <span>Export</span>
-                        </button>
-                    </div>
-                </div>
-                {open && (
-                    <div className="relative">
-                        <div className="absolute right-2 top-2 bg-background border border-neutral-800 rounded-lg shadow-lg p-4 w-48 z-10">
-                            <div className="flex items-center gap-2 mb-3">
-                                <IconDownload className="w-4 h-4 text-neutral-300" />
-                                <label className="font-medium text-neutral-200">Export as:</label>
+        <>
+            <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                className="hidden"
+                onChange={onFileChange}
+            />
+            <main className="flex-1 flex flex-col">
+                <header className="bg-background p-4 border-b-2 border-neutral-800 shadow-sm">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                            <div className="flex items-center">
+                                <div className="text-accent-dark text-3xl font-bold">pix</div>
+                                <div className="text-2xl font-bold text-neutral-100">EDiT</div>
                             </div>
+                        </div>
 
-                            <select
-                                className="w-full p-2 rounded-md border border-neutral-800 bg-background text-neutral-200 focus:outline-none transition-colors"
-                                value={exportFormat}
-                                onChange={(e) => setExportFormat(e.target.value)}
-                            >
-                                <option value="png">PNG</option>
-                                <option value="jpg">JPG</option>
-                                <option value="jpeg">JPEG</option>
-                                <option value="webp">WEBP</option>
-                            </select>
-
-                            <button
-                                className="w-full mt-3 bg-accent-dark hover:bg-accent-light hover:cursor-pointer text-white py-2 px-4 rounded-md transition-colors font-medium"
-                                onClick={() => downloadImage()}
-                            >
-                                Download
+                        <div className="flex justify-between items-center space-x-2">
+                            <button className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 hover:cursor-pointer rounded transition-colors">
+                                <IconUndo className="w-5 h-5 text-white" />
+                            </button>
+                            <button className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 hover:cursor-pointer rounded transition-colors">
+                                <IconRedo className="w-5 h-5 text-white" />
+                            </button>
+                            <button onClick={() => triggerFileSelect()} className="px-3 py-2 bg-neutral-200 hover:bg-neutral-300 hover:cursor-pointer text-neutral-800 rounded transition-colors flex items-center space-x-2">
+                                <IconUpload className="w-5 h-5" />
+                                <span>Upload new</span>
+                            </button>
+                            <button onClick={() => setOpen(prev => !prev)} className="px-3 py-2 bg-accent-dark hover:bg-accent-light hover:cursor-pointer text-white tracking-wider rounded transition-colors flex items-center space-x-2">
+                                <IconDownload className="w-5 h-5" />
+                                <span>Export</span>
                             </button>
                         </div>
                     </div>
-                )}
-            </header>
+                    {open && (
+                        <div className="relative">
+                            <div className="absolute right-2 top-2 bg-background border border-neutral-800 rounded-lg shadow-lg p-4 w-48 z-10">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <IconDownload className="w-4 h-4 text-neutral-300" />
+                                    <label className="font-medium text-neutral-200">Export as:</label>
+                                </div>
 
-            <div
-                ref={containerRef}
-                className="flex-1 bg-background p-8 flex items-center justify-center overflow-auto relative"
-            >
-                <canvas
-                    ref={canvasRef}
-                    onMouseDown={onMouseDown}
-                    onMouseMove={onMouseMove}
-                    onMouseUp={onMouseUp}
-                    onMouseLeave={onMouseUp}
-                    style={{
-                        maxWidth: '90vw',
-                        maxHeight: '80vh',
-                        width: 'auto',
-                        height: 'auto',
-                        border: '1px solid #40ac02',
-                    }}
-                />
-            </div>
-        </main>
+                                <select
+                                    className="w-full p-2 rounded-md border border-neutral-800 bg-background text-neutral-200 focus:outline-none transition-colors"
+                                    value={exportFormat}
+                                    onChange={(e) => setExportFormat(e.target.value)}
+                                >
+                                    <option value="png">PNG</option>
+                                    <option value="jpg">JPG</option>
+                                    <option value="jpeg">JPEG</option>
+                                    <option value="webp">WEBP</option>
+                                </select>
+
+                                <button
+                                    className="w-full mt-3 bg-accent-dark hover:bg-accent-light hover:cursor-pointer text-white py-2 px-4 rounded-md transition-colors font-medium"
+                                    onClick={() => downloadImage()}
+                                >
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </header>
+
+                <div
+                    ref={containerRef}
+                    className="flex-1 bg-background p-8 flex items-center justify-center overflow-auto relative"
+                >
+                    <canvas
+                        ref={canvasRef}
+                        onMouseDown={onMouseDown}
+                        onMouseMove={onMouseMove}
+                        onMouseUp={onMouseUp}
+                        onMouseLeave={onMouseUp}
+                        style={{
+                            maxWidth: '40vw',
+                            maxHeight: '80vh',
+                            width: 'auto',
+                            height: 'auto',
+                            border: '2px solid #40ac02c4',
+                        }}
+                    />
+                </div>
+            </main>
+        </>
     );
 }

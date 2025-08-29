@@ -178,3 +178,11 @@ export type BlurStore = {
   blurStrength: number,
   setBlurStrength: (brushSize: number) => void,
 }
+
+export type CropStore = {
+  rotation: number,
+  setRotation: (rotation: number) => void,
+
+  selectedRatio: string,
+  setSelectedRatio: (selectedRatio: string) => void,
+}

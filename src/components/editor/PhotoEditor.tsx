@@ -1,6 +1,5 @@
 'use client'
 
-import React, { useState } from 'react';
 import LeftSidebar from '@/components/editor/LeftSidebar';
 import Crop from '@/components/editor/RightSidebar/Crop';
 import Filter from '@/components/editor/RightSidebar/Filters';
@@ -13,14 +12,11 @@ import AddBlur from '@/components/editor/RightSidebar/AddBlur';
 
 const PhotoEditor = () => {
     const { activeTab } = useActiveTabStore();
-    const [rotation, setRotation] = useState(0);
-
-    console.log('Current activeTab:', activeTab);
 
     const renderSidebarContent = () => {
         switch (activeTab) {
             case 'crop':
-                return <Crop rotation={rotation} setRotation={setRotation}/>
+                return <Crop />
 
             case 'addBlur':
                 return <AddBlur />
@@ -59,7 +55,7 @@ const PhotoEditor = () => {
 
             <Canvas />
 
-            <aside className="w-80 bg-background p-6 overflow-y-auto border-l border-neutral-800 z-10">
+            <aside className="w-80 bg-background p-6 overflow-y-auto border-l-2 border-neutral-800 z-10">
                 <div className="transition-all duration-300">
                     {renderSidebarContent()}
                 </div>

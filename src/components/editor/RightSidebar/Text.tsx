@@ -77,7 +77,7 @@ export default function TextEditorTool() {
             setTextBoxes(textBoxes.filter(box => box.id !== activeTextBox.id));
             setActiveTextBox(null);
           }}
-          className={`py-3 cursor-pointer text-white rounded-lg transition-colors font-medium shadow-sm px-2 w-full ${!activeTextBox ? 'hidden' : 'bg-rose-500 hover:bg-rose-600'}`}>
+          className={`py-3 cursor-pointer text-white rounded-lg transition-colors font-medium shadow-sm px-2 w-full ${!activeTextBox ? 'hidden' : 'bg-neutral-700 hover:bg-rose-600'}`}>
           Delete Active Text
         </button>
       </div>

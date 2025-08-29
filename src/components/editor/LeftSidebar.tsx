@@ -14,7 +14,7 @@ export default function LeftSidebar() {
     ];
 
     return (
-        <aside className="w-28 h-full bg-background border-r border-neutral-800 flex flex-col items-center p-10 space-y-2 z-20">
+        <aside className="w-28 h-full bg-background border-r-2 border-neutral-800 flex flex-col items-center p-10 space-y-2 z-20">
             {toolbarItems.map((item) => {
                 const Icon = item.icon;
                 return (

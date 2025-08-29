@@ -6,6 +6,7 @@ import {
   BlurStore,
   BlurType,
   BrushType,
+  CropStore,
   Dimension,
   DrawingStore,
   FileStore,
@@ -144,3 +145,10 @@ export const useBlurStore = create<BlurStore>((set) => ({
   setBlurStrength: (blurStrength: number) => set({ blurStrength }),
 }));
 
+export const useCropStore = create<CropStore>((set) => ({
+  rotation: 0,
+  setRotation: (rotation: number) => set({ rotation }),
+
+  selectedRatio: 'Free Form',
+  setSelectedRatio: (selectedRatio: string) => set({ selectedRatio }),
+}));

@@ -62,6 +62,22 @@ export const fontWeights = [
   { value: '800', label: 'Extra Bold' }
 ];
 
+export const aspectRatios = [
+  { name: 'Free Form', value: 'freeForm' },
+  { name: 'Square', value: '1:1' },
+  { name: '16:9', value: '16:9' },
+  { name: '4:3', value: '4:3' },
+  { name: '3:2', value: '3:2' },
+  { name: '9:16', value: '9:16' },
+]
+
+export const quickRotations = [
+  { label: '↻ 90°', value: 90 },
+  { label: '↻ 180°', value: 180 },
+  { label: '↺ -90°', value: -90 },
+  { label: '⟲ Reset', value: 0 }
+]
+
 
 
 

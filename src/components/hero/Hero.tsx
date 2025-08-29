@@ -89,14 +89,14 @@ function Hero() {
                 </div>
 
                 <div className='flex justify-end items-end'>
-                    <div className='border border-accent-light/30 translate-x-1/2 -translate-y-64 rotate-90 w-3xl'></div>
+                    <div className='border border-accent-light/30 translate-x-1/2 -translate-y-64 rotate-90 w-3xl blur-xs shadow-2xl shadow-accent-dark'></div>
                 </div>
                 <div className='transform-3d mt-16'>
-                    <div className='border border-accent-light/30 w-7xl translate-x-11'></div>
+                    <div className='border border-accent-light/30 w-7xl translate-x-11 blur-xs shadow-2xl shadow-accent-dark'></div>
                 </div>
             </div>
             <Video />
-        </>
+        </> 
     )
 }
 

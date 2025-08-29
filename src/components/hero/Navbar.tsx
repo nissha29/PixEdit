@@ -24,7 +24,7 @@ function Navbar() {
                     </div>
                 </div>
                 <div className='text-lg flex gap-10 justify-center items-center'>
-                    <Button className='bg-accent-dark text-white hover:bg-accent-light text-lg px-3 py-2' onClick={() => signIn('google', { callbackUrl: '/upload' })}>
+                    <Button className='border border-accent-dark text-white hover:border-accent-light text-lg px-3 py-2' onClick={() => signIn('google', { callbackUrl: '/upload' })}>
                         Get Started
                     </Button>
                 </div>
@@ -32,5 +32,4 @@ function Navbar() {
         </div>
     )
 }
-
 export default Navbar
