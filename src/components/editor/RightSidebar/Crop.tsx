@@ -29,7 +29,7 @@ export default function Crop() {
                             <button
                                 key={ratio.name}
                                 onClick={() => setSelectedRatio(ratio.name)}
-                                className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 ${selectedRatio === ratio.name
+                                className={`px-3 py-10 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 ${selectedRatio === ratio.name
                                     ? 'bg-accent-dark text-white scale-105'
                                     : 'bg-neutral-200 hover:bg-neutral-300 text-neutral-800 hover:scale-105 hover:cursor-pointer'
                                     }`}
@@ -48,7 +48,7 @@ export default function Crop() {
                             <button
                                 key={quick.label}
                                 onClick={() => handleQuickRotation(quick.value)}
-                                className="p-2 bg-neutral-700 hover:bg-neutral-600 rounded-lg text-xs text-neutral-200 transition-colors hover:cursor-pointer"
+                                className="p-2 bg-neutral-700 hover:bg-neutral-600 rounded-lg text-sm text-neutral-200 transition-colors hover:cursor-pointer"
                             >
                                 {quick.label}
                             </button>
@@ -75,23 +75,12 @@ export default function Crop() {
                                     background: `linear-gradient(to right, #40ac02 0%, #40ac02 ${((rotation - (-180)) / (180 - (-180))) * 100}%, #e5e7eb ${((rotation - (-180)) / (180 - (-180))) * 100}%, #e5e7eb 100%)`
                                 }}
                             />
-                            <div className="flex justify-between text-xs text-neutral-500 mt-1">
+                            <div className="flex justify-between text-sm text-neutral-400 mt-1">
                                 <span>-180°</span>
                                 <span>0°</span>
                                 <span>+180°</span>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <div className="pt-4 border-t border-neutral-700">
-                    <div className="flex flex-col gap-2">
-                        <button className="flex-1 p-2 bg-accent-dark hover:cursor-pointer hover:bg-accent-light text-white rounded-lg font-medium transition-colors">
-                            Apply Changes
-                        </button>
-                        <button className="flex-1 p-2 bg-neutral-700 hover:cursor-pointer hover:bg-rose-500 text-neutral-200 rounded-lg font-medium transition-colors">
-                            Reset All
-                        </button>
                     </div>
                 </div>
             </div>

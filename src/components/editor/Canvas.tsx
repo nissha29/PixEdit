@@ -1,5 +1,5 @@
 import { IconDownload, IconRedo, IconUndo, IconUpload } from "@/icons/icons";
-import { useActiveTabStore, useBackgroundStore, useBlurStore, useDrawingStore, useFileStore, useFilterStore, useImageDimensionStore, useImagePreviewStore, useTextStore } from "@/store/store";
+import { useActiveTabStore, useBackgroundStore, useBlurStore, useCropStore, useDrawingStore, useFileStore, useFilterStore, useImageDimensionStore, useImagePreviewStore, useTextStore } from "@/store/store";
 import { TextBox } from "@/types/types";
 import { drawText, blur, snowy, drawBoundingBox, getBoundingBox, getBox, getCanvasCoords, isPointInRect, pixelate, smudge, resetContextStyles, drawBoundingBoxForCrop } from "@/utils/utils";
 import { useEffect, useRef, useState } from "react";
@@ -15,6 +15,7 @@ export default function Canvas() {
     const { tool, selectedColor, brushSize, brushType } = useDrawingStore();
     const [isDrawing, setIsDrawing] = useState(false);
     const [isBlurring, setIsBlurring] = useState(false);
+    const [isCropping, setIsCropping] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const { textBoxes, setTextBoxes, activeTextBox, setActiveTextBox } = useTextStore();
     const { setImageDimensions } = useImageDimensionStore();
@@ -24,7 +25,49 @@ export default function Canvas() {
     let lastPos: { x: number; y: number } | null = null;
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const { setDataURL } = useImagePreviewStore();
-    const { setFile } = useFileStore()
+    const { setFile } = useFileStore();
+    const { selectedRatio } = useCropStore();
+    const [cropBox, setCropBox] = useState({ minX: 0, minY: 0, maxX: 0, maxY: 0 });
+    const [draggingHandler, setDraggingHandler] = useState<string | null>(null);
+    const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
+    const minWidth = 30;
+    const minHeight = 30;
+
+    useEffect(() => {
+        if (!dataURL) return;
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = dataURL;
+        img.onload = () => {
+            setImageDimensions({ width: img.width, height: img.height });
+            setCropBox({ minX: 0, minY: 0, maxX: img.width, maxY: img.height });
+            if (canvasRef.current) {
+                canvasRef.current.width = img.width;
+                canvasRef.current.height = img.height;
+            }
+        };
+    }, [dataURL, setImageDimensions]);
+
+    function getHandlerUnderPoint(x: number, y: number, box: typeof cropBox) {
+        const handlerRadius = 10;
+
+        const corners = [
+            { name: 'top-left', x: box.minX, y: box.minY },
+            { name: 'top-right', x: box.maxX, y: box.minY },
+            { name: 'bottom-left', x: box.minX, y: box.maxY },
+            { name: 'bottom-right', x: box.maxX, y: box.maxY },
+        ];
+
+        for (const corner of corners) {
+            const dx = x - corner.x;
+            const dy = y - corner.y;
+            if (dx * dx + dy * dy <= handlerRadius * handlerRadius) {
+                return corner.name;
+            }
+        }
+
+        return null;
+    }
 
     const triggerFileSelect = () => {
         fileInputRef.current?.click();
@@ -208,6 +251,77 @@ export default function Canvas() {
         lastPos = null;
     }
 
+    const onMouseDownCrop = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        if (selectedRatio !== 'Free Form') return;
+        const mouseX = e.nativeEvent.offsetX;
+        const mouseY = e.nativeEvent.offsetY;
+
+        // Ignore if outside canvas bounds
+        if (mouseX < 0 || mouseY < 0) return;
+
+        const handler = getHandlerUnderPoint(mouseX, mouseY, cropBox);
+        console.log('Handler detected:', handler);
+
+        if (handler) {
+            setDraggingHandler(handler);
+            setDragStart({ x: mouseX, y: mouseY });
+            setIsCropping(true);
+        }
+    }
+
+    const onMouseMoveCrop = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        if (!isCropping || !draggingHandler || !dragStart || !canvasRef.current) return;
+        const rect = canvasRef.current.getBoundingClientRect();
+        const mouseX = (e.clientX - rect.left) * (canvasRef.current.width / rect.width);
+        const mouseY = (e.clientY - rect.top) * (canvasRef.current.height / rect.height);
+
+        const dx = mouseX - dragStart.x;
+        const dy = mouseY - dragStart.y;
+
+        setCropBox((prev) => {
+            const { minX, minY, maxX, maxY } = prev;
+            const newBox = { ...prev };
+            switch (draggingHandler) {
+                case 'top-left':
+                    newBox.minX = Math.min(maxX - minWidth, Math.max(0, minX + dx));
+                    newBox.minY = Math.min(maxY - minHeight, Math.max(0, minY + dy));
+                    break;
+                case 'top-right':
+                    newBox.maxX = Math.max(minX + minWidth, Math.min(canvasRef.current!.width, maxX + dx));
+                    newBox.minY = Math.min(maxY - minHeight, Math.max(0, minY + dy));
+                    break;
+                case 'bottom-left':
+                    newBox.minX = Math.min(maxX - minWidth, Math.max(0, minX + dx));
+                    newBox.maxY = Math.max(minY + minHeight, Math.min(canvasRef.current!.height, maxY + dy));
+                    break;
+                case 'bottom-right':
+                    newBox.maxX = Math.max(minX + minWidth, Math.min(canvasRef.current!.width, maxX + dx));
+                    newBox.maxY = Math.max(minY + minHeight, Math.min(canvasRef.current!.height, maxY + dy));
+                    break;
+                case 'top':
+                    newBox.minY = Math.min(maxY - minHeight, Math.max(0, minY + dy));
+                    break;
+                case 'bottom':
+                    newBox.maxY = Math.max(minY + minHeight, Math.min(canvasRef.current!.height, maxY + dy));
+                    break;
+                case 'left':
+                    newBox.minX = Math.min(maxX - minWidth, Math.max(0, minX + dx));
+                    break;
+                case 'right':
+                    newBox.maxX = Math.max(minX + minWidth, Math.min(canvasRef.current!.width, maxX + dx));
+                    break;
+            }
+            return newBox;
+        });
+        setDragStart({ x: mouseX, y: mouseY });
+    }
+
+    const onMouseUpCrop = () => {
+        setIsCropping(false);
+        setDraggingHandler(null);
+        setDragStart(null);
+    }
+
     const onMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
         switch (activeTab) {
             case 'draw':
@@ -216,6 +330,8 @@ export default function Canvas() {
                 onMouseDownText(e);
             case 'addBlur':
                 onMouseDownBlur(e);
+            case 'crop':
+                onMouseDownCrop(e);
         }
     }
 
@@ -227,6 +343,8 @@ export default function Canvas() {
                 onMouseMoveText(e);
             case 'addBlur':
                 onMouseMoveBlur(e);
+            case 'crop':
+                onMouseMoveCrop(e);
         }
     }
 
@@ -238,6 +356,8 @@ export default function Canvas() {
                 onMouseUpText();
             case 'addBlur':
                 onMouseUpBlur();
+            case 'crop':
+                onMouseUpCrop();
         }
     }
 
@@ -360,7 +480,7 @@ export default function Canvas() {
                             drawBoundingBox(ctx, paddedBox);
                         }
                     }
-                    if(activeTab === 'crop') {
+                    if (activeTab === 'crop') {
                         const box = { minX: 0, minY: 0, maxX: width, maxY: height };
                         drawBoundingBoxForCrop(ctx, box);
                     }

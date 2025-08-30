@@ -312,11 +312,11 @@ export function blur(ctx: CanvasRenderingContext2D, x: number, y: number, radius
   ctx.restore();
 }
 
-export function drawBoundingBoxForCrop(ctx: CanvasRenderingContext2D, box: { minX: number; minY: number; maxX: number; maxY: number }) {
-  const handlerWidth = 8; 
-  const handlerHeight = 40;
-  const halfHandlerWidth = handlerWidth / 2;
-  const halfHandlerHeight = handlerHeight / 2;
+export function drawBoundingBoxForCrop(
+  ctx: CanvasRenderingContext2D,
+  box: { minX: number; minY: number; maxX: number; maxY: number }
+) {
+  const handlerRadius = 30;
 
   ctx.save();
 
@@ -325,23 +325,6 @@ export function drawBoundingBoxForCrop(ctx: CanvasRenderingContext2D, box: { min
   ctx.fillStyle = '#FFFFFF';
 
   ctx.strokeRect(box.minX, box.minY, box.maxX - box.minX, box.maxY - box.minY);
-
-  const sides = [
-    { x: (box.minX + box.maxX) / 2, y: box.minY, horizontal: true },
-    { x: (box.minX + box.maxX) / 2, y: box.maxY, horizontal: true },
-    { x: box.minX, y: (box.minY + box.maxY) / 2, horizontal: false },
-    { x: box.maxX, y: (box.minY + box.maxY) / 2, horizontal: false },
-  ];
-
-  sides.forEach(({ x, y, horizontal }) => {
-    ctx.beginPath();
-    if (horizontal) {
-      ctx.rect(x - halfHandlerHeight, y - halfHandlerWidth, handlerHeight, handlerWidth);
-    } else {
-      ctx.rect(x - halfHandlerWidth, y - halfHandlerHeight, handlerWidth, handlerHeight);
-    }
-    ctx.fill();
-  });
 
   const corners = [
     { x: box.minX, y: box.minY },
@@ -352,10 +335,9 @@ export function drawBoundingBoxForCrop(ctx: CanvasRenderingContext2D, box: { min
 
   corners.forEach(({ x, y }) => {
     ctx.beginPath();
-
-    ctx.rect(x - halfHandlerWidth, y - halfHandlerHeight, handlerWidth, handlerHeight);
-    ctx.rect(x - halfHandlerHeight, y - halfHandlerWidth, handlerHeight, handlerWidth);
+    ctx.arc(x, y, handlerRadius, 0, 2 * Math.PI);
     ctx.fill();
+    ctx.stroke();
   });
 
   ctx.restore();
