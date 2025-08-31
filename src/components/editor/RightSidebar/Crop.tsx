@@ -1,8 +1,87 @@
 import { aspectRatios, quickRotations } from "@/lib/constants"
-import { useCropStore } from "@/store/store";
+import { useCropStore, useImageDimensionStore, useImagePreviewStore } from "@/store/store";
+import { ArrowRight } from 'lucide-react'
 
 export default function Crop() {
     const { rotation, setRotation, selectedRatio, setSelectedRatio } = useCropStore();
+    const { dataURL, setDataURL } = useImagePreviewStore();
+    const { cropBox, setCropBox, setIsCropping } = useCropStore();
+    const { imageDimensions } = useImageDimensionStore();
+
+    const handleApplyCrop = () => {
+        if (!cropBox || !dataURL) return;
+
+        const img = new Image();
+        img.src = dataURL;
+        img.onload = () => {
+            const cropWidth = cropBox.maxX - cropBox.minX;
+            const cropHeight = cropBox.maxY - cropBox.minY;
+
+            const offCanvas = document.createElement("canvas");
+            offCanvas.width = cropWidth;
+            offCanvas.height = cropHeight;
+            const offCtx = offCanvas.getContext("2d")!;
+            offCtx.drawImage(
+                img,
+                cropBox.minX, cropBox.minY, cropWidth, cropHeight,
+                0, 0, cropWidth, cropHeight
+            );
+
+            setDataURL(offCanvas.toDataURL("image/png"));
+            setIsCropping(false);
+        };
+    };
+
+    const handleAspectRatio = (ratio: string) => {
+        setSelectedRatio(ratio);
+        setIsCropping(true);
+
+        const { width: imgW, height: imgH } = imageDimensions;
+        let cropWidth = imgW;
+        let cropHeight = imgH;
+        switch (ratio) {
+            case 'Free Form':
+                setCropBox({ minX: 2, minY: 2, maxX: imgW - 2, maxY: imgW - 2 });
+                break;
+            case 'square':
+                const side = Math.min(imgW, imgW) - 4;
+                setCropBox({ minX: 2, minY: 2, maxX: 2 + side, maxY: 2 + side });
+                break;
+            case '16:9':
+                const aspect169 = 16 / 9;
+                if (imgW / imgH > aspect169) {
+                    cropHeight = imgH - 4;
+                    cropWidth = cropHeight * aspect169;
+                } else {
+                    cropWidth = imgW - 4;
+                    cropHeight = cropWidth / aspect169;
+                }
+                break;
+            case '3:2':
+                const aspect32 = 3 / 2;
+                if (imgW / imgH > aspect32) {
+                    cropHeight = imgH - 4;
+                    cropWidth = cropHeight * aspect32;
+                } else {
+                    cropWidth = imgW - 4;
+                    cropHeight = cropWidth / aspect32;
+                }
+                break;
+            case '9:16':
+                const aspect = 9 / 16;
+                if (imgW / imgH > aspect) {
+                    cropHeight = imgH - 4;
+                    cropWidth = cropHeight * aspect;
+                } else {
+                    cropWidth = imgW - 4;
+                    cropHeight = cropWidth / aspect;
+                }
+                break;
+            default:
+                setCropBox({ minX: 2, minY: 2, maxX: imgW - 2, maxY: imgH - 2 });
+                break;
+        }
+    }
 
     const handleQuickRotation = (value: number) => {
         if (value === 0) {
@@ -28,7 +107,7 @@ export default function Crop() {
                         {aspectRatios.map((ratio) => (
                             <button
                                 key={ratio.name}
-                                onClick={() => setSelectedRatio(ratio.name)}
+                                onClick={() => handleAspectRatio(ratio.name)}
                                 className={`px-3 py-10 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 ${selectedRatio === ratio.name
                                     ? 'bg-accent-dark text-white scale-105'
                                     : 'bg-neutral-200 hover:bg-neutral-300 text-neutral-800 hover:scale-105 hover:cursor-pointer'
@@ -81,6 +160,7 @@ export default function Crop() {
                                 <span>+180°</span>
                             </div>
                         </div>
+                        <button onClick={() => handleApplyCrop()} className="mt-5 text-white text-lg bg-accent-dark w-full p-2 rounded-lg flex gap-2 justify-center items-center font-semibold hover:cursor-pointer">{'Apply Crop'} <ArrowRight className="w-5 h-5 stroke-2" /></button>
                     </div>
                 </div>
             </div>

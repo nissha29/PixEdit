@@ -316,29 +316,28 @@ export function drawBoundingBoxForCrop(
   ctx: CanvasRenderingContext2D,
   box: { minX: number; minY: number; maxX: number; maxY: number }
 ) {
-  const handlerRadius = 30;
+  const { width, height } = ctx.canvas;
 
   ctx.save();
+  ctx.beginPath();
 
-  ctx.strokeStyle = '#40ac02c4';
+  ctx.rect(0, 0, width, height);
+
+  ctx.rect(box.minX, box.minY, box.maxX - box.minX, box.maxY - box.minY);
+
+  ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+  ctx.fill("evenodd");
+  ctx.restore();
+
+  ctx.strokeStyle = "#40ac02";
   ctx.lineWidth = 4;
-  ctx.fillStyle = '#FFFFFF';
-
   ctx.strokeRect(box.minX, box.minY, box.maxX - box.minX, box.maxY - box.minY);
 
-  const corners = [
-    { x: box.minX, y: box.minY },
-    { x: box.maxX, y: box.minY },
-    { x: box.minX, y: box.maxY },
-    { x: box.maxX, y: box.maxY },
-  ];
-
-  corners.forEach(({ x, y }) => {
-    ctx.beginPath();
-    ctx.arc(x, y, handlerRadius, 0, 2 * Math.PI);
-    ctx.fill();
-    ctx.stroke();
-  });
-
-  ctx.restore();
+  ctx.fillStyle = "#40ac02";
+  const r = 15;
+  ctx.beginPath(); ctx.arc(box.minX, box.minY, r, 0, Math.PI * 3); ctx.fill();
+  ctx.beginPath(); ctx.arc(box.maxX, box.minY, r, 0, Math.PI * 3); ctx.fill();
+  ctx.beginPath(); ctx.arc(box.minX, box.maxY, r, 0, Math.PI * 3); ctx.fill();
+  ctx.beginPath(); ctx.arc(box.maxX, box.maxY, r, 0, Math.PI * 3); ctx.fill();
 }
+

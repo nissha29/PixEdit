@@ -15,7 +15,6 @@ export default function Canvas() {
     const { tool, selectedColor, brushSize, brushType } = useDrawingStore();
     const [isDrawing, setIsDrawing] = useState(false);
     const [isBlurring, setIsBlurring] = useState(false);
-    const [isCropping, setIsCropping] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const { textBoxes, setTextBoxes, activeTextBox, setActiveTextBox } = useTextStore();
     const { setImageDimensions } = useImageDimensionStore();
@@ -26,8 +25,7 @@ export default function Canvas() {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const { setDataURL } = useImagePreviewStore();
     const { setFile } = useFileStore();
-    const { selectedRatio } = useCropStore();
-    const [cropBox, setCropBox] = useState({ minX: 0, minY: 0, maxX: 0, maxY: 0 });
+    const { selectedRatio, cropBox, setCropBox, isCropping, setIsCropping } = useCropStore();
     const [draggingHandler, setDraggingHandler] = useState<string | null>(null);
     const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
     const minWidth = 30;
@@ -40,16 +38,16 @@ export default function Canvas() {
         img.src = dataURL;
         img.onload = () => {
             setImageDimensions({ width: img.width, height: img.height });
-            setCropBox({ minX: 0, minY: 0, maxX: img.width, maxY: img.height });
+            setCropBox({ minX: 2, minY: 2, maxX: img.width - 2, maxY: img.height - 2 });
             if (canvasRef.current) {
                 canvasRef.current.width = img.width;
                 canvasRef.current.height = img.height;
             }
         };
-    }, [dataURL, setImageDimensions]);
+    }, [dataURL, setImageDimensions, setCropBox]);
 
     function getHandlerUnderPoint(x: number, y: number, box: typeof cropBox) {
-        const handlerRadius = 10;
+        const handlerRadius = 20;
 
         const corners = [
             { name: 'top-left', x: box.minX, y: box.minY },
@@ -253,11 +251,13 @@ export default function Canvas() {
 
     const onMouseDownCrop = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (selectedRatio !== 'Free Form') return;
-        const mouseX = e.nativeEvent.offsetX;
-        const mouseY = e.nativeEvent.offsetY;
 
-        // Ignore if outside canvas bounds
-        if (mouseX < 0 || mouseY < 0) return;
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
 
         const handler = getHandlerUnderPoint(mouseX, mouseY, cropBox);
         console.log('Handler detected:', handler);
@@ -267,57 +267,57 @@ export default function Canvas() {
             setDragStart({ x: mouseX, y: mouseY });
             setIsCropping(true);
         }
-    }
+    };
+
 
     const onMouseMoveCrop = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (!isCropping || !draggingHandler || !dragStart || !canvasRef.current) return;
-        const rect = canvasRef.current.getBoundingClientRect();
-        const mouseX = (e.clientX - rect.left) * (canvasRef.current.width / rect.width);
-        const mouseY = (e.clientY - rect.top) * (canvasRef.current.height / rect.height);
+
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
 
         const dx = mouseX - dragStart.x;
         const dy = mouseY - dragStart.y;
 
-        setCropBox((prev) => {
-            const { minX, minY, maxX, maxY } = prev;
-            const newBox = { ...prev };
-            switch (draggingHandler) {
-                case 'top-left':
-                    newBox.minX = Math.min(maxX - minWidth, Math.max(0, minX + dx));
-                    newBox.minY = Math.min(maxY - minHeight, Math.max(0, minY + dy));
-                    break;
-                case 'top-right':
-                    newBox.maxX = Math.max(minX + minWidth, Math.min(canvasRef.current!.width, maxX + dx));
-                    newBox.minY = Math.min(maxY - minHeight, Math.max(0, minY + dy));
-                    break;
-                case 'bottom-left':
-                    newBox.minX = Math.min(maxX - minWidth, Math.max(0, minX + dx));
-                    newBox.maxY = Math.max(minY + minHeight, Math.min(canvasRef.current!.height, maxY + dy));
-                    break;
-                case 'bottom-right':
-                    newBox.maxX = Math.max(minX + minWidth, Math.min(canvasRef.current!.width, maxX + dx));
-                    newBox.maxY = Math.max(minY + minHeight, Math.min(canvasRef.current!.height, maxY + dy));
-                    break;
-                case 'top':
-                    newBox.minY = Math.min(maxY - minHeight, Math.max(0, minY + dy));
-                    break;
-                case 'bottom':
-                    newBox.maxY = Math.max(minY + minHeight, Math.min(canvasRef.current!.height, maxY + dy));
-                    break;
-                case 'left':
-                    newBox.minX = Math.min(maxX - minWidth, Math.max(0, minX + dx));
-                    break;
-                case 'right':
-                    newBox.maxX = Math.max(minX + minWidth, Math.min(canvasRef.current!.width, maxX + dx));
-                    break;
-            }
-            return newBox;
-        });
+        const newBox = { ...cropBox };
+        switch (draggingHandler) {
+            case 'top-left':
+                newBox.minX = Math.min(newBox.maxX - minWidth, Math.max(0, newBox.minX + dx));
+                newBox.minY = Math.min(newBox.maxY - minHeight, Math.max(0, newBox.minY + dy));
+                break;
+            case 'top-right':
+                newBox.maxX = Math.max(newBox.minX + minWidth, Math.min(canvas.width, newBox.maxX + dx));
+                newBox.minY = Math.min(newBox.maxY - minHeight, Math.max(0, newBox.minY + dy));
+                break;
+            case 'bottom-left':
+                newBox.minX = Math.min(newBox.maxX - minWidth, Math.max(0, newBox.minX + dx));
+                newBox.maxY = Math.max(newBox.minY + minHeight, Math.min(canvas.height, newBox.maxY + dy));
+                break;
+            case 'bottom-right':
+                newBox.maxX = Math.max(newBox.minX + minWidth, Math.min(canvas.width, newBox.maxX + dx));
+                newBox.maxY = Math.max(newBox.minY + minHeight, Math.min(canvas.height, newBox.maxY + dy));
+                break;
+        }
+
+        setCropBox(newBox);
         setDragStart({ x: mouseX, y: mouseY });
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const img = new Image();
+        img.src = dataURL!;
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            drawBoundingBoxForCrop(ctx, newBox);
+        };
     }
 
     const onMouseUpCrop = () => {
-        setIsCropping(false);
         setDraggingHandler(null);
         setDragStart(null);
     }
@@ -326,40 +326,52 @@ export default function Canvas() {
         switch (activeTab) {
             case 'draw':
                 onMouseDownDraw(e);
+                break;
             case 'text':
                 onMouseDownText(e);
+                break;
             case 'addBlur':
                 onMouseDownBlur(e);
+                break;
             case 'crop':
                 onMouseDownCrop(e);
+                break;
         }
-    }
+    };
 
     const onMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
         switch (activeTab) {
             case 'draw':
                 onMouseMoveDraw(e);
+                break;
             case 'text':
                 onMouseMoveText(e);
+                break;
             case 'addBlur':
                 onMouseMoveBlur(e);
+                break;
             case 'crop':
                 onMouseMoveCrop(e);
+                break;
         }
-    }
+    };
 
     const onMouseUp = () => {
         switch (activeTab) {
             case 'draw':
                 onMouseUpDraw();
+                break;
             case 'text':
                 onMouseUpText();
+                break;
             case 'addBlur':
                 onMouseUpBlur();
+                break;
             case 'crop':
                 onMouseUpCrop();
+                break;
         }
-    }
+    };
 
     function downloadImage() {
         const canvas = canvasRef.current;
@@ -480,16 +492,26 @@ export default function Canvas() {
                             drawBoundingBox(ctx, paddedBox);
                         }
                     }
-                    if (activeTab === 'crop') {
-                        const box = { minX: 0, minY: 0, maxX: width, maxY: height };
-                        drawBoundingBoxForCrop(ctx, box);
-                    }
+                    if (activeTab === 'crop' && selectedRatio === 'Free Form') {
+                        const img = new Image();
+                        if (dataURL) img.src = dataURL;
 
+                        img.onload = () => {
+                            if (!canvas) return;
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            if (isCropping) {
+                                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                                drawBoundingBoxForCrop(ctx, cropBox);
+                            } else {
+                                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            }
+                        };
+                    }
                 }
             }
             drawForeground();
         };
-    }, [dataURL, background, filter, textBoxes, activeTab, setImageDimensions, activeTextBox]);
+    }, [dataURL, background, filter, textBoxes, activeTab, setImageDimensions, activeTextBox, selectedRatio, cropBox, isCropping]);
 
     return (
         <>

@@ -185,4 +185,10 @@ export type CropStore = {
 
   selectedRatio: string,
   setSelectedRatio: (selectedRatio: string) => void,
+
+  cropBox: { minX: number; minY: number; maxX: number; maxY: number },
+  setCropBox: (cropBox: { minX: number; minY: number; maxX: number; maxY: number }) => void,
+
+  isCropping: boolean,
+  setIsCropping: (isCropping: boolean) => void,
 }

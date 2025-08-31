@@ -151,4 +151,10 @@ export const useCropStore = create<CropStore>((set) => ({
 
   selectedRatio: 'Free Form',
   setSelectedRatio: (selectedRatio: string) => set({ selectedRatio }),
+
+  cropBox: { minX: 0, minY: 0, maxX: 0, maxY: 0 },
+  setCropBox: (cropBox: { minX: number; minY: number; maxX: number; maxY: number }) => set({ cropBox }),
+
+  isCropping: true,
+  setIsCropping: (isCropping: boolean) => set({ isCropping }),
 }));
