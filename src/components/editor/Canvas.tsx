@@ -6,18 +6,18 @@ import { useEffect, useRef, useState } from "react";
 
 export default function Canvas() {
     const { dataURL } = useImagePreviewStore();
-    const { background } = useBackgroundStore();
+    const { background, setBackground, setHasRemovedBackground } = useBackgroundStore();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [open, setOpen] = useState(false);
     const [exportFormat, setExportFormat] = useState('png');
-    const { filter } = useFilterStore();
+    const { filter, setFilter } = useFilterStore();
     const { activeTab } = useActiveTabStore();
     const { tool, selectedColor, brushSize, brushType } = useDrawingStore();
     const [isDrawing, setIsDrawing] = useState(false);
     const [isBlurring, setIsBlurring] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const { textBoxes, setTextBoxes, activeTextBox, setActiveTextBox } = useTextStore();
-    const { setImageDimensions } = useImageDimensionStore();
+    const { imageDimensions, setImageDimensions } = useImageDimensionStore();
     const [interactionMode, setInteractionMode] = useState<'none' | 'dragging'>('none');
     const [dragStartPos, setDragStartPos] = useState<{ x: number, y: number } | null>(null);
     const { selectedBlur, blurRadius, blurStrength } = useBlurStore();
@@ -25,7 +25,7 @@ export default function Canvas() {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const { setDataURL } = useImagePreviewStore();
     const { setFile } = useFileStore();
-    const { selectedRatio, cropBox, setCropBox, isCropping, setIsCropping } = useCropStore();
+    const { selectedRatio, cropBox, setCropBox, isCropping, setIsCropping, rotation, setRotation } = useCropStore();
     const [draggingHandler, setDraggingHandler] = useState<string | null>(null);
     const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
     const minWidth = 30;
@@ -69,6 +69,12 @@ export default function Canvas() {
 
     const triggerFileSelect = () => {
         fileInputRef.current?.click();
+        setBackground(null);
+        setHasRemovedBackground(false);
+        setCropBox({ minX: 2, minY: 2, maxX: imageDimensions.width - 2, maxY: imageDimensions.height - 2 });
+        setRotation(0);
+        setFilter({ name: 'None', class: '' });
+        setTextBoxes([]);
     };
 
     const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -452,31 +458,49 @@ export default function Canvas() {
             }
 
             function drawForeground() {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+
                 if (ctx) {
                     ctx.save();
                     ctx.filter = ctx.filter = filter?.class || 'none';
-                    ctx.drawImage(fgImg, 0, 0, width, height);
+
+                    const rad = (rotation * Math.PI) / 180;
+
+                    const rotatedWidth = Math.abs(fgImg.width * Math.cos(rad)) + Math.abs(fgImg.height * Math.sin(rad));
+                    const rotatedHeight = Math.abs(fgImg.width * Math.sin(rad)) + Math.abs(fgImg.height * Math.cos(rad));
+
+                    let scale = Math.max(canvas.width / rotatedWidth, canvas.height / rotatedHeight);
+
+                    if (scale < 1) scale = 1;
+                    const angleFactor = 1 + Math.abs(Math.sin(rad)) * 1;
+                    scale *= angleFactor;
+
+                    ctx.translate(canvas.width / 2, canvas.height / 2);
+                    ctx.rotate(rad);
+                    ctx.scale(scale, scale);
+
+                    ctx.drawImage(fgImg, -fgImg.width / 2, -fgImg.height / 2);
                     ctx.restore();
 
-                    if (activeTab === 'text') {
-                        textBoxes.forEach((box: TextBox) => {
-                            drawText(ctx,
-                                box.text,
-                                box.x,
-                                box.y,
-                                {
-                                    fontFamily: box.fontFamily,
-                                    fontSize: box.fontSize,
-                                    fontWeight: box.fontWeight,
-                                    isBold: box.isBold,
-                                    isItalic: box.isItalic,
-                                    isUnderlined: box.isUnderlined,
-                                    textAlign: box.textAlign,
-                                    fillStyle: box.color,
-                                }
-                            );
-                        })
-                    }
+                    textBoxes.forEach((box: TextBox) => {
+                        drawText(ctx,
+                            box.text,
+                            box.x,
+                            box.y,
+                            {
+                                fontFamily: box.fontFamily,
+                                fontSize: box.fontSize,
+                                fontWeight: box.fontWeight,
+                                isBold: box.isBold,
+                                isItalic: box.isItalic,
+                                isUnderlined: box.isUnderlined,
+                                textAlign: box.textAlign,
+                                fillStyle: box.color,
+                            }
+                        );
+                    })
+
                     if (activeTab === 'text' && activeTextBox) {
                         const box = getBoundingBox({
                             x: activeTextBox.x,
@@ -492,26 +516,17 @@ export default function Canvas() {
                             drawBoundingBox(ctx, paddedBox);
                         }
                     }
-                    if (activeTab === 'crop' && selectedRatio === 'Free Form') {
-                        const img = new Image();
-                        if (dataURL) img.src = dataURL;
 
-                        img.onload = () => {
-                            if (!canvas) return;
-                            ctx.clearRect(0, 0, canvas.width, canvas.height);
-                            if (isCropping) {
-                                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                                drawBoundingBoxForCrop(ctx, cropBox);
-                            } else {
-                                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                            }
-                        };
+                    if (activeTab === 'crop') {
+                        if (isCropping) {
+                            drawBoundingBoxForCrop(ctx, cropBox);
+                        }
                     }
                 }
             }
             drawForeground();
         };
-    }, [dataURL, background, filter, textBoxes, activeTab, setImageDimensions, activeTextBox, selectedRatio, cropBox, isCropping]);
+    }, [dataURL, background, filter, textBoxes, activeTab, setImageDimensions, activeTextBox, selectedRatio, cropBox, isCropping, rotation]);
 
     return (
         <>

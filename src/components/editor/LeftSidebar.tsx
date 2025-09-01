@@ -1,17 +1,8 @@
-import { IconBlur, IconCrop, IconLayers, IconFilter, IconSparkles, IconType, IconWand } from '@/icons/icons'
 import { useActiveTabStore } from '@/store/store';
+import { toolbarItems } from '@/lib/constants';
 
 export default function LeftSidebar() {
     const { activeTab, setActiveTab } = useActiveTabStore();
-    const toolbarItems = [
-        { id: 'background', icon: IconLayers, label: 'Background', color: 'bg-yellow-500' },
-        { id: 'crop', icon: IconCrop, label: 'Crop', color: 'bg-blue-500' },
-        { id: 'filters', icon: IconFilter, label: 'Filters', color: 'bg-rose-500' },
-        { id: 'text', icon: IconType, label: 'Text', color: 'bg-orange-500' },
-        { id: 'draw', icon: IconWand, label: 'Draw', color: 'bg-fuchsia-500' },
-        { id: 'addBlur', icon: IconBlur, label: 'Add Blur', color: 'bg-green-500' },
-        { id: 'aiTools', icon: IconSparkles, label: 'AI Tools', color: 'bg-purple-500' },
-    ];
 
     return (
         <aside className="w-28 h-full bg-background border-r-2 border-neutral-800 flex flex-col items-center p-10 space-y-2 z-20">

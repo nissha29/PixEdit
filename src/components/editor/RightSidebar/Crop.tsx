@@ -32,6 +32,11 @@ export default function Crop() {
         };
     };
 
+    const handleApplyRotation = (value: number) => {
+        setRotation(value);
+    }
+
+
     const handleAspectRatio = (ratio: string) => {
         setSelectedRatio(ratio);
         setIsCropping(true);
@@ -39,35 +44,45 @@ export default function Crop() {
         const { width: imgW, height: imgH } = imageDimensions;
         let cropWidth = imgW;
         let cropHeight = imgH;
+
         switch (ratio) {
             case 'Free Form':
-                setCropBox({ minX: 2, minY: 2, maxX: imgW - 2, maxY: imgW - 2 });
-                break;
-            case 'square':
-                const side = Math.min(imgW, imgW) - 4;
-                setCropBox({ minX: 2, minY: 2, maxX: 2 + side, maxY: 2 + side });
-                break;
-            case '16:9':
-                const aspect169 = 16 / 9;
-                if (imgW / imgH > aspect169) {
+                setCropBox({ minX: 2, minY: 2, maxX: imgW - 2, maxY: imgH - 2 });
+                return;
+
+            case 'Square': {
+                const side = Math.min(imgW, imgH) - 4;
+                const minX = (imgW - side) / 2;
+                const minY = (imgH - side) / 2;
+                setCropBox({ minX, minY, maxX: minX + side, maxY: minY + side });
+                return;
+            }
+
+            case '16:9': {
+                const aspect = 16 / 9;
+                if (imgW / imgH > aspect) {
                     cropHeight = imgH - 4;
-                    cropWidth = cropHeight * aspect169;
+                    cropWidth = cropHeight * aspect;
                 } else {
                     cropWidth = imgW - 4;
-                    cropHeight = cropWidth / aspect169;
+                    cropHeight = cropWidth / aspect;
                 }
                 break;
-            case '3:2':
-                const aspect32 = 3 / 2;
-                if (imgW / imgH > aspect32) {
+            }
+
+            case '3:2': {
+                const aspect = 3 / 2;
+                if (imgW / imgH > aspect) {
                     cropHeight = imgH - 4;
-                    cropWidth = cropHeight * aspect32;
+                    cropWidth = cropHeight * aspect;
                 } else {
                     cropWidth = imgW - 4;
-                    cropHeight = cropWidth / aspect32;
+                    cropHeight = cropWidth / aspect;
                 }
                 break;
-            case '9:16':
+            }
+
+            case '9:16': {
                 const aspect = 9 / 16;
                 if (imgW / imgH > aspect) {
                     cropHeight = imgH - 4;
@@ -77,22 +92,34 @@ export default function Crop() {
                     cropHeight = cropWidth / aspect;
                 }
                 break;
+            }
+
+            case '4:3': {
+                const aspect = 4 / 3;
+                if (imgW / imgH > aspect) {
+                    cropHeight = imgH - 4;
+                    cropWidth = cropHeight * aspect;
+                } else {
+                    cropWidth = imgW - 4;
+                    cropHeight = cropWidth / aspect;
+                }
+                break;
+            }
+
             default:
                 setCropBox({ minX: 2, minY: 2, maxX: imgW - 2, maxY: imgH - 2 });
-                break;
+                return;
         }
-    }
 
-    const handleQuickRotation = (value: number) => {
-        if (value === 0) {
-            setRotation(0)
-        } else {
-            let newRotation = rotation + value;
-            if (newRotation > 180) newRotation -= 360;
-            if (newRotation < -180) newRotation += 360;
-            setRotation(newRotation);
-        }
-    }
+        const minX = (imgW - cropWidth) / 2;
+        const minY = (imgH - cropHeight) / 2;
+        setCropBox({
+            minX,
+            minY,
+            maxX: minX + cropWidth,
+            maxY: minY + cropHeight,
+        });
+    };
 
     return (
         <div className="space-y-6 p-4 rounded-xl">
@@ -126,8 +153,8 @@ export default function Crop() {
                         {quickRotations.map((quick) => (
                             <button
                                 key={quick.label}
-                                onClick={() => handleQuickRotation(quick.value)}
-                                className="p-2 bg-neutral-700 hover:bg-neutral-600 rounded-lg text-sm text-neutral-200 transition-colors hover:cursor-pointer"
+                                onClick={() => handleApplyRotation(quick.value)}
+                                className={`p-2 rounded-lg text-sm text-neutral-200 transition-colors hover:cursor-pointer ${rotation === quick.value ? 'bg-accent-dark' : 'bg-neutral-700 hover:bg-neutral-600 '}`}
                             >
                                 {quick.label}
                             </button>
@@ -148,7 +175,7 @@ export default function Crop() {
                                 max="180"
                                 step="1"
                                 value={rotation}
-                                onChange={(e) => setRotation(Number(e.target.value))}
+                                onChange={(e) => handleApplyRotation(Number(e.target.value))}
                                 className="w-full flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-1.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-accent-dark [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-accent-dark [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
                                 style={{
                                     background: `linear-gradient(to right, #40ac02 0%, #40ac02 ${((rotation - (-180)) / (180 - (-180))) * 100}%, #e5e7eb ${((rotation - (-180)) / (180 - (-180))) * 100}%, #e5e7eb 100%)`

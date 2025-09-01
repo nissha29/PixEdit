@@ -48,6 +48,9 @@ export type Background = {
 export type BackgroundStore = {
   background: Background,
   setBackground: (background: Background) => void,
+
+  hasRemovedBackground: boolean,
+  setHasRemovedBackground: (value: boolean) => void,
 }
 
 export type LoadingStore = {
@@ -90,7 +93,7 @@ export type DrawingStore = {
 }
 
 export enum AlignType {
-  left =  'left',
+  left = 'left',
   right = 'right',
   center = 'center',
 }

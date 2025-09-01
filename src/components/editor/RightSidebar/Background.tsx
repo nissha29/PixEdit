@@ -14,9 +14,8 @@ export default function Background() {
   const { dataURL, setDataURL } = useImagePreviewStore();
   const [showPicker, setShowPicker] = useState(false);
   const [customColor, setCustomColor] = useState('#ffffff');
-  const { setBackground } = useBackgroundStore();
+  const { setBackground, hasRemovedBackground, setHasRemovedBackground } = useBackgroundStore();
   const { loading, setLoading } = useLoadingStore();
-  const [hasRemovedBackground, setHasRemovedBackground] = useState(false);
 
   const blurRestClass = !hasRemovedBackground
     ? 'pointer-events-none select-none blur opacity-100'

@@ -35,11 +35,14 @@ export const useUserStore = create<UserStore>()(
 );
 
 export const useFileStore = create<FileStore>()(
-  (set) => ({
-    file: null,
-    setFile: (file: File) => set({ file }),
-    clearFile: () => set({ file: null }),
-  }),
+  persist(
+    (set) => ({
+      file: null,
+      setFile: (file: File) => set({ file }),
+      clearFile: () => set({ file: null }),
+    }),
+    { name: 'file-storage' }
+  )
 );
 
 export const useImagePreviewStore = create<ImagePreviewStore>()(
@@ -55,16 +58,22 @@ export const useImagePreviewStore = create<ImagePreviewStore>()(
 
 export const useActiveTabStore = create<ActiveTabStore>()(
   (set) => ({
-    activeTab: 'background',
+    activeTab: 'crop',
     setActiveTab: (activeTab: string | null) => set({ activeTab }),
   }),
 );
 
 export const useBackgroundStore = create<BackgroundStore>()(
-  (set) => ({
-    background: null,
-    setBackground: (background: Background) => set({ background }),
-  }),
+  persist(
+    (set) => ({
+      background: null,
+      setBackground: (background: Background) => set({ background }),
+
+      hasRemovedBackground: false,
+      setHasRemovedBackground: (value: boolean) => set({ hasRemovedBackground: value }),
+    }),
+    { name: 'background-storage' }
+  )
 );
 
 export const useLoadingStore = create<LoadingStore>((set) => ({
@@ -104,7 +113,7 @@ export const useTextStore = create<TextStore>((set) => ({
   selectedFont: 'Inter',
   setSelectedFont: (value: string) => set({ selectedFont: value }),
 
-  fontSize: 20,
+  fontSize: 32,
   setFontSize: (value: number) => set({ fontSize: value }),
 
   fontWeight: '400',
