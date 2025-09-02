@@ -1,7 +1,7 @@
 import { IconDownload, IconRedo, IconUndo, IconUpload } from "@/icons/icons";
 import { useActiveTabStore, useBackgroundStore, useBlurStore, useCropStore, useDrawingStore, useFileStore, useFilterStore, useImageDimensionStore, useImagePreviewStore, useTextStore } from "@/store/store";
 import { TextBox } from "@/types/types";
-import { drawText, blur, snowy, drawBoundingBox, getBoundingBox, getBox, getCanvasCoords, isPointInRect, pixelate, smudge, resetContextStyles, drawBoundingBoxForCrop } from "@/utils/utils";
+import { drawText, blur, snowy, drawBoundingBox, getBoundingBox, getBox, getCanvasCoords, isPointInRect, pixelate, smudge, drawStrokes, drawBoundingBoxForCrop } from "@/utils/utils";
 import { useEffect, useRef, useState } from "react";
 
 export default function Canvas() {
@@ -20,7 +20,7 @@ export default function Canvas() {
     const { imageDimensions, setImageDimensions } = useImageDimensionStore();
     const [interactionMode, setInteractionMode] = useState<'none' | 'dragging'>('none');
     const [dragStartPos, setDragStartPos] = useState<{ x: number, y: number } | null>(null);
-    const { selectedBlur, blurRadius, blurStrength } = useBlurStore();
+    const { selectedBlur, blurRadius, blurStrength, blurs } = useBlurStore();
     let lastPos: { x: number; y: number } | null = null;
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const { setDataURL } = useImagePreviewStore();
@@ -100,7 +100,7 @@ export default function Canvas() {
         const x = (e.clientX - rect.left) * (canvas.width / rect.width);
         const y = (e.clientY - rect.top) * (canvas.height / rect.height);
 
-        resetContextStyles(ctx, tool, brushType, selectedColor, brushSize);
+        drawStrokes(ctx, tool, brushType, selectedColor, brushSize);
 
         ctx.beginPath();
         ctx.moveTo(x, y);
@@ -206,7 +206,8 @@ export default function Canvas() {
     const onMouseDownBlur = (e: React.MouseEvent<HTMLCanvasElement>) => {
         setIsBlurring(true);
         const canvas = canvasRef.current;
-        lastPos = getCanvasCoords(canvas, e);
+        const pos = getCanvasCoords(canvas, e);
+        if (!pos) return;
     }
 
     const onMouseMoveBlur = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -526,7 +527,7 @@ export default function Canvas() {
             }
             drawForeground();
         };
-    }, [dataURL, background, filter, textBoxes, activeTab, setImageDimensions, activeTextBox, selectedRatio, cropBox, isCropping, rotation]);
+    }, [dataURL, background, filter, textBoxes, activeTab, setImageDimensions, activeTextBox, selectedRatio, cropBox, isCropping, rotation, blurs]);
 
     return (
         <>
@@ -609,7 +610,7 @@ export default function Canvas() {
                             maxHeight: '80vh',
                             width: 'auto',
                             height: 'auto',
-                            border: '2px solid #40ac02c4',
+                            border: '2px solid #fce300',
                         }}
                     />
                 </div>

@@ -89,14 +89,20 @@ function Hero() {
                 </div>
 
                 <div className='flex justify-end items-end'>
-                    <div className='border border-accent-light/30 translate-x-1/2 -translate-y-64 rotate-90 w-3xl blur-xs shadow-2xl shadow-accent-dark'></div>
+                    <div className='border border-accent-light/30 translate-x-1/2 -translate-y-60 rotate-90 w-3xl blur-xs shadow-2xl shadow-accent-dark'></div>
                 </div>
-                <div className='transform-3d mt-16'>
+                <div className='transform-3d mt-20'>
                     <div className='border border-accent-light/30 w-7xl translate-x-11 blur-xs shadow-2xl shadow-accent-dark'></div>
+                </div>
+                <div className='flex justify-end items-end'>
+                    <div className='border border-accent-light/30 translate-x-[25rem] -translate-y-72 rotate-90 w-3xl blur-xs shadow-2xl shadow-accent-dark'></div>
+                </div>
+                <div className='transform-3d mt-4'>
+                    <div className='border border-accent-light/30 w-7xl translate-x-28 blur-xs shadow-2xl shadow-accent-dark'></div>
                 </div>
             </div>
             <Video />
-        </> 
+        </>
     )
 }
 

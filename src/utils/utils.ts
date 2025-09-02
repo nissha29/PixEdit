@@ -43,7 +43,7 @@ function hexToRGBA(hex: string, alpha = 1): string {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
-export const resetContextStyles = (ctx: CanvasRenderingContext2D, tool: ToolType, brushType: BrushType, selectedColor: string, brushSize: number) => {
+export const drawStrokes = (ctx: CanvasRenderingContext2D, tool: ToolType, brushType: BrushType, selectedColor: string, brushSize: number) => {
   ctx.globalAlpha = 1;
   ctx.lineDashOffset = 0;
   ctx.setLineDash([]);
@@ -329,11 +329,11 @@ export function drawBoundingBoxForCrop(
   ctx.fill("evenodd");
   ctx.restore();
 
-  ctx.strokeStyle = "#40ac02";
+  ctx.strokeStyle = "#fce300";
   ctx.lineWidth = 4;
   ctx.strokeRect(box.minX, box.minY, box.maxX - box.minX, box.maxY - box.minY);
 
-  ctx.fillStyle = "#40ac02";
+  ctx.fillStyle = "#fce300";
   const r = 15;
   ctx.beginPath(); ctx.arc(box.minX, box.minY, r, 0, Math.PI * 3); ctx.fill();
   ctx.beginPath(); ctx.arc(box.maxX, box.minY, r, 0, Math.PI * 3); ctx.fill();

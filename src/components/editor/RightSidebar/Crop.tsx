@@ -5,11 +5,11 @@ import { ArrowRight } from 'lucide-react'
 export default function Crop() {
     const { rotation, setRotation, selectedRatio, setSelectedRatio } = useCropStore();
     const { dataURL, setDataURL } = useImagePreviewStore();
-    const { cropBox, setCropBox, setIsCropping } = useCropStore();
+    const { cropBox, setCropBox, isCropping, setIsCropping } = useCropStore();
     const { imageDimensions } = useImageDimensionStore();
 
     const handleApplyCrop = () => {
-        if (!cropBox || !dataURL) return;
+        if (!cropBox || !dataURL || !isCropping) return;
 
         const img = new Image();
         img.src = dataURL;

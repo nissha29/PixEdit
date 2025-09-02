@@ -81,6 +81,14 @@ export enum BrushType {
   soft = 'soft'
 }
 
+export type Stroke = {
+  tool: ToolType,
+  type: BrushType,
+  color: string,
+  size: number,
+  points: [{ x: number, y: number }],
+}
+
 export type DrawingStore = {
   tool: ToolType,
   selectedColor: string,
@@ -90,6 +98,9 @@ export type DrawingStore = {
   setSelectedColor: (color: string) => void,
   setBrushSize: (size: number) => void,
   setBrushType: (type: BrushType) => void,
+
+  strokes: Stroke[],
+  setStrokes: (updater: (prev: Stroke[]) => Stroke[]) => void;
 }
 
 export enum AlignType {
@@ -171,6 +182,14 @@ export enum BlurType {
   blur = 'blur',
 }
 
+export type Blurs = {
+  type: BlurType;
+  points: { x: number; y: number }[];
+  radius: number;
+  strength: number;
+};
+
+
 export type BlurStore = {
   selectedBlur: BlurType,
   setSelectedBlur: (selectedBlur: BlurType) => void,
@@ -180,6 +199,9 @@ export type BlurStore = {
 
   blurStrength: number,
   setBlurStrength: (brushSize: number) => void,
+
+  blurs: Blurs[],
+  setBlurs: (updater: (prev: Blurs[]) => Blurs[]) => void;
 }
 
 export type CropStore = {

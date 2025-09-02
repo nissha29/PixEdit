@@ -18,7 +18,7 @@ import {
   TextBox,
   TextStore,
   ToolType,
-  UserStore
+  UserStore,
 } from '../types/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -95,6 +95,12 @@ export const useDrawingStore = create<DrawingStore>((set) => ({
   setSelectedColor: (color: string) => set({ selectedColor: color }),
   setBrushSize: (size: number) => set({ brushSize: size }),
   setBrushType: (type: BrushType) => set({ brushType: type }),
+
+  strokes: [],
+  setStrokes: (updater) =>
+    set((state) => ({
+      strokes: updater(state.strokes),
+    })),
 }));
 
 export const useTextStore = create<TextStore>((set) => ({
@@ -152,6 +158,12 @@ export const useBlurStore = create<BlurStore>((set) => ({
 
   blurStrength: 25,
   setBlurStrength: (blurStrength: number) => set({ blurStrength }),
+
+  blurs: [],
+  setBlurs: (updater) =>
+    set((state) => ({
+      blurs: updater(state.blurs),
+    }))
 }));
 
 export const useCropStore = create<CropStore>((set) => ({
