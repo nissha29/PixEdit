@@ -1,4 +1,4 @@
-import { BrushType, ToolType } from "@/types/types";
+import { BrushType, Stroke, ToolType } from "@/types/types";
 
 export function drawText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, options: {
   fontFamily: string;
@@ -339,5 +339,14 @@ export function drawBoundingBoxForCrop(
   ctx.beginPath(); ctx.arc(box.maxX, box.minY, r, 0, Math.PI * 3); ctx.fill();
   ctx.beginPath(); ctx.arc(box.minX, box.maxY, r, 0, Math.PI * 3); ctx.fill();
   ctx.beginPath(); ctx.arc(box.maxX, box.maxY, r, 0, Math.PI * 3); ctx.fill();
+}
+
+export function pushPointToLast(strokes: Stroke[], point: { x: number; y: number }): Stroke[] {
+  const updated = [...strokes];
+  const last = updated[updated.length - 1];
+  if (last) {
+    last.points = [...last.points, point];
+  }
+  return updated;
 }
 

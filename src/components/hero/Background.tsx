@@ -1,11 +1,11 @@
 import React from 'react'
 
 function Background() {
-    return (
-        <div className=''>
-            <div className="absolute -top-20 z-0 m-auto size-28 sm:size-96 bg-[#40ac02] mt-40 sm:mt-0 opacity-50 sm:opacity-20 blur-[150px] rounded-full"></div>
-        </div>
-    )
+  return (
+    <div className=''>
+      <div className="absolute -top-20 z-0 m-auto size-28 sm:size-96 bg-[#40ac02] mt-40 sm:mt-0 opacity-50 sm:opacity-20 blur-[150px] rounded-full"></div>
+    </div>
+  )
 }
 
-export default Background
+export default Background;

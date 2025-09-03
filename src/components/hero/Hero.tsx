@@ -61,14 +61,14 @@ function Hero() {
             <Background />
             <Navbar />
             <div className='text-foreground'>
-                <div className='flex justify-center items-center gap-6 mt-24'>
+                <div className='flex justify-center items-center gap-6 mt-32'>
                     <div className='flex w-52'>
                         <AnimatedTooltip items={people} />
                     </div>
                     <div>Trusted by 100+ users</div>
                 </div>
                 <div className='flex flex-col justify-center items-center'>
-                    <div className='flex mt-10 text-7xl font-semibold'>
+                    <div className='flex mt-16 text-7xl font-semibold'>
                         <div className=''>
                             Every tool you need to work with
                             <div className='w-full flex flex-col justify-center items-center'>

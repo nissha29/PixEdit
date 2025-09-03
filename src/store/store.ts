@@ -9,6 +9,7 @@ import {
   CropStore,
   Dimension,
   DrawingStore,
+  EditorState,
   FileStore,
   FilterStore,
   FilterType,
@@ -18,6 +19,7 @@ import {
   TextBox,
   TextStore,
   ToolType,
+  UndoRedoState,
   UserStore,
 } from '../types/types';
 import { create } from 'zustand';
@@ -150,7 +152,7 @@ export const useImageDimensionStore = create<ImageDimensionStore>((set) => ({
 }));
 
 export const useBlurStore = create<BlurStore>((set) => ({
-  selectedBlur: BlurType.blur,
+  selectedBlur: BlurType.pixelate,
   setSelectedBlur: (selectedBlur: BlurType) => set({ selectedBlur }),
 
   blurRadius: 10,
@@ -179,3 +181,49 @@ export const useCropStore = create<CropStore>((set) => ({
   isCropping: true,
   setIsCropping: (isCropping: boolean) => set({ isCropping }),
 }));
+
+export const createUndoRedoStore = <T>(initial: T) =>
+  create<UndoRedoState<T>>((set) => ({
+    past: [],
+    present: initial,
+    future: [],
+    set: (newPresent: T) =>
+      set((state) => ({
+        past: state.present !== null ? [...state.past, state.present] : state.past,
+        present: newPresent,
+        future: [],
+      })),
+    undo: () =>
+      set((state) => {
+        if (state.past.length === 0) return state;
+        const previous = state.past[state.past.length - 1];
+        const newPast = state.past.slice(0, -1);
+        return {
+          past: newPast,
+          present: previous,
+          future: [state.present!, ...state.future],
+        };
+      }),
+    redo: () =>
+      set((state) => {
+        if (state.future.length === 0) return state;
+        const next = state.future[0];
+        const newFuture = state.future.slice(1);
+        return {
+          past: [...state.past, state.present!],
+          present: next,
+          future: newFuture,
+        };
+      }),
+    clear: () => set({ past: [], present: initial, future: [] }),
+  }));
+
+export const useEditorUndoRedoStore = createUndoRedoStore<EditorState>({
+  textBoxes: [],
+  cropBox: { minX: 0, minY: 0, maxX: 0, maxY: 0 },
+  rotation: 0,
+  blurs: [],
+  strokes: [],
+  background: null,
+  filter: { name: "None", class: "" },
+});

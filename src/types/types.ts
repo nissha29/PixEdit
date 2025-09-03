@@ -86,7 +86,7 @@ export type Stroke = {
   type: BrushType,
   color: string,
   size: number,
-  points: [{ x: number, y: number }],
+  points: { x: number, y: number }[],
 }
 
 export type DrawingStore = {
@@ -217,3 +217,23 @@ export type CropStore = {
   isCropping: boolean,
   setIsCropping: (isCropping: boolean) => void,
 }
+
+export type UndoRedoState<T> = {
+  past: T[];
+  present: T | null;
+  future: T[];
+  set: (newPresent: T) => void;
+  undo: () => void;
+  redo: () => void;
+  clear: () => void;
+}
+
+export type EditorState = {
+  textBoxes: TextBox[];
+  cropBox: { minX: number; minY: number; maxX: number; maxY: number };
+  rotation: number;
+  blurs: Blurs[];
+  strokes: Stroke[];
+  background: Background | null;
+  filter: { name: string; class: string };
+};
