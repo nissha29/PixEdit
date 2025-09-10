@@ -11,7 +11,7 @@ function Navbar() {
     return (
         <div className='relative'>
             <div className='px-24 flex justify-between items-center dark:text-foreground text-foreground sticky'>
-                <div className='flex gap-32'>
+                <div className='flex gap-24'>
                     <div className='flex items-center'>
                         <div className="text-accent-dark text-3xl font-bold">pix</div>
                         <div className="text-2xl font-bold text-neutral-100">EDiT</div>
@@ -19,7 +19,6 @@ function Navbar() {
                     <div className='flex gap-16 justify-center items-center text-lg z-10'>
                         <Link href='' className={navBarLinkStyles}>Home</Link>
                         <Link href='' className={navBarLinkStyles}> Features</Link>
-                        <Link href='' className={navBarLinkStyles}>Products</Link>
                         <Link href='' className={navBarLinkStyles}>Images</Link>
                     </div>
                 </div>

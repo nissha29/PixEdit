@@ -260,58 +260,6 @@ export function smudge(ctx: CanvasRenderingContext2D, x: number, y: number, radi
   ctx.putImageData(imageData, startX, startY);
 }
 
-export function snowy(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, strength: number) {
-  ctx.save();
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
-
-  const baseDotCount = Math.max(5, Math.floor(radius / 2));
-  const dotCount = Math.min(30, baseDotCount + Math.round(strength / 2));
-  const maxDotRadius = radius / 3 + strength / 4;
-  const minDotRadius = radius / 6 + strength / 6;
-
-  for (let i = 0; i < dotCount; i++) {
-    const offsetX = (Math.random() - 0.5) * radius * 2;
-    const offsetY = (Math.random() - 0.5) * radius * 2;
-    const dotRadius = minDotRadius + Math.random() * (maxDotRadius - minDotRadius);
-
-    ctx.beginPath();
-    ctx.arc(x + offsetX, y + offsetY, dotRadius, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  ctx.shadowColor = 'rgba(255,255,255,0.08)';
-  ctx.shadowBlur = radius / 8 + strength / 10;
-
-  ctx.restore();
-}
-
-export function blur(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, strength: number) {
-  const startX = Math.max(x - radius, 0);
-  const startY = Math.max(y - radius, 0);
-  const size = radius * 2;
-  const canvas = ctx.canvas;
-  const width = Math.min(size, canvas.width - startX);
-  const height = Math.min(size, canvas.height - startY);
-
-  const offscreen = document.createElement('canvas');
-  offscreen.width = width;
-  offscreen.height = height;
-  const offCtx = offscreen.getContext('2d');
-  if (!offCtx) return;
-
-  offCtx.drawImage(canvas, startX, startY, width, height, 0, 0, width, height);
-
-  offCtx.filter = `blur(${strength}px)`;
-  const blurred = offCtx.getImageData(0, 0, width, height);
-  offCtx.clearRect(0, 0, width, height);
-  offCtx.putImageData(blurred, 0, 0);
-
-  ctx.save();
-  ctx.globalAlpha = 0.6;
-  ctx.drawImage(offscreen, startX, startY);
-  ctx.restore();
-}
-
 export function drawBoundingBoxForCrop(
   ctx: CanvasRenderingContext2D,
   box: { minX: number; minY: number; maxX: number; maxY: number }

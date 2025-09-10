@@ -10,6 +10,7 @@ import {
   Dimension,
   DrawingStore,
   EditorState,
+  FileData,
   FileStore,
   FilterStore,
   FilterType,
@@ -40,7 +41,7 @@ export const useFileStore = create<FileStore>()(
   persist(
     (set) => ({
       file: null,
-      setFile: (file: File) => set({ file }),
+      setFile: (file: FileData) => set({ file }),
       clearFile: () => set({ file: null }),
     }),
     { name: 'file-storage' }
@@ -53,6 +54,10 @@ export const useImagePreviewStore = create<ImagePreviewStore>()(
       dataURL: null,
       setDataURL: (dataURL: string | null) => set({ dataURL }),
       clearDataURL: () => set({ dataURL: null }),
+
+      originalDataURL: null,
+      setOriginalDataURL: (originalDataURL: string | null) => set({ originalDataURL }),
+      clearOriginalDataURL: () => set({ originalDataURL: null })
     }),
     { name: 'image-preview-storage' }
   )
@@ -162,10 +167,9 @@ export const useBlurStore = create<BlurStore>((set) => ({
   setBlurStrength: (blurStrength: number) => set({ blurStrength }),
 
   blurs: [],
-  setBlurs: (updater) =>
-    set((state) => ({
-      blurs: updater(state.blurs),
-    }))
+  setBlurs: (blurs) => set((state) => ({
+    blurs: typeof blurs === 'function' ? blurs(state.blurs) : blurs
+  })),
 }));
 
 export const useCropStore = create<CropStore>((set) => ({
@@ -226,4 +230,4 @@ export const useEditorUndoRedoStore = createUndoRedoStore<EditorState>({
   strokes: [],
   background: null,
   filter: { name: "None", class: "" },
-});
+}); 

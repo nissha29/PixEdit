@@ -7,8 +7,9 @@ import { useRouter } from "next/navigation";
 import { IconCheck, IconArrowRight, IconImage, IconTrash, IconUpload } from '@/icons/icons'
 import { useSession } from "next-auth/react";
 import { useFileStore, useImagePreviewStore } from "@/store/store";
+import { FileData } from "@/types/types";
 
-const SingleFileUpload = ({ onChange }: { onChange: (file: File | null) => void }) => {
+const SingleFileUpload = ({ onChange }: { onChange: (newFile: FileData | null) => void }) => {
     const [isDragOver, setIsDragOver] = useState(false);
 
     const handleDrop = (e: React.DragEvent) => {
@@ -19,14 +20,14 @@ const SingleFileUpload = ({ onChange }: { onChange: (file: File | null) => void 
         const imageFile = files.find(file => file.type.startsWith('image/'));
 
         if (imageFile) {
-            onChange(imageFile);
+            onChange({ file: imageFile, name: imageFile.name, size: imageFile.size, type: imageFile.type });
         }
     };
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file && file.type.startsWith('image/')) {
-            onChange(file);
+            onChange({ file, name: file.name, size: file.size, type: file.type });
         }
     };
 
@@ -70,25 +71,27 @@ const SingleFileUpload = ({ onChange }: { onChange: (file: File | null) => void 
 
 export function Upload() {
     const { file, setFile, clearFile } = useFileStore();
-    const { dataURL, setDataURL } = useImagePreviewStore();
+    const { setDataURL, originalDataURL, setOriginalDataURL } = useImagePreviewStore();
     const [uploadComplete, setUploadComplete] = useState(false);
     const { data: session, status } = useSession();
     const router = useRouter();
 
-    const handleFileUpload = (newFile: File | null) => {
+    const handleFileUpload = (newFile: FileData | null) => {
         if (!newFile) return;
 
         const reader = new FileReader();
         reader.onload = (e) => {
+            setOriginalDataURL(e.target?.result as string);
             setDataURL(e.target?.result as string);
         };
-        reader.readAsDataURL(newFile);
-        setFile(newFile);
+        reader.readAsDataURL(newFile.file);
+        setFile({ file: newFile.file, name: newFile.name, size: newFile.size, type: newFile.type });
         setUploadComplete(true);
     };
 
     const removeFile = () => {
         clearFile();
+        setOriginalDataURL(null);
         setDataURL(null);
         setUploadComplete(false);
     };
@@ -170,11 +173,11 @@ export function Upload() {
                                             <span className="font-medium">Photo uploaded successfully!</span>
                                         </div>
 
-                                        {dataURL && (
+                                        {originalDataURL && (
                                             <div className="mb-4">
-                                                <Image src={dataURL}
-                                                    width={500}
-                                                    height={700}
+                                                <Image src={originalDataURL}
+                                                    width={250}
+                                                    height={400}
                                                     alt="Preview"
                                                     className="max-h-64 mx-auto rounded-lg shadow-md">
                                                 </Image>
@@ -183,7 +186,7 @@ export function Upload() {
 
                                         <div className="text-sm text-neutral-400 space-y-1">
                                             <p><strong>File:</strong> {file.name}</p>
-                                            <p><strong>Size:</strong> {formatFileSize(file.size)}</p>
+                                            <p><strong>Size:</strong> {formatFileSize(file.size || 0)}</p>
                                             <p><strong>Type:</strong> {file.type}</p>
                                         </div>
                                     </div>
@@ -216,7 +219,7 @@ export function Upload() {
                                 <div className="flex justify-between text-sm">
                                     <span className="text-neutral-200">File size:</span>
                                     <span className="font-medium text-neutral-200">
-                                        {file ? formatFileSize(file.size) : '0 Bytes'}
+                                        {file ? formatFileSize(file.size || 0) : '0 Bytes'}
                                     </span>
                                 </div>
                                 <div className="flex justify-between text-sm">
@@ -242,11 +245,11 @@ export function Upload() {
                                                     {file.name}
                                                 </p>
                                                 <p className="text-xs text-neutral-400">
-                                                    {formatFileSize(file.size)}
+                                                    {formatFileSize(file.size || 0)}
                                                 </p>
                                             </div>
                                         </div>
-                                        <IconCheck className="w-5 h-5 text-neutral-500 flex-shrink-0" />
+                                        <IconCheck className="w-5 h-5 text-neutral-500 flex-shrink-0" /> 
                                     </motion.div>
                                 </div>
                             )}

@@ -16,13 +16,6 @@
     padding: 0;
     background-color: var(--background);
   }
-  
-  .main-wrapper {
-    padding-left: 20rem;
-    padding-right: 20rem;
-    padding-top: 2rem;
-    min-height: 100vh; 
-  }
 }
 
 :root {

@@ -61,45 +61,47 @@ function Hero() {
             <Background />
             <Navbar />
             <div className='text-foreground'>
-                <div className='flex justify-center items-center gap-6 mt-32'>
+                <div className='flex justify-center items-center gap-6 mt-20'>
                     <div className='flex w-52'>
                         <AnimatedTooltip items={people} />
                     </div>
                     <div>Trusted by 100+ users</div>
                 </div>
-                <div className='flex flex-col justify-center items-center'>
-                    <div className='flex mt-16 text-7xl font-semibold'>
+                <div className='flex flex-col justify-center items-center px-24'>
+                    <div className='flex mt-16 text-6xl font-semibold'>
                         <div className=''>
                             Every tool you need to work with
                             <div className='w-full flex flex-col justify-center items-center'>
-                                <div className='mt-6 mb-6 text-8xl'>
+                                <div className='mt-6 mb-6 text-7xl'>
                                     <FlipWords words={words} />
                                 </div>
                                 in one place
                             </div>
-
                         </div>
                     </div>
+                    <div className='text-neutral-400 mt-8 px-40 text-lg text-center'>
+                        Your all-in-one platform for portrait editing — access effortless tools, complete creative control, and achieve stunning, professional-quality results with ease, all at your fingertips.
+                    </div>
 
-                    <div className='flex mt-16 gap-24 w-full items-center justify-center px-6'>
+                    <div className='flex mt-10 gap-24 w-full items-center justify-center px-6'>
                         <div>
                             <Button onClick={() => signIn('google', { callbackUrl: '/upload' })} className='bg-accent-dark text-white hover:bg-accent-light text-3xl px-5 py-4'>Start Editing Now</Button>
                         </div>
                     </div>
                 </div>
 
-                <div className='flex justify-end items-end'>
-                    <div className='border border-accent-light/30 translate-x-1/2 -translate-y-60 rotate-90 w-3xl blur-xs shadow-2xl shadow-accent-dark'></div>
+                {/* <div className='flex justify-end items-end'>
+                    <div className='border border-accent-light/30 translate-x-1/2 -translate-y-64 rotate-90 w-3xl blur-xs shadow-2xl shadow-accent-dark'></div>
                 </div>
                 <div className='transform-3d mt-20'>
                     <div className='border border-accent-light/30 w-7xl translate-x-11 blur-xs shadow-2xl shadow-accent-dark'></div>
                 </div>
                 <div className='flex justify-end items-end'>
-                    <div className='border border-accent-light/30 translate-x-[25rem] -translate-y-72 rotate-90 w-3xl blur-xs shadow-2xl shadow-accent-dark'></div>
+                    <div className='border border-accent-light/30 translate-x-[25rem] -translate-y-80 rotate-90 w-3xl blur-xs shadow-2xl shadow-accent-dark'></div>
                 </div>
                 <div className='transform-3d mt-4'>
-                    <div className='border border-accent-light/30 w-7xl translate-x-28 blur-xs shadow-2xl shadow-accent-dark'></div>
-                </div>
+                    <div className='border border-accent-light/30 w-7xl translate-x-16 blur-xs shadow-2xl shadow-accent-dark'></div>
+                </div> */}
             </div>
             <Video />
         </>

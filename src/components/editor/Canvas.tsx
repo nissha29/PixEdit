@@ -1,7 +1,7 @@
-import { IconDownload, IconRedo, IconUndo, IconUpload } from "@/icons/icons";
-import { useActiveTabStore, useBackgroundStore, useBlurStore, useCropStore, useDrawingStore, useFileStore, useFilterStore, useImageDimensionStore, useImagePreviewStore, useTextStore, useEditorUndoRedoStore } from "@/store/store";
-import { Stroke, TextBox } from "@/types/types";
-import { drawText, blur, snowy, drawBoundingBox, getBoundingBox, getBox, getCanvasCoords, isPointInRect, pixelate, smudge, drawStrokes, drawBoundingBoxForCrop, pushPointToLast } from "@/utils/utils";
+import { IconDownload, IconUpload } from "@/icons/icons";
+import { useActiveTabStore, useBackgroundStore, useBlurStore, useCropStore, useDrawingStore, useFileStore, useFilterStore, useImageDimensionStore, useImagePreviewStore, useTextStore } from "@/store/store";
+import { Blurs, Stroke, TextBox } from "@/types/types";
+import { drawText, drawBoundingBox, getBoundingBox, getBox, getCanvasCoords, isPointInRect, pixelate, smudge, drawStrokes, drawBoundingBoxForCrop, pushPointToLast } from "@/utils/utils";
 import { useEffect, useRef, useState } from "react";
 
 export default function Canvas() {
@@ -23,10 +23,9 @@ export default function Canvas() {
     const { selectedBlur, blurRadius, blurStrength, blurs, setBlurs } = useBlurStore();
     let lastPos: { x: number; y: number } | null = null;
     const fileInputRef = useRef<HTMLInputElement | null>(null);
-    const { setDataURL } = useImagePreviewStore();
+    const { setDataURL, setOriginalDataURL } = useImagePreviewStore();
     const { setFile } = useFileStore();
     const { selectedRatio, cropBox, setCropBox, isCropping, setIsCropping, rotation, setRotation } = useCropStore();
-    const { present: editor, set: setEditor, undo, redo } = useEditorUndoRedoStore();
     const [draggingHandler, setDraggingHandler] = useState<string | null>(null);
     const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
     const minWidth = 30;
@@ -41,7 +40,6 @@ export default function Canvas() {
             setImageDimensions({ width: img.width, height: img.height });
             const crop = { minX: 2, minY: 2, maxX: img.width - 2, maxY: img.height - 2 }
             setCropBox(crop);
-            setEditor({ ...editor!, cropBox: crop });
             if (canvasRef.current) {
                 canvasRef.current.width = img.width;
                 canvasRef.current.height = img.height;
@@ -86,10 +84,11 @@ export default function Canvas() {
 
         const reader = new FileReader();
         reader.onload = (event) => {
+            setOriginalDataURL(event.target?.result as string);
             setDataURL(event.target?.result as string);
         };
         reader.readAsDataURL(file);
-        setFile(file);
+        setFile({ file, name: file.name, size: file.size, type: file.type });
     };
 
     const onMouseDownDraw = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -116,10 +115,6 @@ export default function Canvas() {
         };
 
         setStrokes((prev) => [...prev, newStroke]);
-        setEditor({
-            ...editor!,
-            strokes: [...editor!.strokes, newStroke],
-        });
     };
 
     const onMouseMoveDraw = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -137,10 +132,6 @@ export default function Canvas() {
         ctx.stroke();
 
         setStrokes((prev) => pushPointToLast(prev, { x, y }));
-        setEditor({
-            ...editor!,
-            strokes: pushPointToLast(editor!.strokes, { x, y }),
-        });
     };
 
     const onMouseUpDraw = () => {
@@ -215,7 +206,6 @@ export default function Canvas() {
         })
 
         setTextBoxes(updatedTextBoxes);
-        setEditor({ ...editor!, textBoxes: updatedTextBoxes });
         setDragStartPos({ x: mouseX, y: mouseY });
     }
 
@@ -230,15 +220,15 @@ export default function Canvas() {
         const pos: { x: number, y: number } | null = getCanvasCoords(canvas, e);
         if (!pos) return;
 
-        const newBlur = {
+        const newBlur: Blurs = {
             type: selectedBlur,
-            points: [{ x: pos.x, y: pos.y }],
+            points: [pos],
             radius: blurRadius,
-            strength: blurStrength
+            strength: blurStrength,
         };
 
-        setBlurs((prev) => [...prev, newBlur]);
-        setEditor({ ...editor!, blurs: [...editor!.blurs, newBlur] });
+        setBlurs(prev => [...prev, newBlur]);
+
     }
 
     const onMouseMoveBlur = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -269,17 +259,17 @@ export default function Canvas() {
                 case 'smudge':
                     smudge(ctx, x, y, blurRadius, blurStrength);
                     break;
-                case 'snowy':
-                    snowy(ctx, x, y, blurRadius, blurStrength);
-                    break;
-                case 'blur':
-                    blur(ctx, x, y, blurRadius, blurStrength);
-                    break;
                 default:
                     break;
             }
         }
-        setBlurs((prev) => {
+
+        const updated = [...blurs];
+        const last = updated[updated.length - 1];
+        if (last) {
+            last.points.push(pos);
+        }
+        setBlurs(prev => {
             const updated = [...prev];
             const last = updated[updated.length - 1];
             if (last) {
@@ -288,17 +278,7 @@ export default function Canvas() {
             return updated;
         });
 
-        setEditor({
-            ...editor!,
-            blurs: (() => {
-                const updated = [...editor!.blurs];
-                const last = updated[updated.length - 1];
-                if (last) {
-                    last.points.push(pos);
-                }
-                return updated;
-            })(),
-        });
+
         lastPos = pos;
     }
 
@@ -363,7 +343,6 @@ export default function Canvas() {
         }
 
         setCropBox(newBox);
-        // setEditor({ ...editor!, cropBox: newBox });
         setDragStart({ x: mouseX, y: mouseY });
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -449,7 +428,7 @@ export default function Canvas() {
 
         const link = document.createElement('a');
         link.href = dataURL;
-        link.download = `apex-${crypto.randomUUID()}.${exportFormat}`;
+        link.download = `pixEDiT-${crypto.randomUUID()}.${exportFormat}`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -500,8 +479,8 @@ export default function Canvas() {
                 bgImg.src = background.value;
                 bgImg.onload = () => {
                     ctx.save();
-                    ctx.filter = 'blur(10px)';
-                    ctx.drawImage(bgImg, 0, 0, width, height);
+                    ctx.filter = 'blur(1px)';
+                    ctx.drawImage(bgImg, 0, 0, width+15, height+15);
                     ctx.restore();
                     drawForeground();
                 };
@@ -554,6 +533,19 @@ export default function Canvas() {
                         );
                     })
 
+                    blurs.forEach(blur => {
+                        blur.points.forEach(point => {
+                            switch (blur.type) {
+                                case 'pixelate':
+                                    pixelate(ctx, point.x, point.y, blur.radius, blur.strength);
+                                    break;
+                                case 'smudge':
+                                    smudge(ctx, point.x, point.y, blur.radius, blur.strength);
+                                    break;
+                            }
+                        });
+                    });
+
                     strokes.forEach(stroke => {
                         if (stroke.points.length < 2) return;
 
@@ -569,33 +561,6 @@ export default function Canvas() {
                         ctx.stroke();
                         ctx.closePath();
                     });
-
-                    blurs.forEach(blurry => {
-                        if (blurry.points.length < 2) return;
-
-                        for (let i = 1; i < blurry.points.length; i++) {
-                            const prev = blurry.points[i - 1];
-                            const curr = blurry.points[i];
-
-                            const distX = curr.x - prev.x;
-                            const distY = curr.y - prev.y;
-                            const distance = Math.hypot(distX, distY);
-                            const step = blurry.strength / 4;
-
-                            for (let j = 0; j < distance; j += step) {
-                                const x = prev.x + (distX * j) / distance;
-                                const y = prev.y + (distY * j) / distance;
-
-                                switch (blurry.type) {
-                                    case 'pixelate': pixelate(ctx, x, y, blurry.radius, blurry.strength); break;
-                                    case 'smudge': smudge(ctx, x, y, blurry.radius, blurry.strength); break;
-                                    case 'snowy': snowy(ctx, x, y, blurry.radius, blurry.strength); break;
-                                    case 'blur': blur(ctx, x, y, blurry.radius, blurry.strength); break;
-                                }
-                            }
-                        }
-                    });
-
 
                     if (activeTab === 'text' && activeTextBox) {
                         const box = getBoundingBox({
@@ -622,7 +587,7 @@ export default function Canvas() {
             }
             drawForeground();
         };
-    }, [dataURL, background, filter, textBoxes, activeTab, setImageDimensions, activeTextBox, selectedRatio, cropBox, isCropping, rotation, blurs]);
+    }, [dataURL, background, filter, textBoxes, activeTab, setImageDimensions, activeTextBox, selectedRatio, cropBox, isCropping, rotation]);
 
     return (
         <>
@@ -644,12 +609,6 @@ export default function Canvas() {
                         </div>
 
                         <div className="flex justify-between items-center space-x-2">
-                            <button onClick={() => undo()} className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 hover:cursor-pointer rounded transition-colors">
-                                <IconUndo className="w-5 h-5 text-white" />
-                            </button>
-                            <button onClick={() => redo()} className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 hover:cursor-pointer rounded transition-colors">
-                                <IconRedo className="w-5 h-5 text-white" />
-                            </button>
                             <button onClick={() => triggerFileSelect()} className="px-3 py-2 bg-neutral-200 hover:bg-neutral-300 hover:cursor-pointer text-neutral-800 rounded transition-colors flex items-center space-x-2">
                                 <IconUpload className="w-5 h-5" />
                                 <span>Upload new</span>

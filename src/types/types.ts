@@ -21,9 +21,16 @@ export type UserStore = {
   clearUser: () => void;
 };
 
+export type FileData = {
+  file: File,
+  name: string | null,
+  type: string | null,
+  size:  number | null,
+}
+
 export type FileStore = {
-  file: File | null,
-  setFile: (newFile: File) => void,
+  file: FileData | null,
+  setFile: (newFile: FileData) => void,
   clearFile: () => void,
 }
 
@@ -31,6 +38,10 @@ export type ImagePreviewStore = {
   dataURL: string | null,
   setDataURL: (dataURL: string | null) => void,
   clearDataURL: () => void,
+
+  originalDataURL: string | null,
+  setOriginalDataURL: (originalDataURL: string | null) => void,
+  clearOriginalDataURL: () => void,
 }
 
 export type ActiveTabStore = {
@@ -178,8 +189,6 @@ export type ImageDimensionStore = {
 export enum BlurType {
   pixelate = 'pixelate',
   smudge = 'smudge',
-  snowy = 'snowy',
-  blur = 'blur',
 }
 
 export type Blurs = {
@@ -201,7 +210,7 @@ export type BlurStore = {
   setBlurStrength: (brushSize: number) => void,
 
   blurs: Blurs[],
-  setBlurs: (updater: (prev: Blurs[]) => Blurs[]) => void;
+  setBlurs: (blurs: Blurs[] | ((prev: Blurs[]) => Blurs[])) => void;
 }
 
 export type CropStore = {

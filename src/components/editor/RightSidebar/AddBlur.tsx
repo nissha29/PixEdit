@@ -4,8 +4,6 @@ import { BlurType } from '@/types/types';
 const blurTypes = [
     { id: BlurType.pixelate, label: BlurType.pixelate },
     { id: BlurType.smudge, label: BlurType.smudge },
-    { id: BlurType.snowy, label: BlurType.snowy },
-    { id: BlurType.blur, label: BlurType.blur },
 ];
 
 export default function AddBlur() {
@@ -17,10 +15,8 @@ export default function AddBlur() {
                 return 'Pixel Size';
             case 'smudge':
                 return 'Smudge Size';
-            case 'snowy':
-                return 'Snowy Size';
             default:
-                return 'Blur Radius';
+                return 'Pixel Size';
         }
     };
 
@@ -30,10 +26,8 @@ export default function AddBlur() {
                 return { min: 2, max: 20, step: 1 };
             case 'smudge':
                 return { min: 3, max: 30, step: 1 };
-            case 'snowy':
-                return { min: 1, max: 15, step: 1 };
             default:
-                return { min: 5, max: 40, step: 1 };
+                return { min: 2, max: 20, step: 1 };
         }
     };
 
