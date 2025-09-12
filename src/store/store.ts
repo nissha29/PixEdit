@@ -126,7 +126,7 @@ export const useTextStore = create<TextStore>((set) => ({
   selectedFont: 'Inter',
   setSelectedFont: (value: string) => set({ selectedFont: value }),
 
-  fontSize: 32,
+  fontSize: 50,
   setFontSize: (value: number) => set({ fontSize: value }),
 
   fontWeight: '400',
@@ -147,7 +147,7 @@ export const useTextStore = create<TextStore>((set) => ({
   customColor: '#ffffff',
   setCustomColor: (value: string) => set({ customColor: value }),
 
-  selectedTextColor: '#000000',
+  selectedTextColor: '#fffffff',  
   setSelectedTextColor: (value: string) => set({ selectedTextColor: value }),
 }));
 
