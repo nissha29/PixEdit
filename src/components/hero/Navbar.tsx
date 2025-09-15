@@ -10,7 +10,7 @@ const navBarLinkStyles = `hover:underline underline-offset-8 decoration-2 decora
 function Navbar() {
     return (
         <div className='relative'>
-            <div className='px-24 flex justify-between items-center dark:text-foreground text-foreground sticky'>
+            <div className='lg:px-5 xl:px-24 flex justify-between items-center dark:text-foreground text-foreground sticky'>
                 <div className='flex gap-24'>
                     <div className='flex items-center'>
                         <div className="text-accent-dark text-3xl font-bold">pix</div>

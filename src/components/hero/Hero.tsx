@@ -11,6 +11,8 @@ import Button from '../forms/Button';
 import ImageFlow from './ImageFlow';
 import { ArrowRight } from 'lucide-react';
 import HowItWorks from './HowItWorks';
+import { CTA } from './Cta';
+import Footer from './Footer';
 
 function Hero() {
     const words = ["images", "illustrations", "pictures", "potraits"];
@@ -61,38 +63,41 @@ function Hero() {
 
     return (
         <>
-            <Background />
-            <Navbar />
-            <div className='text-foreground'>
-                <div className='flex justify-center items-center mt-14'>
-                    <div className='flex w-52'>
-                        <AnimatedTooltip items={people} />
+            <div>
+                <Background />
+                <Navbar />
+                <div className='text-foreground'>
+                    <div className='flex justify-center items-center mt-14'>
+                        <div className='flex w-52'>
+                            <AnimatedTooltip items={people} />
+                        </div>
+                        <div>Trusted by 100+ users</div>
                     </div>
-                    <div>Trusted by 100+ users</div>
-                </div>
-                <div className='flex flex-col justify-center items-center px-24'>
-                    <div className='flex mt-8 text-6xl font-semibold'>
-                        <div className=''>
-                            Every tool you need to work with
-                            <div className='w-full flex flex-col justify-center items-center'>
-                                <div className='mt-6 mb-6 text-7xl'>
-                                    <FlipWords words={words} />
+                    <div className='flex flex-col justify-center items-center px-24'>
+                        <div className='flex mt-8 lg:text-4xl xl:text-5xl 2xl:text-6xl font-semibold'>
+                            <div className=''>
+                                Every tool you need to work with
+                                <div className='w-full flex flex-col justify-center items-center'>
+                                    <div className='mt-6 mb-6 lg:text-5xl xl:text-6xl 2xl:text-7xl'>
+                                        <FlipWords words={words} />
+                                    </div>
+                                    in one place
                                 </div>
-                                in one place
+                            </div>
+                        </div>
+
+                        <div className='flex mt-10 gap-24 w-full items-center justify-center px-6'>
+                            <div>
+                                <Button onClick={() => signIn('google', { callbackUrl: '/upload' })} className='flex gap-2 justify-center items-center bg-accent-dark text-white hover:bg-accent-light lg:text-xl xl:text-2xl 2xl:text-3xl px-5 py-4 shadow-xl shadow-accent-dark/30'>Start Editing Now <ArrowRight /></Button>
                             </div>
                         </div>
                     </div>
-
-                    <div className='flex mt-10 gap-24 w-full items-center justify-center px-6'>
-                        <div>
-                            <Button onClick={() => signIn('google', { callbackUrl: '/upload' })} className='flex gap-2 justify-center items-center bg-accent-dark text-white hover:bg-accent-light text-3xl px-5 py-4 shadow-xl shadow-accent-dark/30'>Start Editing Now <ArrowRight /></Button>
-                        </div>
-                    </div>
                 </div>
+                <Video />
+                <ImageFlow />
+                <HowItWorks />
+                <CTA />
             </div>
-            <Video />
-            <ImageFlow />
-            <HowItWorks />
         </>
     )
 }
