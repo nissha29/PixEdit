@@ -20,7 +20,7 @@ function Navbar() {
                     <div className='hidden md:flex gap-16 justify-center items-center text-lg z-10'>
                         <Link href='' className={navBarLinkStyles}>Home</Link>
                         <Link href='' className={navBarLinkStyles}> Features</Link>
-                        <Link href='' className={navBarLinkStyles}>Images</Link>
+                        <Link href='' className={navBarLinkStyles}>How It Works?</Link>
                     </div>
                 </div>
                 <div className='hidden text-lg md:flex gap-10 justify-center items-center'>
