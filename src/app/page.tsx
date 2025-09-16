@@ -5,7 +5,7 @@ import "./globals.css";
 export default function Home() {
   return (
     <>
-      <div className="lg:px-14 xl:px-24 2xl:px-32 py-10 main-wrapper bg-background min-h-screen">
+      <div className="px-3 sm:px-5 md:px-10 lg:px-14 xl:px-24 2xl:px-32 py-10 main-wrapper bg-background min-h-screen">
         <Hero />
       </div>
       <Footer />

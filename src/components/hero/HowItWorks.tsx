@@ -58,14 +58,14 @@ const content = [
     },
 ];
 export default function HowItWorks() {
-    return <div className="text-5xl mb-32 bg-neutral-900 py-10 mt-10 flex justify-center items-center flex-col">
+    return <div className="w-full text-2xl sm:text-3xl md:text-4xl mb-32 bg-neutral-900 py-10 mt-10 flex justify-center items-center flex-col">
         <div className="flex text-foreground gap-3 justify-center items-center">
             How <div className='flex items-center'>
-                <div className="text-accent-dark text-5xl font-bold">pix</div>
-                <div className="text-4xl font-bold text-neutral-100">EDiT</div>
+                <div className="text-accent-dark sm:text-3xl md:text-5xl font-bold">pix</div>
+                <div className="sm:text-2xl md:text-4xl font-bold text-neutral-100">EDiT</div>
             </div> Works ?
         </div>
-        <div className='text-lg text-neutral-400 flex-wrap w-xl text-center mt-7'>Experience the ease of editing with powerful tools designed to help you create stunning images in just minutes.</div>
+        <div className='text-lg text-neutral-400 flex-wrap sm:w-xl text-center mt-7'>Experience the ease of editing with powerful tools designed to help you create stunning images in just minutes.</div>
         <div className="w-full py-10">
             <StickyScroll content={content} />
         </div>
