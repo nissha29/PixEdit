@@ -1,8 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from '@/prisma/index'
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,7 +12,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user }) {
       const existingUser = await prisma.user.findUnique({
-        where: { email: user.email! },
+        where: { email: user.email || '' },
       });
 
       if (!existingUser) {
