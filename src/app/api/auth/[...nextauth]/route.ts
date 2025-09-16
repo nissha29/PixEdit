@@ -1,10 +1,12 @@
 import NextAuth, { type User, type Session } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaClient } from "@prisma/client";
+import { NextAuthOptions } from "next-auth";
+
 
 const prisma = new PrismaClient();
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -42,7 +44,7 @@ export const authOptions = {
       }
 
       const dbUser = await prisma.user.findUnique({
-        where: { email: session.user?.email },
+        where: { email: session.user.email },
       });
 
       if (!dbUser?.id) {
