@@ -34,7 +34,12 @@ export default function AddBlur() {
     const range = getRadiusRange();
 
     return (
-        <div className="w-full px-6 py-2 space-y-8">
+        <div className="w-full px-6 py-2 space-y-8"
+            style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+            }}
+        >
             <div className="">
                 <h3 className="text-lg font-semibold text-neutral-200">Add Blur</h3>
             </div>
@@ -119,6 +124,6 @@ export default function AddBlur() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

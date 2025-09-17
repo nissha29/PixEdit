@@ -61,7 +61,12 @@ export default function Background() {
 
 
   return (
-    <div className="w-full bg-background px-6 py-2 space-y-8">
+    <div className="w-full bg-background px-6 py-2 space-y-8"
+      style={{
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+      }}
+    >
       <div>
         <h3 className="text-xl font-semibold text-neutral-200 mb-8">Background</h3>
         <div className="flex flex-col gap-3 space-y-4">
@@ -174,7 +179,7 @@ export default function Background() {
             <div>
               <h4 className="font-semibold text-neutral-200 mb-3">Custom</h4>
 
-              <div className="flex space-x-4 overflow-x-auto py-2 px-1 mb-4 custom-scrollbar" style={{ scrollbarWidth: 'none'}}>
+              <div className="flex space-x-4 overflow-x-auto py-2 px-1 mb-4 custom-scrollbar" style={{ scrollbarWidth: 'none' }}>
                 {customImages.map((src, idx) => (
                   <div
                     key={idx}
@@ -185,9 +190,9 @@ export default function Background() {
                       src={src}
                       alt={`Custom background ${idx + 1}`}
                       width={150}
-                      height={80} 
+                      height={80}
                       className="object-fill rounded-lg"
-                      unoptimized={true} 
+                      unoptimized={true}
                     />
                   </div>
                 ))}

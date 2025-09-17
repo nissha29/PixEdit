@@ -25,7 +25,7 @@ export type FileData = {
   file: File,
   name: string | null,
   type: string | null,
-  size:  number | null,
+  size: number | null,
 }
 
 export type FileStore = {
@@ -246,3 +246,13 @@ export type EditorState = {
   background: Background | null;
   filter: { name: string; class: string };
 };
+
+export type RightPanelStore = {
+  isRightPanelOpen: boolean,
+  setIsRightPanelOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
+}
+
+export type LeftPanelStore = {
+  isLeftPanelOpen: boolean,
+  setIsLeftPanelOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
+}

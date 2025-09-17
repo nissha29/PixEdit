@@ -16,7 +16,9 @@ import {
   FilterType,
   ImageDimensionStore,
   ImagePreviewStore,
+  LeftPanelStore,
   LoadingStore,
+  RightPanelStore,
   TextBox,
   TextStore,
   ToolType,
@@ -231,3 +233,21 @@ export const useEditorUndoRedoStore = createUndoRedoStore<EditorState>({
   background: null,
   filter: { name: "None", class: "" },
 }); 
+
+export const useRightPanelStore = create<RightPanelStore>((set) => ({
+    isRightPanelOpen: false,
+    setIsRightPanelOpen: (value) =>
+    set((state) => ({
+      isRightPanelOpen: typeof value === 'function' ? value(state.isRightPanelOpen) : value
+    }))
+  })
+)
+
+export const useLeftPanelStore = create<LeftPanelStore>((set) => ({
+    isLeftPanelOpen: false,
+    setIsLeftPanelOpen: (value) =>
+    set((state) => ({
+      isLeftPanelOpen: typeof value === 'function' ? value(state.isLeftPanelOpen) : value
+    }))
+  })
+)

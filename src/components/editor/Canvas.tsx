@@ -1,7 +1,8 @@
 import { IconDownload, IconUpload } from "@/icons/icons";
-import { useActiveTabStore, useBackgroundStore, useBlurStore, useCropStore, useDrawingStore, useFileStore, useFilterStore, useImageDimensionStore, useImagePreviewStore, useTextStore } from "@/store/store";
+import { useActiveTabStore, useBackgroundStore, useBlurStore, useCropStore, useDrawingStore, useFileStore, useFilterStore, useImageDimensionStore, useImagePreviewStore, useLeftPanelStore, useTextStore } from "@/store/store";
 import { Blurs, Stroke, TextBox } from "@/types/types";
 import { drawText, drawBoundingBox, getBoundingBox, getBox, getCanvasCoords, isPointInRect, pixelate, smudge, drawStrokes, drawBoundingBoxForCrop, pushPointToLast } from "@/utils/utils";
+import { Wrench } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export default function Canvas() {
@@ -28,6 +29,7 @@ export default function Canvas() {
     const { selectedRatio, cropBox, setCropBox, isCropping, setIsCropping, rotation, setRotation } = useCropStore();
     const [draggingHandler, setDraggingHandler] = useState<string | null>(null);
     const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
+    const { setIsLeftPanelOpen } = useLeftPanelStore();
     const minWidth = 30;
     const minHeight = 30;
 
@@ -480,7 +482,7 @@ export default function Canvas() {
                 bgImg.onload = () => {
                     ctx.save();
                     ctx.filter = 'blur(1px)';
-                    ctx.drawImage(bgImg, 0, 0, width+15, height+15);
+                    ctx.drawImage(bgImg, 0, 0, width + 15, height + 15);
                     ctx.restore();
                     drawForeground();
                 };
@@ -598,7 +600,7 @@ export default function Canvas() {
                 className="hidden"
                 onChange={onFileChange}
             />
-            <main className="flex-1 flex flex-col">
+            <main className="h-full flex-1 flex flex-col">
                 <header className="bg-background p-4 border-b-2 border-neutral-800 shadow-sm">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
@@ -609,13 +611,29 @@ export default function Canvas() {
                         </div>
 
                         <div className="flex justify-between items-center space-x-2">
-                            <button onClick={() => triggerFileSelect()} className="px-3 py-2 bg-neutral-200 hover:bg-neutral-300 hover:cursor-pointer text-neutral-800 rounded transition-colors flex items-center space-x-2">
-                                <IconUpload className="w-5 h-5" />
-                                <span>Upload new</span>
+                            <button
+                                onClick={() => {
+                                    console.log('Wrench clicked')
+                                    setIsLeftPanelOpen(prev => !prev)
+                                }}
+                                className="sm:hidden w-12 h-12 sm:w-auto sm:h-auto sm:px-3 sm:py-2 bg-neutral-700 hover:bg-neutral-700/80 hover:cursor-pointer text-neutral-200 tracking-wider rounded transition-colors flex justify-center items-center space-x-2"
+                            >
+                                <Wrench className="w-6 h-6 sm:w-5 sm:h-5" />
                             </button>
-                            <button onClick={() => setOpen(prev => !prev)} className="px-3 py-2 bg-accent-dark hover:bg-accent-light hover:cursor-pointer text-white tracking-wider rounded transition-colors flex items-center space-x-2">
-                                <IconDownload className="w-5 h-5" />
-                                <span>Export</span>
+                            <button
+                                onClick={() => triggerFileSelect()}
+                                className="w-12 h-12 sm:w-auto sm:h-auto sm:px-3 sm:py-2 bg-neutral-700 hover:bg-neutral-700/80 hover:cursor-pointer text-neutral-200 rounded transition-colors flex justify-center items-center space-x-2"
+                            >
+                                <IconUpload className="w-6 h-6 sm:w-5 sm:h-5" />
+                                <span className="hidden sm:flex">Upload new</span>
+                            </button>
+
+                            <button
+                                onClick={() => setOpen(prev => !prev)}
+                                className="w-12 h-12 sm:w-auto sm:h-auto sm:px-3 sm:py-2 bg-neutral-700 hover:bg-neutral-700/80 hover:cursor-pointer text-neutral-200 tracking-wider rounded transition-colors flex justify-center items-center space-x-2"
+                            >
+                                <IconDownload className="w-6 h-6 sm:w-5 sm:h-5" />
+                                <span className="hidden sm:flex">Export</span>
                             </button>
                         </div>
                     </div>
@@ -660,12 +678,19 @@ export default function Canvas() {
                         onMouseUp={onMouseUp}
                         onMouseLeave={onMouseUp}
                         style={{
-                            maxWidth: '40vw',
-                            maxHeight: '80vh',
                             width: 'auto',
                             height: 'auto',
                             border: '2px solid #fce300',
                         }}
+                        className="
+                            mt-40 sm:mt-0
+                            max-w-[89vw] max-h-[60vh]
+                            sm:max-w-[70vw] sm:max-h-[80vh]
+                            md:max-w-[75vw] md:max-h-[80vh]
+                            lg:max-w-[55vw] lg:max-h-[80vh]
+                            xl:max-w-[50vw] xl:max-h-[80vh]
+                            2xl:max-w-[40vw] 2xl:max-h-[80vh]
+                        "
                     />
                 </div>
             </main>

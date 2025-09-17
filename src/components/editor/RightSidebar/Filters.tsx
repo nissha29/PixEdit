@@ -5,7 +5,12 @@ export default function Filters() {
     const { setFilter } = useFilterStore();
     const { dataURL } = useImagePreviewStore();
 
-    return <div className="space-y-6" style={{ scrollbarWidth: 'none' }}>
+    return <div className="overflow-y-scroll space-y-6"
+        style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+        }}
+    >
         <h3 className="text-xl font-semibold text-neutral-200 mb-4">Filters</h3>
         <div className="grid grid-cols-2 gap-3">
             {filters.map((filter, index) => (

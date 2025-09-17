@@ -4,18 +4,13 @@ import Image from 'next/image';
 export function ImageFlow() {
 
     return (
-        <div className="flex flex-col justify-center items-center mb-32 mt-5">
+        <div className="flex flex-col justify-center items-center mb-24 mt-5">
             <div className="text-2xl sm:text-4xl lg:text-5xl text-foreground mb-7 flex flex-col justify-center items-center gap-6">
                 <div><span className="text-white bg-accent-dark px-2 py-0.5">MINIMAL</span> yet mighty</div>
                 <div className='text-base lg:text-lg text-neutral-400 flex-wrap md:w-2xl text-center'>All the editing tools you need, thoughtfully designed to keep things simple — so you can focus on making your photos look amazing without any distractions.</div>
             </div>
             <div
                 className="flex flex-col justify-start items-start gap-10 mt-7 sm:mt-16"
-                // style={{
-                //     scrollbarWidth: 'none',
-                //     msOverflowStyle: 'none', 
-                //     overscrollBehavior: 'revert-layer',
-                // }}
             >
                 <Feature mainText="Add Text" description="Easily add and style text on your images with a variety of fonts, sizes, colors, and placement options — customize every detail to create visually stunning designs that perfectly match your message, all in just a few clicks." image1="/text1.png" image2="/text2.png" />
                 <Feature mainText="Crop and Rotate photos" description="Quickly crop and rotate your photos to focus on what matters most — adjust the composition, straighten angles, and enhance your images effortlessly for a polished, professional look." image1="/crop1.png" image2="/crop2.png" />

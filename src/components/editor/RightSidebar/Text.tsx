@@ -55,7 +55,12 @@ export default function TextEditorTool() {
   }
 
   return (
-    <div className="w-full bg-background p-2 space-y-8">
+    <div className="w-full bg-background p-2 space-y-8"
+      style={{
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+      }}
+    >
       <h2 className="text-xl font-semibold text-neutral-200">Add Text</h2>
 
       <textarea

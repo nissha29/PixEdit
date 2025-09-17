@@ -122,7 +122,12 @@ export default function Crop() {
     };
 
     return (
-        <div className="space-y-6 p-4 rounded-xl">
+        <div className="space-y-6 p-4 rounded-xl"
+            style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+            }}
+        >
             <h3 className="text-xl font-semibold text-neutral-200">
                 Crop & Transform
             </h3>
@@ -135,7 +140,7 @@ export default function Crop() {
                             <button
                                 key={ratio.name}
                                 onClick={() => handleAspectRatio(ratio.name)}
-                                className={`px-3 py-10 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 ${selectedRatio === ratio.name
+                                className={`w-28 h-28 lg:w-24 lg:h-24 xl:w-28 xl:h-28 p-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-1 ${selectedRatio === ratio.name
                                     ? 'bg-accent-dark text-white scale-105'
                                     : 'bg-neutral-200 hover:bg-neutral-300 text-neutral-800 hover:scale-105 hover:cursor-pointer'
                                     }`}
