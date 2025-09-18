@@ -3,24 +3,18 @@
 import { useActiveTabStore, useLeftPanelStore, useRightPanelStore } from '@/store/store';
 import { toolbarItems } from '@/lib/constants';
 import { signOut, useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Crown, LogOut, PanelRightOpen, User, Zap } from 'lucide-react';
 
 export default function LeftSidebar() {
     const { activeTab, setActiveTab } = useActiveTabStore();
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const { setIsRightPanelOpen } = useRightPanelStore();
     const { isLeftPanelOpen, setIsLeftPanelOpen } = useLeftPanelStore();
-
-    useEffect(() => {
-        if (status === 'unauthenticated') {
-            router.push('/');
-        }
-    }, [status, router]);
 
     const handleLogout = async () => {
         await signOut({ callbackUrl: '/' });

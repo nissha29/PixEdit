@@ -58,7 +58,7 @@ const content = [
     },
 ];
 export default function HowItWorks() {
-    return <div className="w-full text-2xl sm:text-3xl md:text-4xl mb-32 bg-neutral-900 py-10 mt-10 flex justify-center items-center flex-col">
+    return <div id='howItWorks' className="how itWorks w-full text-2xl sm:text-3xl md:text-4xl mb-32 bg-neutral-900 py-10 mt-10 flex justify-center items-center flex-col">
         <div className="flex text-foreground gap-3 justify-center items-center">
             How <div className='flex items-center'>
                 <div className="text-accent-dark sm:text-3xl md:text-5xl font-bold">pix</div>

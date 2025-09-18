@@ -4,7 +4,7 @@ import React from 'react'
 
 function Video() {
     return (
-        <div className='flex flex-col justify-center items-center mb-32'>
+        <div className='flex flex-col justify-center items-center mb-24 sm:mb-32 animate-pulse'>
             <div className="xl:w-6xl 2xl:w-full mt-2 overflow-hidden h-1/2 shadow-2xl shadow-accent-dark/30 hover:shadow-accent-dark/40 border border-neutral-700 rounded translate-y-10 2xl:translate-10 rotate-3">
                 <div className="relative z-10 group hover:cursor-pointer">
                     <Image src='/lp-pix.png' width={2000} height={2000} className='w-full 2xl:h-[52rem] xl:h-[45rem] lg:h-[40rem] md:h-[30rem]' alt='' />

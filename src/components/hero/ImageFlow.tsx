@@ -4,7 +4,7 @@ import Image from 'next/image';
 export function ImageFlow() {
 
     return (
-        <div className="flex flex-col justify-center items-center mb-24 mt-5">
+        <div id='features' className="features flex flex-col justify-center items-center mb-24 mt-5">
             <div className="text-2xl sm:text-4xl lg:text-5xl text-foreground mb-7 flex flex-col justify-center items-center gap-6">
                 <div><span className="text-white bg-accent-dark px-2 py-0.5">MINIMAL</span> yet mighty</div>
                 <div className='text-base lg:text-lg text-neutral-400 flex-wrap md:w-2xl text-center'>All the editing tools you need, thoughtfully designed to keep things simple — so you can focus on making your photos look amazing without any distractions.</div>

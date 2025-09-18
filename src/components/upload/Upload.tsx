@@ -72,9 +72,14 @@ const SingleFileUpload = ({ onChange }: { onChange: (newFile: FileData | null) =
 export function Upload() {
     const { file, setFile, clearFile } = useFileStore();
     const { setDataURL, originalDataURL, setOriginalDataURL } = useImagePreviewStore();
-    const [uploadComplete, setUploadComplete] = useState(false);
     const { data: session, status } = useSession();
     const router = useRouter();
+
+    useEffect(() => {
+        if (status === "unauthenticated") {
+            router.push("/");
+        }
+    }, [status, router]);
 
     const handleFileUpload = (newFile: FileData | null) => {
         if (!newFile) return;
@@ -86,14 +91,12 @@ export function Upload() {
         };
         reader.readAsDataURL(newFile.file);
         setFile({ file: newFile.file, name: newFile.name, size: newFile.size, type: newFile.type });
-        setUploadComplete(true);
     };
 
     const removeFile = () => {
         clearFile();
         setOriginalDataURL(null);
         setDataURL(null);
-        setUploadComplete(false);
     };
 
     const formatFileSize = (bytes: number) => {
@@ -104,11 +107,28 @@ export function Upload() {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
-    useEffect(() => {
-        if (status === 'unauthenticated') {
-            router.push('/');
-        }
-    }, [status, router]);
+
+    if (status === "loading") {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen px-4">
+                <div className="w-full max-w-4xl space-y-6 animate-pulse">
+                    <div className="flex justify-between items-center">
+                        <div className="h-8 w-32 bg-neutral-700 rounded"></div>
+                        <div className="h-10 w-28 bg-neutral-700 rounded"></div>
+                    </div>
+
+                    <div className="h-10 w-1/2 bg-neutral-700 rounded mx-auto"></div>
+
+                    <div className="h-64 w-full bg-neutral-800 rounded-xl border border-neutral-700"></div>
+                </div>
+            </div>
+        );
+    }
+
+
+    if (status === "unauthenticated") {
+        return null;
+    }
 
     return (
         <div className="min-h-screen bg-background">
@@ -127,13 +147,12 @@ export function Upload() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
-                            onClick={() => { router.push('/editor') }}
-                            className="bg-accent-dark hover:bg-accent-light text-white px-2 sm:px-3 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 hover:shadow-lg flex items-center justify-center space-x-2 hover:cursor-pointer"
+                            onClick={() => { router.push('/manage') }}
+                            className="bg-neutral-700 hover:bg-neutral-700/80 hover:cursor-pointer text-neutral-200 px-2 sm:px-3 py-3 rounded font-semibold transition-all transform hover:scale-105 hover:shadow-lg flex items-center justify-center space-x-2"
                         >
                             <IconImage className="w-5 h-5" />
                             <span>Manage Photos</span>
                         </motion.button>
-
                     </div>
                 </div>
             </header>
@@ -224,8 +243,8 @@ export function Upload() {
                                 </div>
                                 <div className="flex justify-between text-sm">
                                     <span className="text-neutral-200">Status:</span>
-                                    <span className={`font-medium ${uploadComplete ? 'text-green-600' : 'text-neutral-200'}`}>
-                                        {uploadComplete ? 'Ready' : 'Not Uploaded'}
+                                    <span className={`font-medium ${file ? 'text-green-600' : 'text-neutral-200'}`}>
+                                        {file ? 'Ready' : 'Not Uploaded'}
                                     </span>
                                 </div>
                             </div>
@@ -249,13 +268,13 @@ export function Upload() {
                                                 </p>
                                             </div>
                                         </div>
-                                        <IconCheck className="w-5 h-5 text-neutral-500 flex-shrink-0" /> 
+                                        <IconCheck className="w-5 h-5 text-neutral-500 flex-shrink-0" />
                                     </motion.div>
                                 </div>
                             )}
 
                             <AnimatePresence>
-                                {uploadComplete && file && (
+                                {file && (
                                     <motion.button
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
@@ -289,20 +308,16 @@ export function Upload() {
                                         <span>Text and typography</span>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                        <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-                                        <span>Object Removal or Magic Eraser</span>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 bg-fuchsia-400 rounded-full"></div>
                                         <span>Add Blur</span>
                                     </div>
                                     <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
-                                        <span>AI Image Upscaling and Restoration</span>
+                                        <span>AI Image Editing</span>
                                     </div>
                                     <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 bg-lime-400 rounded-full"></div>
-                                        <span>Format Conversion</span>
+                                        <span>Export in various formats</span>
                                     </div>
                                 </div>
                             </div>

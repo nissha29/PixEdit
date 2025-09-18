@@ -9,10 +9,22 @@ import Canvas from '@/components/editor/Canvas';
 import { useActiveTabStore, useRightPanelStore } from '@/store/store';
 import Draw from '@/components/editor/RightSidebar/Draw';
 import AddBlur from '@/components/editor/RightSidebar/AddBlur';
+import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const PhotoEditor = () => {
     const { activeTab } = useActiveTabStore();
     const { isRightPanelOpen, setIsRightPanelOpen } = useRightPanelStore();
+    const { status } = useSession();
+    const router = useRouter();
+
+
+    useEffect(() => {
+        if (status === "unauthenticated") {
+            router.push("/");
+        }
+    }, [status, router]);
 
     const renderSidebarContent = () => {
         switch (activeTab) {
@@ -49,6 +61,38 @@ const PhotoEditor = () => {
                 );
         }
     };
+
+    if (status === "loading") {
+        return (
+            <div className="h-screen w-screen bg-background flex animate-pulse">
+                <aside className="hidden lg:flex flex-col w-20 bg-neutral-900 p-4 space-y-6 border-r border-neutral-800">
+                    <div className="h-10 w-10 bg-neutral-700 rounded-lg"></div>
+                    <div className="h-10 w-10 bg-neutral-700 rounded-lg"></div>
+                    <div className="h-10 w-10 bg-neutral-700 rounded-lg"></div>
+                    <div className="h-10 w-10 bg-neutral-700 rounded-lg"></div>
+                </aside>
+
+                <main className="flex-1 flex items-center justify-center bg-neutral-950">
+                    <div className="h-[500px] w-[700px] bg-neutral-800 rounded-xl border border-neutral-700"></div>
+                </main>
+
+                <aside className="hidden lg:block w-72 xl:w-80 bg-neutral-900 p-6 border-l border-neutral-800 space-y-4">
+                    <div className="h-6 w-32 bg-neutral-700 rounded"></div>
+                    <div className="h-10 w-full bg-neutral-800 rounded"></div>
+                    <div className="h-10 w-3/4 bg-neutral-800 rounded"></div>
+                    <div className="h-10 w-1/2 bg-neutral-800 rounded"></div>
+                    <div className="h-32 w-full bg-neutral-800 rounded"></div>
+                </aside>
+            </div>
+        );
+    }
+
+
+
+    if (status === "unauthenticated") {
+        return null;
+    }
+
 
     return (
         <div className="h-full w-full bg-background text-neutral-800 flex">
