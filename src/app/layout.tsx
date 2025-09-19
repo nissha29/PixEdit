@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Providers from "./providers";
+import SessionProvider from "../components/provider/SessionProvider";
 import { quattrocento } from "@/lib/fonts";
+import QueryProvider from "@/components/provider/QueryProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,9 +19,11 @@ export default function RootLayout({
       <body
         className={`${quattrocento.className} antialiased`}
       >
-        <Providers>
-          {children}
-        </Providers>
+        <QueryProvider>
+          <SessionProvider>
+            {children}
+          </SessionProvider>
+        </QueryProvider>
       </body>
     </html>
   );

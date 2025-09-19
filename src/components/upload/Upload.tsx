@@ -81,7 +81,7 @@ export function Upload() {
         }
     }, [status, router]);
 
-    const handleFileUpload = (newFile: FileData | null) => {
+    const handleFileUpload = async (newFile: FileData | null) => {
         if (!newFile) return;
 
         const reader = new FileReader();

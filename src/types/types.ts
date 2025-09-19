@@ -256,3 +256,11 @@ export type LeftPanelStore = {
   isLeftPanelOpen: boolean,
   setIsLeftPanelOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
 }
+
+export type ImageType = {
+  id: string;
+  createdAt: Date;
+  userId: string;
+  publicId: string;
+  url: string;
+};

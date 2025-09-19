@@ -17,8 +17,18 @@ model User {
   name      String?
   email     String?  @unique
   image     String?
-  plan      PlanType   @default(free)
+  plan      PlanType @default(free)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  images     Image[]
+}
+
+model Image {
+  id           String   @id @default(uuid())
+  userId       String   
+  publicId     String
+  url          String
+  createdAt    DateTime @default(now())
+  user         User @relation(fields: [userId], references: [id])
 }
 

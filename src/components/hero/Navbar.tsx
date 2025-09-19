@@ -45,7 +45,7 @@ function Navbar() {
                     className="hover:cursor-pointer" onClick={() => setIsOpen(prev => !prev)} />}
                 </div>
 
-                {isOpen && <div className="bg-background border border-neutral-800 rounded-md px-1 py-3 absolute top-10 w-full">
+                {isOpen && <div className="bg-background border border-neutral-800 rounded-md px-1 py-3 absolute top-1 w-full">
                     <div className="flex flex-col space-y-4 px-4">
                         <Link href="#" className="text-neutral-200 font-medium hover:underline underline-offset-8 decoration-2 decoration-accent-dark transition-all ease-in-out duration-200">
                             Home
@@ -56,7 +56,7 @@ function Navbar() {
                         <Link href="#demo" className="text-neutral-200 font-medium hover:underline underline-offset-8 decoration-2 decoration-accent-dark transition-all ease-in-out duration-200">
                             How it works
                         </Link>
-                        <button className="bg-accent-dark cursor-pointer text-neutral-800 px-4 py-2 rounded-full font-light w-full " onClick={() => router.push('/signup')}>
+                        <button className="bg-accent-dark cursor-pointer text-neutral-800 px-4 py-2 rounded-full font-light w-full " onClick={handleClick}>
                             Start Editing
                         </button>
                     </div>

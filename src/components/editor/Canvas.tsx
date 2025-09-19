@@ -1,8 +1,10 @@
 import { IconDownload, IconUpload } from "@/icons/icons";
+import handleUplaod from "@/lib/upload";
 import { useActiveTabStore, useBackgroundStore, useBlurStore, useCropStore, useDrawingStore, useFileStore, useFilterStore, useImageDimensionStore, useImagePreviewStore, useLeftPanelStore, useTextStore } from "@/store/store";
 import { Blurs, Stroke, TextBox } from "@/types/types";
 import { drawText, drawBoundingBox, getBoundingBox, getBox, getCanvasCoords, isPointInRect, pixelate, smudge, drawStrokes, drawBoundingBoxForCrop, pushPointToLast } from "@/utils/utils";
 import { Wrench } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 
 export default function Canvas() {
@@ -30,6 +32,7 @@ export default function Canvas() {
     const [draggingHandler, setDraggingHandler] = useState<string | null>(null);
     const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
     const { setIsLeftPanelOpen } = useLeftPanelStore();
+    const { data: session } = useSession();
     const minWidth = 30;
     const minHeight = 30;
 
@@ -413,7 +416,7 @@ export default function Canvas() {
         }
     };
 
-    function downloadImage() {
+    async function downloadImage() {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -434,6 +437,11 @@ export default function Canvas() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+
+        if (!session?.user.id) {
+            throw new Error("User ID missing from session");
+        }
+        await handleUplaod(dataURL, session?.user.id);
     }
 
     useEffect(() => {
@@ -683,8 +691,8 @@ export default function Canvas() {
                             border: '2px solid #fce300',
                         }}
                         className="
-                            mt-40 sm:mt-0
-                            max-w-[89vw] max-h-[60vh]
+                            mt-40 sm:mt-10
+                            max-w-[80vw] max-h-[40vh]
                             sm:max-w-[70vw] sm:max-h-[80vh]
                             md:max-w-[75vw] md:max-h-[80vh]
                             lg:max-w-[55vw] lg:max-h-[80vh]
