@@ -1,13 +1,13 @@
 import { IconBlur, IconCrop, IconLayers, IconFilter, IconSparkles, IconType, IconWand } from '@/icons/icons'
 
 export const toolbarItems = [
+  { id: 'aiEditor', icon: IconSparkles, label: 'AI Editor', color: 'bg-purple-500' },
   { id: 'text', icon: IconType, label: 'Text', color: 'bg-yellow-500' },
   { id: 'crop', icon: IconCrop, label: 'Crop', color: 'bg-blue-500' },
   { id: 'filters', icon: IconFilter, label: 'Filters', color: 'bg-rose-500' },
   { id: 'background', icon: IconLayers, label: 'Background', color: 'bg-orange-500' },
   { id: 'draw', icon: IconWand, label: 'Draw', color: 'bg-fuchsia-500' },
   { id: 'addBlur', icon: IconBlur, label: 'Add Blur', color: 'bg-green-500' },
-  { id: 'aiTools', icon: IconSparkles, label: 'AI Tools', color: 'bg-purple-500' },
 ];
 
 export const baseColors = [

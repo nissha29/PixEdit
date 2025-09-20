@@ -51,7 +51,7 @@ export default function AddBlur() {
                             key={type.id}
                             onClick={() => setSelectedBlur(type.id)}
                             className={`p-3 rounded-lg transition-all duration-200 hover:scale-105 hover:cursor-pointer ${selectedBlur === type.id
-                                ? 'bg-accent-dark text-neutral-200'
+                                ? 'bg-green-500 text-neutral-200'
                                 : 'bg-white text-neutral-700'
                                 }`}
                         >
@@ -74,9 +74,9 @@ export default function AddBlur() {
                     step={range.step}
                     value={blurRadius}
                     onChange={(e) => setBlurRadius(Number(e.target.value))}
-                    className="w-full flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-1.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-accent-dark [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-accent-dark [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
+                    className="w-full flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-1.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-green-500 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-green-500 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
                     style={{
-                        background: `linear-gradient(to right, #40ac02 0%, #40ac02 ${((blurRadius - range.min) / (range.max - range.min)) * 100}%, #e5e7eb ${((blurRadius - range.min) / (range.max - range.min)) * 100}%, #e5e7eb 100%)`
+                        background: `linear-gradient(to right, #22c55e 0%, #22c55e ${((blurRadius - range.min) / (range.max - range.min)) * 100}%, #e5e7eb ${((blurRadius - range.min) / (range.max - range.min)) * 100}%, #e5e7eb 100%)`
                     }}
                 />
                 <div className="flex justify-between text-sm text-neutral-300">
@@ -96,9 +96,9 @@ export default function AddBlur() {
                     step={5}
                     value={blurStrength}
                     onChange={(e) => setBlurStrength(Number(e.target.value))}
-                    className="w-full flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-1.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-accent-dark [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-accent-dark [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
+                    className="w-full flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-1.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-green-500 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-green-500 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
                     style={{
-                        background: `linear-gradient(to right, #40ac02 0%, #40ac02 ${((blurStrength - 10) / (60 - 10)) * 100}%, #e5e7eb ${((blurStrength - 10) / (60 - 10)) * 100}%, #e5e7eb 100%)`
+                        background: `linear-gradient(to right, #22c55e 0%, #22c55e ${((blurStrength - 10) / (60 - 10)) * 100}%, #e5e7eb ${((blurStrength - 10) / (60 - 10)) * 100}%, #e5e7eb 100%)`
                     }}
                 />
                 <div className="flex justify-between text-sm text-neutral-300">

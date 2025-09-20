@@ -183,7 +183,7 @@ export default function Background() {
                 {customImages.map((src, idx) => (
                   <div
                     key={idx}
-                    className="flex-shrink-0 w-[150px] h-20 rounded-lg cursor-pointer hover:ring-2 hover:ring-accent-dark transition overflow-hidden"
+                    className="flex-shrink-0 w-[150px] h-20 rounded-lg cursor-pointer hover:ring-2 hover:ring-orange-500 transition overflow-hidden"
                     onClick={() => setBackgroundChoice('image', src)}
                   >
                     <Image
@@ -200,7 +200,7 @@ export default function Background() {
 
 
               <div className="relative inline-block w-full">
-                <button className="w-full py-3 border-2 border-dashed border-neutral-300 hover:border-neutral-400 rounded-lg text-neutral-200 hover:text-neutral-300 transition-colors text-sm">
+                <button className="w-full py-3 border-2 border-dashed border-orange-500 hover:border-orange-600 hover:scale-105 rounded-lg text-neutral-200 hover:text-neutral-300 transition-colors text-sm">
                   Upload Background Image
                 </button>
                 <input

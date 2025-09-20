@@ -141,7 +141,7 @@ export default function Crop() {
                                 key={ratio.name}
                                 onClick={() => handleAspectRatio(ratio.name)}
                                 className={`w-28 h-28 lg:w-24 lg:h-24 xl:w-28 xl:h-28 p-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-1 ${selectedRatio === ratio.name
-                                    ? 'bg-accent-dark text-white scale-105'
+                                    ? 'bg-blue-500 text-white scale-105'
                                     : 'bg-neutral-200 hover:bg-neutral-300 text-neutral-800 hover:scale-105 hover:cursor-pointer'
                                     }`}
                             >
@@ -159,7 +159,7 @@ export default function Crop() {
                             <button
                                 key={quick.label}
                                 onClick={() => handleApplyRotation(quick.value)}
-                                className={`p-2 rounded-lg text-sm text-neutral-200 transition-colors hover:cursor-pointer ${rotation === quick.value ? 'bg-accent-dark' : 'bg-neutral-700 hover:bg-neutral-600 '}`}
+                                className={`p-2 rounded-lg text-sm text-neutral-200 transition-colors hover:cursor-pointer ${rotation === quick.value ? 'bg-blue-500' : 'bg-neutral-700 hover:bg-neutral-600 '}`}
                             >
                                 {quick.label}
                             </button>
@@ -181,9 +181,9 @@ export default function Crop() {
                                 step="1"
                                 value={rotation}
                                 onChange={(e) => handleApplyRotation(Number(e.target.value))}
-                                className="w-full flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-1.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-accent-dark [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-accent-dark [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
+                                className="w-full flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-1.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-blue-500 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
                                 style={{
-                                    background: `linear-gradient(to right, #40ac02 0%, #40ac02 ${((rotation - (-180)) / (180 - (-180))) * 100}%, #e5e7eb ${((rotation - (-180)) / (180 - (-180))) * 100}%, #e5e7eb 100%)`
+                                    background: `linear-gradient(to right, #2196F3 0%, #2196F3 ${((rotation - (-180)) / (180 - (-180))) * 100}%, #e5e7eb ${((rotation - (-180)) / (180 - (-180))) * 100}%, #e5e7eb 100%)`
                                 }}
                             />
                             <div className="flex justify-between text-sm text-neutral-400 mt-1">
@@ -192,7 +192,7 @@ export default function Crop() {
                                 <span>+180°</span>
                             </div>
                         </div>
-                        <button onClick={() => handleApplyCrop()} className="mt-5 text-white text-lg bg-accent-dark w-full p-2 rounded-lg flex gap-2 justify-center items-center font-semibold hover:cursor-pointer">{'Apply Crop'} <ArrowRight className="w-5 h-5 stroke-2" /></button>
+                        <button onClick={() => handleApplyCrop()} className="mt-5 text-white text-lg bg-blue-500 hover:to-blue-600 w-full p-2 rounded-lg flex gap-2 justify-center items-center font-semibold hover:cursor-pointer">{'Apply Crop'} <ArrowRight className="w-5 h-5 stroke-2" /></button>
                     </div>
                 </div>
             </div>

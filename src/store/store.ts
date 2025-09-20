@@ -67,7 +67,7 @@ export const useImagePreviewStore = create<ImagePreviewStore>()(
 
 export const useActiveTabStore = create<ActiveTabStore>()(
   (set) => ({
-    activeTab: 'crop',
+    activeTab: 'aiEditor',
     setActiveTab: (activeTab: string | null) => set({ activeTab }),
   }),
 );

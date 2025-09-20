@@ -12,6 +12,7 @@ import AddBlur from '@/components/editor/RightSidebar/AddBlur';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import AIEditor from './RightSidebar/AIEditor';
 
 const PhotoEditor = () => {
     const { activeTab } = useActiveTabStore();
@@ -46,12 +47,8 @@ const PhotoEditor = () => {
             case 'background':
                 return <Background />
 
-            case 'aiTools':
-                return (
-                    <div className="text-center text-neutral-500 py-8">
-                        <p>AI Tools coming soon...</p>
-                    </div>
-                );
+            case 'aiEditor':
+                return <AIEditor />
 
             default:
                 return (

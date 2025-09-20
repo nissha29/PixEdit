@@ -72,7 +72,7 @@ export default function TextEditorTool() {
       />
 
       <div className='flex gap-3 flex-col'>
-        <button onClick={addNewText} className="w-full py-3 bg-accent-dark hover:cursor-pointer hover:bg-accent-light text-white rounded-lg transition-colors font-medium shadow-sm px-2">
+        <button onClick={addNewText} className="w-full py-3 bg-[#FFEB3B] hover:cursor-pointer hover:bg-yellow-400 text-neutral-800 rounded-lg transition-colors font-medium shadow-sm px-2">
           Add New Text
         </button>
 
@@ -127,17 +127,17 @@ export default function TextEditorTool() {
                 [&::-webkit-slider-thumb]:h-5
                 [&::-webkit-slider-thumb]:w-1.5 
                 [&::-webkit-slider-thumb]:rounded-full 
-                [&::-webkit-slider-thumb]:bg-accent-dark 
+                [&::-webkit-slider-thumb]:bg-[#FFEB3B]
                 [&::-webkit-slider-thumb]:cursor-pointer
                 [&::-webkit-slider-thumb]:shadow-lg
                 [&::-moz-range-thumb]:h-5 
                 [&::-moz-range-thumb]:w-5 
                 [&::-moz-range-thumb]:rounded-full 
-                [&::-moz-range-thumb]:bg-accent-dark
+                [&::-moz-range-thumb]:bg-[#FFEB3B]
                 [&::-moz-range-thumb]:border-0
                 [&::-moz-range-thumb]:cursor-pointer"
                 style={{
-                  background: `linear-gradient(to right, #40ac02 0%, #40ac02 ${((fontSize - 12) / (120 - 12)) * 100}%, #e5e7eb ${((fontSize - 12) / (120 - 12)) * 100}%, #e5e7eb 100%)`
+                  background: `linear-gradient(to right, #FFEB3B 0%, #FFEB3B ${((fontSize - 12) / (120 - 12)) * 100}%, #e5e7eb ${((fontSize - 12) / (120 - 12)) * 100}%, #e5e7eb 100%)`
                 }}
               />
               <div className="w-16 px-2 py-1 text-sm rounded border border-neutral-600 text-center bg-neutral-800 text-white">
@@ -175,7 +175,7 @@ export default function TextEditorTool() {
                 setIsBold(!isBold)
                 updateActiveTextBox({ isBold: !isBold })
               }}
-              className={`w-10 h-10 rounded-md border-2 flex items-center justify-center transition-all text-neutral-200 ${isBold ? 'border-accent-dark/80 bg-accent-dark/10 text-accent-dark' : 'border-neutral-500 hover:border-neutral-600'
+              className={`w-10 h-10 rounded-md border-2 flex items-center justify-center transition-all text-neutral-200 ${isBold ? 'border-[#FFEB3B] bg-[#FFEB3B]/5 text-[#FFEB3B]' : 'border-neutral-500 hover:border-neutral-600'
                 }`}
             >
               <Bold className="w-4 h-4" />
@@ -185,7 +185,7 @@ export default function TextEditorTool() {
                 setIsItalic(!isItalic)
                 updateActiveTextBox({ isItalic: !isItalic })
               }}
-              className={`w-10 h-10 rounded-md border-2 flex items-center justify-center transition-all text-neutral-200 ${isItalic ? 'border-accent-dark/80 bg-accent-dark/10 text-accent-dark' : 'border-neutral-500 hover:border-neutral-600'
+              className={`w-10 h-10 rounded-md border-2 flex items-center justify-center transition-all text-neutral-200 ${isItalic ? 'border-[#FFEB3B] bg-[#FFEB3B]/5 text-[#FFEB3B]' : 'border-neutral-500 hover:border-neutral-600'
                 }`}
             >
               <Italic className="w-4 h-4" />
@@ -195,7 +195,7 @@ export default function TextEditorTool() {
                 setIsUnderlined(!isUnderlined)
                 updateActiveTextBox({ isUnderlined: !isUnderlined })
               }}
-              className={`w-10 h-10 rounded-md border-2 flex items-center justify-center transition-all text-neutral-200 ${isUnderlined ? 'border-accent-dark/80 bg-accent-dark/10 text-accent-dark' : 'border-neutral-500 hover:border-neutral-600'
+              className={`w-10 h-10 rounded-md border-2 flex items-center justify-center transition-all text-neutral-200 ${isUnderlined ? 'border-[#FFEB3B] bg-[#FFEB3B]/5 text-[#FFEB3B]' : 'border-neutral-500 hover:border-neutral-600'
                 }`}
             >
               <Underline className="w-4 h-4" />
@@ -218,7 +218,7 @@ export default function TextEditorTool() {
                   setTextAlign(textAlign);
                   updateActiveTextBox({ textAlign })
                 }}
-                className={`w-10 h-10 rounded-md border-2 flex items-center justify-center transition-all text-white ${textAlign === value ? 'border-accent-dark/80 bg-accent-dark/10 text-accent-dark' : 'border-neutral-500 hover:border-neutral-600'
+                className={`w-10 h-10 rounded-md border-2 flex items-center justify-center transition-all text-white ${textAlign === value ? 'border-[#FFEB3B] bg-[#FFEB3B]/5 text-[#FFEB3B]' : 'border-neutral-500 hover:border-neutral-600'
                   }`}
               >
                 <Icon className="w-4 h-4" />

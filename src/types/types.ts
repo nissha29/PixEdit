@@ -264,3 +264,10 @@ export type ImageType = {
   publicId: string;
   url: string;
 };
+
+export type ImageEditType = {
+  inputs: string | null;
+  parameters: {
+    prompt: string;
+  };
+}

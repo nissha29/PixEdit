@@ -26,10 +26,6 @@ export default function ManageComp() {
     const limit = 10;
 
     const userId = session?.user.id;
-    if (!userId) {
-        throw new Error('userId missing');
-
-    }
 
     const { data, isLoading } = useQuery<ImagesResponse>({
         queryKey: ["images", userId, page],
@@ -51,7 +47,7 @@ export default function ManageComp() {
                     {Array.from({ length: limit }).map((_, idx) => (
                         <div
                             key={idx}
-                            className="w-96 h-72 bg-neutral-800 rounded-xl animate-pulse"
+                            className="w-80 h-80 bg-neutral-800 rounded-xl animate-pulse"
                         />
                     ))}
                 </div>
