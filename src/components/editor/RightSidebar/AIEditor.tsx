@@ -1,34 +1,42 @@
 'use client'
 
-import inpaintImage from '@/app/actions/inpaintImage'
 import { useImagePreviewStore } from '@/store/store'
-import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
+import axios from 'axios'
 
 export default function AIEditor() {
   const [prompt, setPrompt] = useState('')
   const [submittedPrompt, setSubmittedPrompt] = useState('')
-  const { dataURL, setDataURL } = useImagePreviewStore();
+  const [isPending, setIsPending] = useState(false);
+  const { setDataURL } = useImagePreviewStore();
 
-  const { mutate, data, isPending, error } = useMutation({
-    mutationKey: ['prompt'],
-    mutationFn: () => inpaintImage({
-      inputs: dataURL,
-      parameters: {
-        prompt
+  const handleSubmit = async () => {
+    try {
+      setIsPending(true);
+      if (!prompt) throw new Error("Prompt is required");
+
+      const response = await axios.get(`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?nologo=true`, {
+        responseType: 'blob'
+      });
+      if (!response) {
+        throw new Error(`Image fetch failed`);
       }
-    }),
-    onSuccess: () => {
-      setSubmittedPrompt(prompt)
-      if(data) {
-        setDataURL(data);
+
+      const blob = response.data as Blob;
+      if (!blob || blob.size === 0) {
+        throw new Error("Image fetch failed: empty blob");
       }
-      setPrompt('')
-    },
-    onError: () => {
-      console.log(error);
+
+      setSubmittedPrompt(prompt);
+      setPrompt('');
+      setIsPending(false);
+
+      const objectUrl = URL.createObjectURL(blob);
+      setDataURL(objectUrl);
+    } catch (err) {
+      console.log(err);
     }
-  })
+  }
 
   return (
     <div className="space-y-6 p-4 rounded-xl text-neutral-200">
@@ -43,23 +51,22 @@ export default function AIEditor() {
       />
 
       <button
-        onClick={() => mutate()}
+        onClick={handleSubmit}
         disabled={isPending}
-        className="w-full py-3 bg-purple-500 hover:bg-purple-600 rounded-md text-white font-medium transition"
+        className="w-full py-3 bg-purple-500 hover:bg-purple-600 rounded-md text-white font-medium transition hover:cursor-pointer"
       >
         {isPending ? 'Loading...' : 'Submit'}
       </button>
 
       <div className='text-neutral-200 text-xl mt-6'>Instructions</div>
       <p className="text-neutral-400 -mt-4">
-        Write a prompt above describing how you want your image to be edited.
-        Our AI will process it and return the edited image based on your instructions.
+        Write a prompt above describing the image you want to generate. Our AI will create the image, and you can then refine or edit it further in the Pixedit editor.
       </p>
 
       {submittedPrompt && (
-        <p className="mt-4 text-neutral-200 text-center">
-          Last submitted prompt: {submittedPrompt}
-        </p>
+        <div className="mt-4 text-neutral-200">
+          Last submitted prompt: <p className='text-neutral-400'>{submittedPrompt}</p>
+        </div>
       )}
     </div>
   )

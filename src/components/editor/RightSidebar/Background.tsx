@@ -75,7 +75,7 @@ export default function Background() {
               if (!hasRemovedBackground) handleBackgroundRemoval(dataURL);
             }}
             disabled={loading || hasRemovedBackground}
-            className={`w-full py-3 bg-rose-500 hover:bg-rose-500 hover:cursor-pointer text-white rounded-lg transition-colors font-medium ${blurRemoveBgClass}`}>
+            className={`w-full py-3 bg-orange-400 hover:bg-orange-500 hover:cursor-pointer text-white rounded transition-colors font-medium ${blurRemoveBgClass}`}>
             {loading ? <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" /> : 'Remove Background'}
           </button>
 

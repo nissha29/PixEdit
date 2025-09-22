@@ -265,9 +265,6 @@ export type ImageType = {
   url: string;
 };
 
-export type ImageEditType = {
-  inputs: string | null;
-  parameters: {
-    prompt: string;
-  };
-}
+type ObjectResult = { objectUrl: string; contentType: string };
+type DataResult = { dataUrl: string };
+export type AiResult = ObjectResult | DataResult;
