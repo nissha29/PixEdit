@@ -10,7 +10,11 @@ export function ImageFlow() {
                 <div className='text-base lg:text-lg text-neutral-400 flex-wrap md:w-2xl text-center'>All the editing tools you need, thoughtfully designed to keep things simple — so you can focus on making your photos look amazing without any distractions.</div>
             </div>
             <div
-                className="flex flex-col justify-start items-start gap-10 mt-7 sm:mt-16"
+                className="h-[45rem] flex flex-col justify-start items-start gap-10 mt-7 sm:mt-16 overflow-y-scroll"
+                style={{
+                    overscrollBehavior: 'contain',
+                    scrollbarWidth: 'none'
+                }}
             >
                 <Feature mainText="Add Text" description="Easily add and style text on your images with a variety of fonts, sizes, colors, and placement options — customize every detail to create visually stunning designs that perfectly match your message, all in just a few clicks." image1="/text1.png" image2="/text2.png" />
                 <Feature mainText="Crop and Rotate photos" description="Quickly crop and rotate your photos to focus on what matters most — adjust the composition, straighten angles, and enhance your images effortlessly for a polished, professional look." image1="/crop1.png" image2="/crop2.png" />
@@ -18,6 +22,7 @@ export function ImageFlow() {
                 <Feature mainText="Remove or Change Background" description="Remove backgrounds with precision or switch them to colors, gradients, or entirely new images — personalize your photos and make them stand out effortlessly." image1="/background1.png" image2="/background2.png" />
                 <Feature mainText="Draw" description="Add creativity on the go — explore brush, pencil, dotted, and chalk styles to draw freely and enhance your images with unique artistic effects." image1="/draw1.png" image2="/draw2.png" />
                 <Feature mainText="Add Blur" description="Add blur effects like pixelate and smudge to your photos — create focus, hide details, or add artistic touches to enhance your images with ease." image1="/blur1.png" image2="/blur2.png" />
+                <Feature mainText="AI Generate and Edit" description="Write a prompt describing the image you want to generate. Our AI will create the image, and you can then refine or edit it further in the Pixedit editor." image1="/ai1.png" image2="/ai2.png" />
             </div>
         </div>
     );
