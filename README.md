@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🖼️ Pixedit
 
-## Getting Started
+#### Pixedit is a complete image editing solution that lets you remove or change backgrounds instantly, crop and resize with precision, rotate and flip with ease, add stylish text and typography, apply blur effects for depth, generate and refine visuals with AI, and finally export in multiple formats — everything you need to edit, design, and transform your images effortlessly.
 
-First, run the development server:
+![Landing Page](./assets/landingPage.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+![Landing Page2](./assets/landingPage2.png)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![Upload](./assets/upload.png)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+![Editor UI](./assets/editor.png)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ✨ Key Features
+🔵 **Remove or Change Background Instantly** – Quickly replace, remove, or edit backgrounds with AI precision.  
 
-To learn more about Next.js, take a look at the following resources:
+🟢 **Smart Crop and Resize** – Adjust image dimensions effortlessly while keeping quality intact.  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+🔴 **Rotate and Flip** – Transform images with rotation and flipping options.  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+🟣 **Text and Typography** – Add stylish text overlays with customizable fonts and colors.  
 
-## Deploy on Vercel
+🟡 **Add Blur** – Apply blur effects selectively for depth and focus.  
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+🟠 **AI Image Generate and Edit** – Create images from prompts and refine them directly in the editor.  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+⚫ **Export in Various Formats** – Save and share your creations in multiple file formats.  
+
+## 🎥 Demo Video
+[![Pixedit Demo Video](https://img.youtube.com/vi/Bw6PRJb1gDs/maxresdefault.jpg)](https://www.youtube.com/watch?v=Bw6PRJb1gDs)  
+*(Replace with your actual demo link when ready)*  
+
+---
+
+## 🛠️ Tech Stack
+
+Pixedit is built with a modern and scalable stack to ensure performance, reliability, and smooth user experience:
+
+⚡ Next.js – React framework for server-side rendering and fast builds
+
+🎨 Tailwind CSS – Utility-first styling for responsive and sleek UI
+
+🗄️ Prisma – Next-generation ORM for database management
+
+🔒 Next-Auth – Secure and flexible authentication
+
+📦 Zustand – Lightweight state management
+
+🧑‍💻 TypeScript – Type-safe development for scalability and maintainability
+
+
+## 🚀 Getting Started
+
+Run Pixedit locally and start exploring all its image editing features in just a few steps.
+
+### Prerequisites
+ 
+#### Installation & Setup
+
+1. Clone the repository
+
+   ``` 
+   https://github.com/nissha29/PixEdit.git
+   ```
+
+2. Navigate into the project folder
+  
+     ```
+     cd pixedit
+     ```
+
+3. Install dependencies
+   
+     ```
+     npm install
+     ```
+
+4. Start the development server
+    
+    ```
+    npm run dev
+    ```
+
+5. Open the app in your browser
+
+    Visit http://localhost:3000 to see Pixedit in action.
+

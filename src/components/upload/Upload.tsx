@@ -313,7 +313,7 @@ export function Upload() {
                                     </div>
                                     <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
-                                        <span>AI Image Editing</span>
+                                        <span>AI Image Generate and Edit</span>
                                     </div>
                                     <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 bg-lime-400 rounded-full"></div>
