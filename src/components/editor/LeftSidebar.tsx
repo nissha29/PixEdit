@@ -4,14 +4,12 @@ import { useActiveTabStore, useLeftPanelStore, useRightPanelStore } from '@/stor
 import { toolbarItems } from '@/lib/constants';
 import { signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Crown, LogOut, PanelRightOpen, User, Zap } from 'lucide-react';
+import { LogOut, PanelRightOpen, User } from 'lucide-react';
 
 export default function LeftSidebar() {
     const { activeTab, setActiveTab } = useActiveTabStore();
     const { data: session } = useSession();
-    const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const { setIsRightPanelOpen } = useRightPanelStore();
     const { isLeftPanelOpen, setIsLeftPanelOpen } = useLeftPanelStore();
@@ -20,14 +18,6 @@ export default function LeftSidebar() {
         await signOut({ callbackUrl: '/' });
         setIsOpen(false);
     };
-
-    const handleUpgrade = () => {
-        router.push('/upgrade');
-        setIsOpen(false);
-    };
-
-    const planType = session?.user?.plan || 'premium';
-    const isPremium = planType === 'premium';
 
     return (
         <div className='relative'>
@@ -135,7 +125,7 @@ export default function LeftSidebar() {
                             </div>
                         </div>
 
-                        <div className="px-4 py-3 border-b border-neutral-700">
+                        {/* <div className="px-4 py-3 border-b border-neutral-700">
                             <div className="flex items-center justify-between">
                                 <span className="text-neutral-300 font-medium">Plan</span>
                                 <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold ${isPremium
@@ -146,10 +136,10 @@ export default function LeftSidebar() {
                                     <span className="capitalize">{planType}</span>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="p-2 space-y-1">
-                            {!isPremium && (
+                            {/* {!isPremium && (
                                 <button
                                     onClick={handleUpgrade}
                                     className="w-full flex items-center gap-3 px-3 py-2.5 text-yellow-400 hover:text-yellow-300 hover:bg-gradient-to-r hover:from-yellow-500/10 hover:to-orange-500/10 rounded-lg transition-all duration-200 group border border-yellow-500/20 hover:border-yellow-500/40"
@@ -157,7 +147,7 @@ export default function LeftSidebar() {
                                     <Zap className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
                                     <span className="text-sm font-medium">Upgrade to Premium</span>
                                 </button>
-                            )}
+                            )} */}
 
                             <button
                                 onClick={handleLogout}
