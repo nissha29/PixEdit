@@ -28,7 +28,7 @@
 ⚫ **Export in Various Formats** – Save and share your creations in multiple file formats.  
 
 ## 🎥 Demo Video
-[![Pixedit Demo Video](https://img.youtube.com/vi/Bw6PRJb1gDs/maxresdefault.jpg)](https://www.youtube.com/watch?v=Bw6PRJb1gDs)  
+[![Pixedit Demo Video](./assets/editor.png)](https://www.youtube.com/watch?v=2ojFEbT6RPQ&t=43s)  
 *(Replace with your actual demo link when ready)*  
 
 ---
