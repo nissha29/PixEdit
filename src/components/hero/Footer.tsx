@@ -1,14 +1,15 @@
 import React from "react";
 import { Twitter, Github, Linkedin, Mail } from 'lucide-react'
+import Link from "next/link";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [
-    { name: "Twitter", href: "#", icon: <Twitter /> },
-    { name: "Github", href: "#", icon: <Github /> },
-    { name: "LinkedIn", href: "#", icon: <Linkedin /> },
-    { name: "Gmail", href: "#", icon: <Mail /> },
+    { name: "Twitter", href: "https://x.com/nissha297", icon: <Twitter /> },
+    { name: "Github", href: "https://github.com/nissha29", icon: <Github /> },
+    { name: "LinkedIn", href: "https://www.linkedin.com/in/nisha-kashyap-5972a9273/", icon: <Linkedin /> },
+    { name: "Gmail", href: "mailto:nishakashyap2907@gmail.com", icon: <Mail /> },
   ];
 
   return (
@@ -32,10 +33,10 @@ export const Footer = () => {
                 <span className="text-green-600">✉️</span> hello@pixedit.com
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-green-600">📞</span> +1 (555) 123-4567
+                <span className="text-green-600">📞</span> 1234567890
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-green-600">📍</span> New York, NY
+                <span className="text-green-600">📍</span> India
               </div>
             </div>
           </div>
@@ -45,14 +46,15 @@ export const Footer = () => {
           <div className="flex items-center space-x-4">
             <span className="text-neutral-300">Follow us:</span>
             {socialLinks.map((social, i) => (
-              <a
+              <Link
                 key={i}
                 href={social.href}
+                target="_blank"
                 className="w-8 h-8 hover:bg-green-600 rounded-xl flex items-center justify-center transition"
                 aria-label={social.name}
               >
                 <span className="stroke-1 font-thin">{social.icon}</span>
-              </a>
+              </Link>
             ))}
           </div>
 
