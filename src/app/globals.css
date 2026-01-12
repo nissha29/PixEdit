@@ -11,10 +11,28 @@
 }
 
 @layer base {
+  * {
+    scroll-behavior: smooth;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
   body {
     margin: 0;
     padding: 0;
     background-color: var(--background);
+    overflow-x: hidden;
+  }
+  
+  /* Performance optimizations for smooth scrolling */
+  .main-wrapper {
+    contain: layout style paint;
+    transform: translateZ(0);
+    will-change: scroll-position;
   }
 }
 

@@ -67,7 +67,10 @@ export const StickyScroll: React.FC<StickyScrollProps> = ({
             style={{
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
-                overscrollBehavior: "contain",
+                overscrollBehavior: "auto",
+                WebkitOverflowScrolling: "touch",
+                scrollBehavior: "smooth",
+                willChange: "scroll-position",
             }}
             ref={ref}
         >

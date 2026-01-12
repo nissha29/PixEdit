@@ -36,10 +36,13 @@ export const AnimateScroll = ({ children, delay = 0 }: AnimateScrollProps) => {
   return (
     <div
       ref={elementRef}
-      className={`transition-all duration-1000 ease-out w-full flex justify-center items-center
+      className={`transition-all duration-500 ease-out w-full flex justify-center items-center
         ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}
       `}
-      style={{ transitionDelay: `${delay}ms` }}
+      style={{ 
+        transitionDelay: `${delay}ms`,
+        willChange: isVisible ? 'auto' : 'transform, opacity'
+      }}
     >
       {children}
     </div>

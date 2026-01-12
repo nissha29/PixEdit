@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "prisma generate --schema=src/prisma/schema.prisma && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate --schema=src/prisma/schema.prisma"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
